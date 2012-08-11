@@ -1,0 +1,15 @@
+template structure
+
+                                     base.html(root)
+                                     home_base.html                         (divides main-content to left and right-content)
+      (logged out users)                        (logged in users)
+sell_loggedout   homepage.html            sell_loggedin     user_home.html
+                                         
+    
+    
+    
+    
+    
+
+macros.html
+>> contains the basic divs and parts of the website, (i.e home reg form, about, search, etc)

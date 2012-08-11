@@ -1,0 +1,17 @@
+{% extends "home_base.html" %}
+{% import "macros.html" as macro %}
+
+{% block login %}
+    {{ macro.top_login() }}
+{% endblock %}
+
+{% block left_content %}
+    {{ macro.ebentaSearch() }}
+    {{ macro.getAbout() }}
+{% endblock %}
+
+{% block right_content %}
+	<div style="margin-top:-20px">
+    {{ macro.getRegistrationForm(val,err,errs) }}
+	</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block other_css %}
+    <link type="text/css" rel="stylesheet" href="/static/css/login.css"/>
+{% endblock %}
+
+{% block content %}
+        <div class="main-login well">
+            <div class="label-top">
+                <label class="ebenta-label">eBenta Login</label>
+            </div>
+            <center>
+            {%if err%}<span class="label label-important">{{err}}</span>{%endif%}
+            <div class="main-login-content" >
+                <form action="/login" method="post">
+                    <input type="text" name="username" class="login-input" placeholder="Username"/>
+                    <input type="password" name="password"class="login-input" placeholder="Password"/>
+                    <label style="text-align:left"><input type="checkbox" name="remember"> Remember me</label>
+                    <input type="submit" value="  Login  " class="btn btn-success"> or <a href="/register" class="forgot-pass">Sign Up
+                    <br/><a href="/login/forget" class="forgot-pass">Forgot your password?</a>
+                </table>
+                </form>
+            </center>
+            </div>
+        </div>
+{% endblock %}

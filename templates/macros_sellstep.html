@@ -1,0 +1,102 @@
+{% import "macros.html" as macro %}
+
+{% macro showProcedure(step,method) -%}
+    <h3>How to {{method.title()}}</h3>
+    <div {% if step== 1 %} class="alert alert-success" {% endif %}>
+    Step 1: Search Book!
+        <ul>
+            <li>Check if the book you are {{method}}ing is already in our Library.</li>
+            <li>If it is on our Library, skip to step 3.</li>
+        </ul>
+    </div>
+    <div {% if step== 2 %} class="alert alert-success" {% endif %}>
+    Step 2: Enter General Book Info
+        <ul>
+            <li>Your book is not yet in our database, enter some general info about the book.</li>
+        </ul>
+    </div>
+    <div {% if step== 3 %} class="alert alert-success" {% endif %}>
+    Step 3: Finalize 
+        <ul>
+            <li>Enter some info about {% if method=='sell': %}your copy of {% endif %} the book.</li>
+            <li>Pricing: {% if method=='sell' %}Enter the minimum price you would sell your book.{% else: %} Enter the maximum price you would like to buy for this book.{% endif %}</li>
+            <li>Rating: Click on the help button (beside rating) to see Rating Guide.</li>
+        </ul>
+    </div>
+    <div {% if step== 4 %} class="alert alert-success" {% endif %}>
+    Step 4: Wait
+        <ul>
+            <li>Depending on your <a href="/user/settings" style="text-decoration:none;">privacy settings</a> just wait for a <em>buyer</em> or an <em>admin</em> to contact you.</li>
+        </ul>
+    </div>
+{%- endmacro %}
+
+{% macro showConditionGuide(method) %}
+<h3>Book Conditions</h3>
+{% if method=="sell": %} 
+ Rating your book according to the guide below, will help potential buyers determine the condition of your book.
+{% else: %}
+ Choose the rating of the book you would like to purchase. This helps other users know what you would want.
+{% endif %}
+<br/><br/>
+<table class="centered-table">
+    <tr><td>Rating</td><td>Description</td><td>Remarks</td></tr>
+    <tr><td>{{ macro.printStar(5)}}</td><td>Good as New</td><td>
+        <ul class="rating-list">
+            <li>Brand new quality</li>
+            <li>Less than 2 months used</li>
+        </ul></td></tr>
+    <tr><td>{{ macro.printStar(4)}}</td><td>Slightly Used</td><td>
+        <ul class="rating-list">
+            <li>Taken good care</li>
+            <li>No torn pages/edges</li>
+            <li>Has never been wet</li>
+            <li>Well maintained</li>
+        </ul></td></tr>
+    <tr><td>{{ macro.printStar(3)}}</td><td>Average</td><td>
+        <ul class="rating-list">
+            <li>More than 1 year used</li>
+            <li>Some edges torn</li>
+            </ul></td></tr>
+    <tr><td>{{ macro.printStar(2)}}</td><td>Poor</td><td>
+        <ul class="rating-list">
+            <li>Some pages torn</li>
+            <li>Not well maintained</li>
+        </ul></td></tr>
+    <tr><td>{{ macro.printStar(1)}}</td><td>Abused</td><td>
+        <ul class="rating-list">
+            <li>Veteran service</li>
+        </ul></td></tr>        
+</table>
+{% endmacro %}
+
+{% macro showStep3(book,errors=[]) %}
+<h3>You are selling your copy of:</h3>
+{{ macro.showBookInfo(book,False) }}
+<div style="heght:auto;width:430px;margin:0 auto;margin-top:-30px;">
+    <form action="/sell" method="post"><br/>
+    <table class="sell-table">
+        <tr><td style="width:70px;height:40px;">Condition{{req|safe}}</td><td>{{macro.showRating()}}</td><td><a href="javascript:void(0)" onclick="toggleHelp()"><img src="/static/images/help.png"></a></td></tr>
+        <tr><td>Price{{req|safe}}</td><td><span class="input-prepend"><span class="add-on">Php</span><input type="text" name="price" style="width:60px;" {% if price: %}value="{{price}}"{% endif %}></span></td></tr>
+        <tr><td>Comments</td><td><textarea style="height:40px;width:230px;" onfocus="blank(this)" name="comment"></textarea></td></tr>
+    </table>
+    <center>
+        {% if errors: %}
+            {% for err in errors: %}<label class="error">{{err}}</label><br/>{% endfor %}</br>{% endif %}
+        <tr><td></td><td><input type="submit" value="Post Sell Order" class="btn btn-success"></td></tr>
+    </center>
+    <input type="hidden" name="bid" value="{{book[0].key().id()}}">
+    <input type="hidden" id="condition" name="rating" value="{% if rating: %}{{ rating }}{% else: %}0{% endif %}">
+</form>
+</div>
+{% endmacro %}
+
+{% macro showStep4(book) %}
+<h3>Post Success!</h3>
+<div id="sell-success">
+    You have successfully posted a sell order on your copy of <em><b>{{ book.title }}</b></em>. Depending on your <a href="/user" class="link">privacy settings</a> an admin, user, or guest may contact you.
+    <br/><br/>By default, only an admin can contact you if someone is interested to purchase your book. It may take a while, but we will contact you.    
+    <br/><br/><b>Make sure</b> the contact number on your <a href="/user/settings" class="link">profile</a> is valid. For now, this is the only way admins can contact you. (Dont worry, we would not disclose your personal details to anyone without your consent)</li>
+</div>
+
+{% endmacro %}

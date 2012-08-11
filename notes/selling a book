@@ -1,0 +1,36 @@
+Selling a book:
+    1. User checks if book is in eBenta database(Library)
+        1.1 If YES, server fills up details about book, user fills up info about his copy of book (i.e rating condition,
+            aprox when  bought, price range willing to sell)
+        1.2 if NO, user fills up details about book, server adds book to database, user fill up info about his copy
+    2. Save add to database
+    
+step 1 form:
+    input book title
+    input search
+    
+step 2.1 FOUND form
+    show list of found books
+
+    2.1.1 after user chooses (or if only 1 found)
+        show title
+        show author
+        show price range
+        show brand new price
+        show tags
+        show seller, buyers
+        input next
+        
+step 2.2 NOT FOUND FORM
+    show enter book info
+    input title
+    input author/s
+    input tag
+    input next
+    
+step 3
+    input rating condition
+    input price range
+    input edition
+    input sell
+

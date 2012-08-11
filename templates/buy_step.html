@@ -1,0 +1,51 @@
+{% extends "home_base.html" %}
+{% import "macros.html" as macro %}
+{% import "macros_sellstep.html" as sellmacro %}
+
+{% block login %}
+    {{ macro.top_welcome(user) }}
+{% endblock %}
+
+{% if rating: %}
+    {% block body_tag %} 
+        onload = "setCondition({{rating}})"
+    {% endblock %}
+{% endif %}
+
+{% block left_content %}
+    {% if step == 1: %}
+        {{ macro.ebentaSearch(action="/buy/search",next="buy") }}
+    {% elif step == 2: %}
+        {{ macro.addNewBook(next="buy") }}
+    {% elif step == 3: %}
+        <h3>You are Buying:</h3>
+        {{ macro.showBookInfo(book,False) }}
+        <div style="heght:auto;width:430px;margin:0 auto;">
+        <form action="/buy" method="post">
+            <br/>
+            <table class="sell-table">
+                <tr><td><label style="margin-right:20px;">Book Condition:{{req|safe}}</label></td><td>{{ macro.showRating() }}</td><td><a href="javascript:void(0)" onclick="toggleHelp()"><img src="/static/images/help.png"></a></td></tr>
+                <tr><td>Price:{{req|safe}}</td><td>Php <input type="text" name="price" style="width:60px;" {% if price: %}value="{{price}}"{% endif %}></td></tr>
+            </table>
+            <center>
+                {% if errors: %}
+                    {% for err in errors: %}
+                        <label class="error">{{err}}</label><br/>
+                    {% endfor %}
+                    </br>
+                {% endif %}
+                <tr><td></td><td><input type="submit" value="Sell your copy" class="submit-button"></td></tr>
+            </center>
+            <input type="hidden" name="bid" value="{{book[0].key().id()}}">
+            <input type="hidden" id="condition" name="rating" value="{% if rating: %}{{ rating }}{% else: %}0{% endif %}">
+        </form>
+        </div>
+    {% elif step == 4: %}
+        {{ sellmacro.showStep4(book) }}
+    {% endif %}
+{% endblock %}
+
+{% block right_content %}
+    <div id="sellProcedure">{{ sellmacro.showProcedure(step,"buy") }}</div>
+    <div id="conditionHelp">{{ sellmacro.showConditionGuide("buy") }}</div>
+{% endblock %}

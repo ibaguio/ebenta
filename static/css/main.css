@@ -1,0 +1,294 @@
+body{
+    font-family:"lucida grande",tahoma,verdana,arial,sans-serif;
+    font-size:14px;
+}
+
+input[type=text]{
+  background: #ffc;
+}
+input[type=password]{
+  background: #ffc;
+}
+ul{
+  font-size: 15px;  
+}
+.top-content{
+  position: relative;
+  height: 130px;
+  width: 930px;
+  margin: 0 auto;
+}
+
+.top-links{
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  /* border:solid; */
+  height: 40px;
+  width: 900px;
+}
+
+.top-login{
+  position: absolute;
+  top:0px;
+  right: 0px;
+  height:130px;
+  width: 260px;
+}
+.top-welcome{
+  position: absolute;
+  top:0px;
+  right: 0px;
+  height:130px;
+  width: 150px;
+}
+.main-content{
+  margin: auto;
+  width:970px;
+  height: 540px;
+  display: table;
+}
+.span11-5{
+  width:910px;
+}
+.footer-link{
+  margin-left: 5px;
+}
+.half-content{
+  width: 465px;
+  height: auto;
+  display: table-cell;
+}
+.links-top{
+    position: absolute;
+    right: 150px;
+    top: 5px;
+}
+.main-link{
+    font-size: 20px;
+    font-family: sans-serif;
+    color: green;
+    text-decoration: none;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.main-link:hover{
+    background:maroon;
+    text-shadow: #333 0 -1px 0;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+.ebenta-search{
+  position:relative;
+  margin: 15px auto;
+  border: solid #777;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  width: 330px;
+  height:150px;
+  text-align: center;
+}
+.search-bar{
+    margin:10px;
+    width: 270px;
+    height: 27px;
+    font-size: 20px;
+}
+.registration{
+    margin: 0px auto;
+    font-size: 13px;
+    width:410px;
+}
+.label-top{
+  height:30px;
+  width:280px;
+  border-bottom: 2px solid #663;
+  text-align:left;
+  margin: 10px auto;
+}
+.ebenta-label{
+  font-size: 18px;
+  font-weight:bold;
+}
+.submit-button{
+  margin:5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;  
+  height: 28px;
+  background: #339900;
+}
+.link{
+  text-decoration: none;
+  color:#777;
+}
+.link:hover{
+  text-decoration: underline;
+}
+.error{
+  font-size:12px;
+  color:red;
+}
+.highlight{
+  padding: 8px;
+  margin-bottom: 5px;
+  background: #339900;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;  
+}
+.search-results{
+  font-size:15px;
+  width: 455px;
+  position: relative;
+  margin-top: 15px; 
+}
+.search-time{
+  font-size:13px;
+  margin: 0 auto;
+  color: #454;  
+}
+.result-img{
+  height: 100px;
+  width:75px;
+}
+.result-info{
+  width: 380px;
+  position: absolute;
+  top:0px;
+  left:85px;
+}
+.result-icons{
+  position: absolute;
+  top: 70px;
+  right: 10px;
+}
+
+.icon{
+  height: 32px;
+  width: 32px;
+}
+
+.icon + .icon{
+  /*border:solid;*/
+  padding-right: 5px;
+}
+
+#sellProcedure{
+  display: block;
+}
+#conditionHelp{
+  display: none;
+}
+.rating-star20{
+  width:20px;
+  height:20px;
+}
+.rating-star14{
+  width:14px;
+  height:14px;
+}
+.rating-star12{
+  width:12px;
+  height:12px;
+}
+.centered-table{
+  text-align: center;
+}
+
+.centered-table td{
+  padding: 5px;
+  margin-top:-5px;
+}
+.rating-list{
+  font-size:14px;
+  text-align:left;
+}
+.sell-table td{
+  padding: 5px;
+}
+#profile-pic{
+  width: 110px;
+  height: auto;
+}
+#sell-success{
+  width: 420px;
+  padding-top: 20px;
+  text-align: justify;
+}
+.browsed{
+  float:left;
+  width:284px;
+  margin-left:4px;
+  margin-right:4px;
+  margin-bottom:10px;
+  position:relative;
+  border: 1px solid #eee;
+  padding:4px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+}
+.browsed-info{
+  width:205px;
+  float:right;
+  margin-top:12px;
+}
+.browsed-img{
+  float:left;
+  margin-left:0;
+  width:50px
+}
+.browsed-stats{
+  bottom:5px;
+  right:5px;
+  position:absolute
+}
+.tdmarg{
+  width:18px;
+  height:20px
+}
+.btr{
+  margin-top:3px;
+  margin-bottom:3px;
+}
+.icon16px{
+  width: 16px;
+  height: auto;
+  position:absolute:
+  top:0px; 
+}
+.about-ans{
+  font-size: 16px;
+  font-family: Helvetica, Arial;
+  margin-left: 25px;
+}
+
+.admin-icon{
+  height: 16px;
+}
+#myprofile td{
+  padding-right:70px;
+}
+.edit-link{
+  text-decoration:none;
+  color: #383;
+}
+.edit-link:hover{
+  text-decoration: underline;
+}
+.img100{
+  width:100px;
+  height:auto;
+}
+.book-image:hover{
+  text-decoration: none;
+}
+.request-loading{
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: text-bottom;
+  background-image: url("../images/loading.gif");
+  background-repeat: no-repeat;
+  margin-left: 0;
+  margin-right: 3px;
+  margin-top: 1px;
+}

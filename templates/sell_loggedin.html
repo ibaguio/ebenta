@@ -1,0 +1,16 @@
+{# sell page if user is logged in #}
+  {% extends "home_base.html" %}
+  {% import "macros.html" as macro %}
+    {% block login%}
+      {{ macro.top_welcome(user) }}
+    {% endblock %}
+    
+    {% block left_content%}
+        sell a book content
+    {% endblock%}
+    
+    {% block right_content %}
+        {{ macro.getAbout() }}
+        {{ macro.getComments() }}
+    {% endblock %}  
+

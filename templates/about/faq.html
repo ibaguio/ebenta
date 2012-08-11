@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% import "macros.html" as macro %}
+
+{% block login %}
+    {% if user: %}
+        {{ macro.top_welcome(user) }}
+    {% else: %}
+        {{ macro.top_login() }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="row-fluid">
+    	{{macro.aboutNav("faq")}}
+        <div class="span9">
+        <h2>Frequently Asked Questions</h2>
+        <div class="well">
+            <h3>What is eBenta?</h3>
+            <p class="about-ans"><em>eBenta</em> is a <b>free</b> service designed to help scholars make profit from their unsed textbooks
+        by selling them to other scholars. New scholars may save by purchasing used books at
+        a lower price, instead of buying new ones. </p>
+            <h3>Who runs and maintains eBenta?</h3>
+            <p class="about-ans"><em>eBenta</em> was created and is currently maintained by a small team UP students who has a passion for creating cool stuff and helping other people.</p>
+            <h3>Why is the service free?</h3>
+            <p class="about-ans">First of all, everybody loves free service, so why question? Oh, right. You are scholars, and have been taught to think radically and question almost if not everything yada yada. eBenta is our first project deployed to real users, and yes, there may be some bugs <a href="/" class="link">(tell us if you find one!)</a> on the system, and we created this site to learn, and at the same time, help people like you.</p>
+            <h3>Where is eBenta hosted?</h3>
+            <p class="about-ans">For those geeks who would love to know more about the system, here are some of our information. <em>eBenta</em> is hosted by Google on their servers and is running on the <a href="https://www.developers.google.com/appengine/" class="link">Google App Engine</a>, using the webapp2 python framework, and is coded from scratch.</p>
+            <h3>Can we sell/purchase items other than books?</h3>
+            <p class="about-ans">As of the now, eBenta only supports posting of sell or purchase orders for used books. But we do plan on expanding on other things.</p>
+        </div>
+        </div>
+    </div>
+{% endblock %}

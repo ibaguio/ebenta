@@ -1,0 +1,24 @@
+{% extends "home_base.html" %}
+{% import "macros.html" as macro %}
+
+{% block toplinks %}
+   <label><a href="/sell" class="main-link">Sell</a></label>
+   <label><a href="/about_ebenta" class="main-link">About</a></label>
+{% endblock %}
+
+{% block login %}
+    {{ macro.top_welcome(user) }}
+{% endblock%}
+
+{% block left_content%}
+    {{ macro.ebentaSearch(username) }}
+{% endblock %}
+
+{% block right_content %}
+    {{ macro.getAbout() }}
+    {% if not comment :%}
+        {{ macro.getComments() }}
+    {% else: %}
+        {{ macro.getOkComments() }}
+    {% endif%}
+{% endblock%}

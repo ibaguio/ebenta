@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% import "macros.html" as macro %}
+
+{% block login %}
+    {% if user: %}
+        {{ macro.top_welcome(user) }}
+    {% else: %}
+        {{ macro.top_login() }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="row-fluid">
+        {{macro.helpNav("consign")}}
+        <div class="span9">
+        <h2>Consignment</h2>
+        
+        </div>
+    </div>
+    
+{% endblock %}

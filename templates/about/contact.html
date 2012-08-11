@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% import "macros.html" as macro %}
+
+{% block login %}
+    {% if user: %}
+        {{ macro.top_welcome(user) }}
+    {% else: %}
+        {{ macro.top_login() }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="row-fluid">
+        {{macro.aboutNav("contact")}}
+        <div class="span9">
+        <h2>Contact eBenta</h2>
+        <div class="well" style="font-size:15px;">
+            Communication is the core of business, if you have any concerns, questions, or would like to purchase an available book in ebenta, you may contact our admins thru SMS, email, or ebenta Messaging.
+            <br/><br/>
+
+            Here are the list of eBenta admins that you may contact:
+            <div style="margin-left:30px;margin-top:15px;">
+                <a href="/user?usr=ibaguio">ibaguio</a>
+                <br/><a href="/user?usr=gdoliro">gdoliro</a>
+            </div>
+            <br/>You could also email us at: <font style="color:green">ebenta@gmail.com</font>
+
+        </div>
+        </div>
+    </div>
+    
+{% endblock %}
+
+<div align="right">
+<div style="width:450px;margin: 10px;" >
+{{ macro.getComments()}}
+</div></div>

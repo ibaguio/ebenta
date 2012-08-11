@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% import "macros.html" as macro %}
+
+{% block login %}
+    {% if user: %}
+        {{ macro.top_welcome(user) }}
+    {% else: %}
+        {{ macro.top_login() }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if msg: %}
+    {{ msg }}
+    {% endif %}
+    <div class="span8" >
+    	<div style=";margin-top:10px;height:180px;width:920px;" class="row">
+            <div class="result-image pull-left" >
+            {% if book.image: %}
+                <img src="/static/images/{{book.image}}" class="result-img" alt="no image available"/>
+            {% else:%}
+                <div class="result-img" ><div style="height:25px;"></div>
+                <label class="label label-success" alt="no image available" title="No image available" style="text-align:center;"/>No image<br/>available</label></div>
+            {% endif %}
+            </div>
+            <div class="span5" >
+                <h3><small>Book Information</small></h3>
+                <table class="table table-bordered table-condensed">
+                    <tr><td style="width:55px">Title</td><td>{{book.title}}</td></tr>
+                    <tr><td>Author</td><td>{{book.author}}</td></tr>
+                    <tr class="hidden" name="info"><td>ISBN</td><td>{%if book.isbn%}{{book.isbn}}{%else%}No Data{%endif%}</td></tr>
+                    {% if book.description%}<tr class="hidden" name="info"><td></td><td>{{book.description}}</td></tr>{%endif%}
+                    <tr class="hidden" name="info"></tr>
+                </table>
+            </div>
+            <div class="span3">
+                <div id="book-stats" class="hidden">
+                    <h3><small>Book Statistics</small></h3>
+                    <table class="table table-condensed">
+                        <tr><td style="width:90px">Listed</td>
+                            <td><span id="total-listed"></span></td></tr>
+                        <tr><td>Total Sold</td>
+                            <td><span id="total-sold"></span></td></tr>
+                        <tr><td>Ave Price</td><td>
+                            <span id="ave-price"></span></td></tr>
+                        <tr><td>New Price</td><td>
+                            <span id="new-price"></span></td></tr>
+                        <tr><td></td><td></td></tr>
+                    </table>
+                </div>
+                <div class="span4"></div>
+                    <div id="stats-loading" class="hidden">
+                    <i class="request-loading"></i>Loading Book Stats
+                </div>
+                <div id="show-error-stats" style="border:solid" class="hidden">
+                    <strong>Failed</strong> to load book stat
+                </div>
+            </div>
+            <div id="mini-nav" class="well span3 pull-right" style="padding:8px 0;width:160px;margin-top:25px;margin-right:20px">
+                <ul class="nav nav-list">
+                    <li><a style="margin-top:5px" href="javascript:void(0)" id="more-info" onclick="moreInfo()" class="">
+                        <i class="icon-info-sign" id="icon-more-info"></i>More Info</a></li>
+                    <li ><a href="javascript:void(0)" onclick="getStats({{book.key().id()}})" id="show-stats-link"><i class="icon-list-alt" id="icon-show-stats"></i>Show stats</a></li>
+                    <li><a href="/sell/step3?book={{book.key().id()}}"><i class="icon-book" id="icon-sell-book"></i>Sell your copy</a></li>
+                </ul>
+            </div> 
+        </div>
+    	<div class="span7">
+    		<h3>People Selling this book </h3>
+            <div style="position:relative">
+                <div style="margin-left:185px;position:absolute">
+                    <h2><small>Sort by</small></h2>
+                </div>
+                <span class="hidden" id="loading" style="position:absolute;right:13px;top:7px">
+                    <i class="request-loading"></i>
+                </span><img title="Error in fetching listings" src="/static/images/error.gif" class="hidden" id="load-error" style="position:absolute;right:13px;top:7px;width:18px">
+                <div class="offset3" >
+                <ul class="nav nav-tabs">
+                    <li id="li-sort-posted"><a href="javascript:void(0)" onclick="requestSellers('posted')">Date</a></li>
+                    <li id="li-sort-rating"><a href="javascript:void(0)" onclick="requestSellers('rating')">Rating</a></li>
+                    <li id="li-sort-price"><a href="javascript:void(0)" onclick="requestSellers('price')">Price</a></li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)"><b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li id="li-sort-asc"><a href="javascript:void(0)" onclick="reorder('asc')">Ascending</a></li>
+                            <li id="li-sort-desc" ><a href="javascript:void(0)" onclick="reorder('desc')">Descending</a></li>    
+                        </ul>
+                </ul>
+                {# used by ajax and JS#}
+                </div>
+            </div>
+            <div style="display:table" id="sellers-list">
+    		{% for item in for_sale%}
+    			<div id="item-info" class="row span5" style="position:relative;padding:14px 0px">
+    				<span class="thumbnail" style="margin:0 15px;width:105px;">
+                        <a class="thumbnail" href="/user?usr={{item.user.username}}"><img src="{{item.user.getImage()}}" class="img100"></a>
+                    </span>                    
+    				<table class="table table-condensed" style="position:absolute;top:15px;left:140px;">
+		    			<tr><td>Seller</td><td><a href="/user?usr={{item.user.username}}">{{item.user.username}}</a></td></tr>
+		    			<tr><td>Book Rating</td><td><a rel="popover" data-content="{{getDesc(item.rating)}}" data-original-title="{{getDescTitle(item.rating)}}">{%for i in range(item.rating)%}<img class="rating-star14" src="/static/images/gold_star.png">{%endfor%}{%for i in range(item.rating,5)%}<img class="rating-star14" src="/static/images/white_star.png">{%endfor%}</a></td></tr>
+		    			<tr><td>Price</td><td>Php {{item.price}}</td></tr>
+		    			{% if item.comment %}<tr><td>Comments</td><td>{{item.comment}}</td></tr>{%endif%}
+		    			<tr><td>Date Posted</td><td>{{item.posted.strftime("%B %d, %Y")}}
+	    			</table>
+    			</div>
+    		{% endfor %}
+            </div>
+            <div id="results-nav">
+                <div>
+                    <center><h3><small id="display-info">Showing 0-0 of 0</small></h3></center>
+                </div>
+                <div class="pagination pagination-centered" >
+                    <ul id="pagination">
+                        <li><a href="javascript:void(0)">«</a></li>
+                        <li class="active">
+                          <a href="javascript:void(0)">1</a>
+                        </li>
+                        <li><a href="javascript:void(0)">2</a></li>
+                        <li><a href="javascript:void(0)">3</a></li>
+                        <li><a href="javascript:void(0)">4</a></li>
+                        <li><a href="javascript:void(0)">»</a></li>
+                    </ul>
+                </div>
+            </div>
+    	</div>
+	</div>
+{% endblock %}
+
+{% block jscript%}
+    window.sortBy="posted";
+    window.offset=0;
+    activate('desc');
+    document.onload = requestSellers('posted');
+{% endblock %}
+
+{% macro getDesc(rating) %}
+{%if rating==1%}
+    We advice that you find other alternatives
+{%elif rating==2%}
+    Some pages torn<br/>not well maintained
+{%elif rating==3%}
+    More than 1 year used<br/>Some edges torn
+{%elif rating==4%}
+    Taken good care<br/>No torn pages/edges<br/>Has never been wet<br/>Well maintained
+{%elif rating==5%}
+    Brand new quality<br/>Less than 2 months used
+{%endif%}
+{% endmacro %}
+
+{% macro getDescTitle(rating) %}
+{%if rating==1%}
+    Abused
+{%elif rating==2%}
+    Poor
+{%elif rating==3%}
+    Average
+{%elif rating==4%}
+    Slightly Used
+{%elif rating==5%}
+    Good as New
+{%endif%}
+{% endmacro %}

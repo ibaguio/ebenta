@@ -1,0 +1,21 @@
+{% macro top_login() -%}
+  <div class="top-login">
+    <form action="/login" method="post">
+      <table>
+        <tr><td>Username:</td><td><input type="text" name="username" class="login-input"></td></tr>
+        <tr><td>Password:</td><td><input type="password" name="password" class="login-input"></td></tr>  
+        <tr><td></td><td><label><input type="checkbox" name="remember">Remember me</label></td>
+      </table>
+      <center>
+      <input type="submit" value=" Login " class="submit-button" >
+      </center>
+    </form>
+  </div>
+{%- endmacro %}
+
+{% macro top_welcome(username) -%}
+    <div class="top-login">
+        Welcome, {{username}}!
+        <br/><a href="/profile?usr={{username}}" class="link">Profile</a> | <a href="/logout" class="link">Logout</a>
+    </div>
+{%- endmacro %}

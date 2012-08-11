@@ -1,0 +1,18 @@
+{% extends "home_base.html" %}
+{% import "macros.html" as macro %}
+  {% block login%}
+    {{ macro.top_login() }}
+  {% endblock %}
+  
+  {% block left_content%}
+      <br/>
+      <br/>
+      <h2>Oopss!</h2>
+      <br/>You must be logged in to enter this page.
+      <br/>Not yet a member? You may register beside.
+  {% endblock%}
+  
+  {% block right_content %}
+      
+      {{ macro.getRegistrationForm([],[]) }}
+  {% endblock %}  

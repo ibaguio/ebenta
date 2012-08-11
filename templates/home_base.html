@@ -1,0 +1,14 @@
+{% extends "base.html"%}
+{% block content %}
+  <div class="half-content">
+      {% block left_content %}{% endblock %}
+  </div>
+  
+  <div class="half-content">
+      {% block right_content %}{% endblock %}
+  </div>
+
+{% endblock %}
+{# home_base.html is direct son of base.html
+    it divies main-content to left and right-content
+#}

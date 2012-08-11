@@ -1,0 +1,2 @@
+ebenta/pagehandlers contains files of the specific page handlers called from main.py
+this is to separate, and create an abstract view on each handler/class

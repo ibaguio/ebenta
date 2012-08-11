@@ -1,0 +1,26 @@
+{% extends "home_base.html" %}
+{% import "macros.html" as macro %}
+
+{% block login %}
+    {% if user: %}
+        {{ macro.top_welcome(user) }}
+    {% else: %}
+        {{ macro.top_login() }}
+    {% endif %}
+{% endblock %}
+
+{% block right_content %}
+    {% if results: %}
+        <br/><span class="search-time">Found {{resLen}} matches for <b><em>{{ query }}</em></b>. It took {{ time |safe }} seconds to search.</span>
+        <br/>Book not found? {% if next: %}<a href="/{{next}}/step2" class="link">{% else: %}<a href="/books/add" class="link">{% endif %}Add your book</a> to our Library        
+        {{ macro.showBookInfo(results,True) }}
+    {% else: %}
+        No result found for <b><em>{{ query }}</em></b>
+        <br/><br/>The book <b><em>{{ query }}</em></b> is not yet in our database. 
+        Be the first one to <a href="/sell/step2?book={{query}}" class="link">sell</a> or <a href="/buy?book={{query}}" class="link">request</a> for this book.
+    {% endif %}
+{% endblock %}
+
+{% block left_content %}
+    {{macro.ebentaSearch(next=next)}}
+{% endblock %}

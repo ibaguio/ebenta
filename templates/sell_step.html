@@ -1,0 +1,31 @@
+{% extends "home_base.html" %}
+{% import "macros.html" as macro %}
+{% import "macros_sellstep.html" as sellmacro %}
+
+{% block login %}
+    {{ macro.top_welcome(user) }}
+{% endblock %}
+
+{% if rating: %}
+    {% block jscript %}
+    if ({%if errors%}true{%else%}false{%endif%})
+        window.onload = setCondition({{rating}});
+    {% endblock %}
+{% endif %}
+
+{% block left_content %} 
+    {% if step == 1: %}
+        {{ macro.ebentaSearch(action="/sell/search",next="sell") }}
+    {% elif step == 2: %}
+        {{ macro.addNewBook(next="sell") }}
+    {% elif step == 3: %}
+        {{ sellmacro.showStep3(book,errors) }}
+    {% elif step == 4: %}
+        {{ sellmacro.showStep4(book) }}
+    {% endif %}
+{% endblock %}
+
+{% block right_content %}
+    <div id="sellProcedure">{{ sellmacro.showProcedure(step,"sell") }}</div>
+    <div id="conditionHelp">{{ sellmacro.showConditionGuide("sell") }}</div>
+{% endblock %}

@@ -1,0 +1,214 @@
+{% macro ebentaSearch(user,action="/search",next="") %}
+  <div class="ebenta-search">
+     <div class="label-top"><label class="ebenta-label">eBenta Search</label></div>
+     <form action="{{ action }}" method="get">
+        <input type="text" name="q" class="search-bar" placeholder="enter title or author"><input type="submit" value="Search a book"  class="btn btn-primary"> {% if user: %} or <a href="/sell" class="link">Sell your books</a> {% endif %}
+        {% if next: %} <input type="hidden" name="next" value="{{next}}">{% endif %}
+     </form>
+  </div>
+{%- endmacro %}
+
+{% macro getRegistrationForm(val,err,errs) %}
+    <br/>
+    <div class="span5" style="padding-left:25px;">   
+    <h3>Register for FREE</h3>
+    {% if err: %}
+    <div class="alert alert-error">
+        <a class="close" data-dismiss="alert" href="javascript:void(0)">×</a>
+            {% for e in err %}
+                <label>{{e}}</label>
+            {% endfor %}
+    </div>
+    {% endif %}
+    <form action="/" method="post" class="well">
+        <div class="control-group {%if 'uname' in errs:%}error{%endif%}">
+        <label>Username</label>
+        <input type="text" name="username" value="{{val['user']}}" placeholder="Username" tabindex="1"/>
+        <a href="javascript:void(0)" rel="popover" title="Username"data-content="Username must be 6-15 characters, alphanumeric or underscore only.">
+            <i class="icon-question-sign"></i></a>
+        </div>
+
+        <div class="control-group {%if 'pass' in errs:%}error{%endif%}">
+        <label>Password</label>
+        <input type="password" name="pass" placeholder="Password" tabindex="2">
+        <a href="javascript:void(0)" rel="popover" title="Password" data-content="Password must be 6-15 characters."/>
+        <i class="icon-question-sign"></i></a>
+        </div>
+        
+        <div class="control-group">
+        <label>Re-type Password</label>
+        <input type="password" name="verify" placeholder="Re-type Password" tabindex="3"/>
+        </div>
+
+        <div class="control-group {%if 'name' in errs:%}error{%endif%}">
+        <label>Complete Name</label>
+            <input type="text" name="firstName" value="{{val['first']}}" placeholder="First" style="width:95px;margin-right:6px;" tabindex="4"/>
+            <input type="text" name="lastName" value="{{val['last']}}" placeholder="Last" style="width:95px" tabindex="5"/>
+        </div>
+        
+        <div class="control-group {%if 'con' in errs:%}error{%endif%}">
+        <label>Contact Number</label>   
+        <input type="text" name="contactNo" value="{{val['con']}}" placeholder="Contact Number" tabindex="6">
+        <a href="javascript:void(0)" rel="popover" title="Contact Number"data-content="Please use this format 09XX XXX XXXX">
+            <i class="icon-question-sign"></i></a>
+        </div>
+
+        <div class="control-group {%if 'email' in errs:%}error{%endif%}">
+        <label>Email</label>
+        <input type="text" name="email" value="{{val['email']}}" placeholder="Email" tabindex="7">
+        </div>
+        
+        <label><input type="submit" value="Register" class="btn btn-success" tabindex="8"></label>
+    </form>
+    </div>
+{%- endmacro %}
+
+{% macro getAbout() -%}
+    <div class="well" style="width:410px;margin:35px auto;">
+    <h3>eBenta</h3>
+    <p style="font-size:15px;"><em>eBenta</em> is a <b>free</b> service designed to help scholars make profit from their unused textbooks by selling them to other scholars. New scholars may save by purchasing used books at a lower price, instead of buying new ones. </p>
+    </div>
+{%- endmacro %}
+
+{% macro top_login() %}
+    <div class="nav pull-right">
+    <ul class="nav"><li class="dropdown">
+    <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">Login<b class="caret"></b></a>
+    <div class="dropdown-menu" style="width:165px;padding:15px;">
+        <h3>ebenta Login</h3>
+        <form action="login" method="post" accept-charset="UTF-8">
+            <input name="uname" style="margin-bottom: 15px;width:150px;" type="text"/ placeholder="Username">
+            <input name="password" style="margin-bottom: 15px;width:150px;" type="password"/ placeholder="Password">
+            <label class="string optional" for="remember"><input name="remember" style="float: left; margin-right: 10px;" type="checkbox" value="1" /> Remember me</label>
+            <input class="btn btn-success" style="clear:left;width:150px;height:32px;font-size:13px;" type="submit" value="Login" />
+        </form>
+    </div>
+    </li></ul>
+    </div>
+{% endmacro %}
+
+{% macro top_welcome(user) %}
+<div class="nav-collapse collapse pull-right">
+    <ul class="nav">
+        <li class><a href="/user">{{user.username}}{% if user.admin%}<img src="/static/images/admin1.png">{%elif user.consignee%}<img src="/static/images/handshake.ico" class="admin-icon">{%endif%}</a></li>
+        <li class><a href="/logout">Logout</a></li>
+    </ul>
+</div>
+{% endmacro %}
+
+{% macro getComments() %}
+<br/><p style="font-size:15px;"><b>eBenta</b> is a new service, and we would love to hear from you. Enter your friendly suggestions, harsh comments, or any site bugs below.</p>
+        <div style="width:420px;margin:0 auto;text-align:right;">
+            <form action="/suggest" method="post">
+                <textarea style="width:410px;height:80px;background:#ffc;margin-right:5px;" name="comment"></textarea>
+                <input type="submit" value="Submit" class="btn btn-success">
+            </form>
+        </div>
+{%- endmacro%}
+
+{% macro getOkComments() %}
+<br/><p style="font-size:15px;"><b>eBenta</b> is a developing service, and we would love to hear from you. Enter your friendly suggestions, harsh comments, or any site bugs below.</p>
+        <div style="width:380px;margin:0 auto;">
+            <br/>Comment Posted! Thank you for your time.
+        </div>
+{%- endmacro%}
+
+{% macro showBookInfo(books,showIcons) -%}
+        {% for book in books: %}
+        <div class="search-results">
+            {% if book.image: %}
+                <a href="/info?book={{book.key().id()}}"><img src="/static/images/{{book.image}}" class="result-img" alt="no image available"/></a>
+            {% else:%}
+                <div class="result-img"><div style="height:10px"></div>
+                <a href="/info?book={{book.key().id()}}"><label class="label label-success" alt="no image available" title="no image available" style="text-align:center"/>No image<br/>available</label></a></div>
+            {% endif %}
+            <div class="result-info">
+                <table>
+                    <tr><td style="width:53px;">Title</td><td><a class="link" href="/info?book={{book.key().id()}}">{{book.title}}</a></td></tr>
+                    <tr><td>Author</td><td>{{book.author}}</td></tr>
+                </table>
+            </div>
+        {% if showIcons:%}
+            <div class="result-icons">
+                <a href="/buy/step3?book={{book.key().id()}}"><i class="icon29-book" alt="Buy Book" title="Buy this Book"/></i></a>
+                <a href="/sell/step3?book={{book.key().id()}}"><i class="icon29-cart-out" alt="Sell Book" title="Sell your Copy of this Book"/></i></a>
+            </div>        
+            <br/><hr/>
+        {% endif%}
+    </div>
+    {% endfor %}
+
+{% endmacro %}
+
+{% macro showRating() %}
+ <span id="rating">
+   <a href="javascript:void(0)" onclick="setCondition(1)"><img id="star1" src="/static/images/white_star.png" class="rating-star20" title="1- Abused"></a>
+   <a href="javascript:void(0)" onclick="setCondition(2)"><img id="star2" src="/static/images/white_star.png" class="rating-star20" title="2- Poor"></a>
+   <a href="javascript:void(0)" onclick="setCondition(3)"><img id="star3" src="/static/images/white_star.png" class="rating-star20" title="3- Average"></a>
+   <a href="javascript:void(0)" onclick="setCondition(4)"><img id="star4" src="/static/images/white_star.png" class="rating-star20" title="4- Slightly Used"></a>
+   <a href="javascript:void(0)" onclick="setCondition(5)"><img id="star5" src="/static/images/white_star.png" class="rating-star20" title="5- Good as New"></a>   
+ </span>
+{% endmacro %}
+
+{% macro printStar(gold,white) %}
+    <span>
+    {% for i in range(gold): %}
+        <img src="/static/images/gold_star.png" class="rating-star12">
+    {% endfor %}
+        {% for i in range(5-gold): %}
+        <img src="/static/images/white_star.png" class="rating-star12">
+    {% endfor %}
+    </span>
+{% endmacro %}
+
+{% macro addNewBook(next="") %}
+<h3>Add New Book</h3>
+<div id="add_new_book">
+<form action="/books/add" method="post">
+<table>
+    <tr><td>Title:{{req|safe}}</td><td><input type="text" name="title" {% if title: %}value="{{title}}"{% endif %}></td>
+    <tr><td>Author:{{req|safe}}</td><td><input type="text" name="author" {% if title: %}value="{{title}}"{% endif %}></td>
+    <tr><td></td><td><input type="submit" value="Add Book" class="submit-button"></td>
+</table>
+{% if next: %}<input type="hidden" name="next" value="{{next}}">{% endif %}
+</form>
+</div>
+{% endmacro %}
+
+{% macro getImage(book) %}
+    {% if book.image %}
+        {#code to put image here#}
+    {% else: %}
+        <!--<img src="/static/images/no_image.jpg" class="result-img" alt="no image available" title="no image available"/>-->
+        <div class="result-img" alt="No image available" title="no image available">
+            <div style="height:25px"></div>
+            <label class="label label-success" style="text-align:center;">No Image<br/>Available</label>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro aboutNav(active) %}
+    <div class="span3 well" style="padding:8px 0;">
+        <ul class="nav nav-list">
+            <li class="nav-header">ebenta</li>
+            <li {% if active == "about"%}class="active"{%endif%}><a href="/about">About</a></li>
+            <li {% if active == "faq"%}class="active"{%endif%}><a href="/about/faq" >FAQ</a></li>
+            <li {% if active == "contact"%}class="active"{%endif%}><a href="/about/contact">Contact Us</a></li>
+            {#<li {% if active == "developer"%}class="active"{%endif%}><a href="/about/developers">Developers</a></li>#}
+            <li {% if active == "copyright"%}class="active"{%endif%}><a href="/about/copyrights">Copyrights & Attributes</a></li>
+            <li {% if active == "terms"%}class="active"{%endif%}><a href="/about/terms">Terms & Conditions</a></li>
+        </ul>
+    </div>    
+{% endmacro%}
+
+{% macro helpNav(active) %}
+    <div class="span3 well" style="padding:8px 0;">
+        <ul class="nav nav-list">
+            <li class="nav-header">help</li>
+            <li {% if active == "consign"%}class="active"{%endif%}><a href="/help/consign">Consign</a></li>
+            <li {% if active == "sellOrder"%}class="active"{%endif%}><a href="/help/post_sell">Posting a Sell Order</a></li>
+            <li {% if active == "buy"%}class="active"{%endif%}><a href="/help/buying">Buying</a></li>
+            <li {% if active == "buyOrder"%}class="active"{%endif%}><a href="/help/post_buy">Posting a Buy Order</a></li>
+        </ul>
+    </div>    
+{% endmacro%}
