@@ -10,6 +10,23 @@ def key(book):
     return db.Key.from_path(book.title,"books")
 
 # DATABASE MODELS
+
+class Unique(db.Model):
+  @classmethod
+  def check(cls, scope, value):
+    def tx(scope, value):
+      key_name = "U%s:%s" % (scope, value,)
+      ue = Unique.get_by_key_name(key_name)
+      if ue:
+        raise UniqueConstraintViolation(scope, value)
+      ue = Unique(key_name=key_name)
+      ue.put()
+    db.run_in_transaction(tx, scope, value)
+class UniqueConstraintViolation(Exception):
+  def __init__(self, scope, value):
+    super(UniqueConstraintViolation, self).__init__("Value '%s' is not unique within scope '%s'." % (value, scope, ))
+
+
 class PrivacySetting(db.Model):
     """show details to:
         admin = admin ONLY
@@ -33,9 +50,7 @@ class User(db.Model):
     admin = db.BooleanProperty(default=False)
     consignee = db.BooleanProperty(default=False)
 
-    #0 - guest
-    #1 - user
-    #3 - admin
+    #0 - guest  1 - user  3 - admin (AND YES ITS 3)
     def toJson(self,_all=False,viewer=0):
         d ={"username": self.username,
             "image": self.getImage()}
@@ -82,6 +97,21 @@ class Library(db.Model):
     description = db.StringProperty(default="")
     brandNewPrice = db.FloatProperty(default=-1.0);
 
+    def toJson(self,**kwargs):
+        d ={"title":self.title,
+            "author":self.author,
+            "key":self.key().id()}
+        if kwargs['image']:
+            d['image'] = self.getImage()
+        for args in kwargs:
+            try:
+                att = getattr(self,args)
+            except: continue
+            if att:
+                d[args] = att
+        return json.dumps(d)
+
+    #generates a list of Search keys for book
     def generateSk(self):
         try:
             k = re.split('\W+',self.title.lower()) + re.split('\W+',self.author.lower())
@@ -93,6 +123,19 @@ class Library(db.Model):
     def addSk(self, *keys):
         for k in keys:
             self.searchKeys.append(k)
+
+    def getImage(self):
+        return None
+
+    @classmethod
+    def getListings(cls,limit=15,offset=0,order="title",count_only=False,count=False):
+        q = Library.all()
+        q.order(order)
+        if count_only:
+            return q.count()
+        if count:
+            return q.fetch(limit=limit,offset=offset), q.count()
+        return q.fetch(limit=limit,offset=offset)
 
 class Feedback(db.Model):
     comment = db.StringProperty(required=True)
@@ -174,7 +217,6 @@ class SellBook(db.Model):
     #returns all of the sell listings for a given book
     @classmethod
     def getListings(cls,book,limit=30,offset=0,order="-posted",count_only=False,count=False,filterExpire=True):
-        logging.error("getListings order by: "+order)
         q = cls.all()
         q.ancestor(book)
         q.order(order)
@@ -219,3 +261,16 @@ class DegreeCourse(db.Model):
 '''if i return a non-tuple, (i.e q.fetch(...),q.count()) 
 python would match every item returned in fetch to count 
 (i.e item1,q.count, item2,q.count ...) which would return error'''
+
+#docs for all getListings 
+""" for BuyBook and SellBook
+    book                instance of book from Library
+    filterExpire        set yes to fetch only unexpired books
+    
+    for ALL (including Library)
+    limit               maximum number of objects to fetch
+    offset              offset to fetch, i.e how many objects to discard before
+                        returning the first object
+    order               the attribute to be sorted
+    count_only          set to true if only get the count of the query
+    count               set to true if also return the count of the query"""

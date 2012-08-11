@@ -75,7 +75,7 @@
                 <span class="hidden" id="loading" style="position:absolute;right:13px;top:7px">
                     <i class="request-loading"></i>
                 </span><img title="Error in fetching listings" src="/static/images/error.gif" class="hidden" id="load-error" style="position:absolute;right:13px;top:7px;width:18px">
-                <div class="offset3" >
+                <div class="offset3" >{# upper nav #}
                 <ul class="nav nav-tabs">
                     <li id="li-sort-posted"><a href="javascript:void(0)" onclick="requestSellers('posted')">Date</a></li>
                     <li id="li-sort-rating"><a href="javascript:void(0)" onclick="requestSellers('rating')">Rating</a></li>
@@ -91,20 +91,6 @@
                 </div>
             </div>
             <div style="display:table" id="sellers-list">
-    		{% for item in for_sale%}
-    			<div id="item-info" class="row span5" style="position:relative;padding:14px 0px">
-    				<span class="thumbnail" style="margin:0 15px;width:105px;">
-                        <a class="thumbnail" href="/user?usr={{item.user.username}}"><img src="{{item.user.getImage()}}" class="img100"></a>
-                    </span>                    
-    				<table class="table table-condensed" style="position:absolute;top:15px;left:140px;">
-		    			<tr><td>Seller</td><td><a href="/user?usr={{item.user.username}}">{{item.user.username}}</a></td></tr>
-		    			<tr><td>Book Rating</td><td><a rel="popover" data-content="{{getDesc(item.rating)}}" data-original-title="{{getDescTitle(item.rating)}}">{%for i in range(item.rating)%}<img class="rating-star14" src="/static/images/gold_star.png">{%endfor%}{%for i in range(item.rating,5)%}<img class="rating-star14" src="/static/images/white_star.png">{%endfor%}</a></td></tr>
-		    			<tr><td>Price</td><td>Php {{item.price}}</td></tr>
-		    			{% if item.comment %}<tr><td>Comments</td><td>{{item.comment}}</td></tr>{%endif%}
-		    			<tr><td>Date Posted</td><td>{{item.posted.strftime("%B %d, %Y")}}
-	    			</table>
-    			</div>
-    		{% endfor %}
             </div>
             <div id="results-nav">
                 <div>
@@ -113,12 +99,7 @@
                 <div class="pagination pagination-centered" >
                     <ul id="pagination">
                         <li><a href="javascript:void(0)">«</a></li>
-                        <li class="active">
-                          <a href="javascript:void(0)">1</a>
-                        </li>
-                        <li><a href="javascript:void(0)">2</a></li>
-                        <li><a href="javascript:void(0)">3</a></li>
-                        <li><a href="javascript:void(0)">4</a></li>
+                        <li class="active"><a href="javascript:void(0)">1</a></li>
                         <li><a href="javascript:void(0)">»</a></li>
                     </ul>
                 </div>
@@ -160,4 +141,21 @@
 {%elif rating==5%}
     Good as New
 {%endif%}
+{% endmacro %}
+
+{% macro nothin%}
+{% for item in for_sale%}
+                <div id="item-info" class="row span5" style="position:relative;padding:14px 0px">
+                    <span class="thumbnail" style="margin:0 15px;width:105px;">
+                        <a class="thumbnail" href="/user?usr={{item.user.username}}"><img src="{{item.user.getImage()}}" class="img100"></a>
+                    </span>                    
+                    <table class="table table-condensed" style="position:absolute;top:15px;left:140px;">
+                        <tr><td>Seller</td><td><a href="/user?usr={{item.user.username}}">{{item.user.username}}</a></td></tr>
+                        <tr><td>Book Rating</td><td><a rel="popover" data-content="{{getDesc(item.rating)}}" data-original-title="{{getDescTitle(item.rating)}}">{%for i in range(item.rating)%}<img class="rating-star14" src="/static/images/gold_star.png">{%endfor%}{%for i in range(item.rating,5)%}<img class="rating-star14" src="/static/images/white_star.png">{%endfor%}</a></td></tr>
+                        <tr><td>Price</td><td>Php {{item.price}}</td></tr>
+                        {% if item.comment %}<tr><td>Comments</td><td>{{item.comment}}</td></tr>{%endif%}
+                        <tr><td>Date Posted</td><td>{{item.posted.strftime("%B %d, %Y")}}
+                    </table>
+                </div>
+            {% endfor %}
 {% endmacro %}

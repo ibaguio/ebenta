@@ -11,34 +11,26 @@
 
 {% block content%}
   {{showBrowseNav()}}
-  <div class="span8" id="browsed-title"><h2><a href="javascript:void(0)"><img src="/static/images/list_icon.png" style="margin-top:-5px" title="Show Navigation" id="imgHide" onclick="showNav()" class="hidden"/></a> Showing {{ showing(q) }}</h2> </div>
-  <div class="span8 well" id="browsed-div">
-    {% for i in range(lenS): %}
-      <div class="browsed">
-        <div class="row-fluid">
-          {# show image#}
-          <span class="browsed-img"><a href="/info?book={{show[i].key().id()}}" class="book-image">{{macro.getImage(show[i])}}</a></span>
-          <div class="browsed-info">{# show book information #}
-            <table>
-            <tr><td class="tdmarg"><img src="/static/images/title.png" title="Book Title" class="icon16px"></td>
-            <td><a href="javascript:void(0)" class="link" rel="popover" onclick="openBookPage({{show[i].key().id()}})" data-content="<b>Author: </b><font color='#049cdb'>{{show[i].author}}</font><br/><div style='margin-top:5px;'>{{getDescription(show[i])}}</div>" data-original-title="{{show[i].title}}">{{modTitle(show[i].title)}}</a></td></tr>
-            <tr><td><img src="/static/images/author.png" title="Author" class="icon16px"></td><td>{{show[i].author}}</td></tr>
-            </table>
-          </div>{# show book stats #}
-          <span class="browsed-stats">
-            <span title="Buying"><i class="icon-shopping-cart"></i>  {{info[i][0]}}</span>
-            <span title="Selling"><i class="icon-book"></i> {{info[i][1]}}</span>
-          </span>
-        </div>
-      </div>
-    {% endfor %}
+  <div class="span9" id="browsed-title">
+    <div class="pull-right" style="margin-right:40px;margin-top:10px;">
+      <i class="request-loading hidden" id="loading"></i>
+      <img title="Error in fetching listings" src="/static/images/error.gif" class="hidden" id="load-error">
+    </div>
+    <h2><a href="javascript:void(0)"><img src="/static/images/list_icon.png" style="margin-top:-5px" title="Show Navigation" id="imgHide" onclick="showNav()" class="hidden"/></a> Showing {{ showing(q) }}</h2>
   </div>
-  
+  <div class="span8 well" id="browsed-div">
+  </div>
+  <div id="pagination">
+  </div>
 {% endblock %}
 
 {% macro getDescription(desc) %}
   {% if desc.description %}{{description}}{%else%}No description available{%endif%}
 {% endmacro%}
+
+{% block jscript %}
+  window.onload = requestLibrary(1);
+{% endblock %}
 
 {% macro advanceSearch() %}
   <div id="search-title" class="span4"><h2>Advance Search</h2></div>

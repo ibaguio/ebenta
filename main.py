@@ -2,6 +2,7 @@
 import webapp2, os
 import logging
 import jinja2
+import math
 from math import ceil
 from utils.crypto import *
 from utils.regex import *
@@ -90,7 +91,6 @@ class ItemInfoHandler(PageHandler):
     def getPage(self,offset,limit):
         return (offset/limit) +1
 
-
 class AboutHandler(PageHandler):
     def get(self):
         self.render("/about/about.html")
@@ -126,7 +126,7 @@ class BrowseAdsHandler(PageHandler):
             category = "library"
         
         if category == "library":
-            lib,buySell = self.getLibListings()
+            lib,buySell,count = self.getLibListings()
             self.render("browse.html",show=lib,info=buySell,lenS=len(lib),q="lib",browse_active="active")
         elif category == "buying":
             lib,buySell = self.getSellListings()
@@ -135,16 +135,38 @@ class BrowseAdsHandler(PageHandler):
             lib,buySell = self.getBuyListings()
             self.render("browse.html",show=lib,info=buySell,lenS=len(lib),q="buy",buy_active="active")
 
+    def post(self):
+        limit = 15
+        page = self.request.get("page")
+        try:
+            page = int(page)
+            assert page > 0
+        except:
+            page = 1
+
+        lib,buySell,count = self.getLibListings()
+        books = []
+        for book in lib:
+            books.append(book.toJson(image=True))
+
+        response_data ={"books": json.dumps(books),
+                        "buySell":json.dumps(buySell),
+                        "page": page,
+                        "pages": count/limit+1}
+        logging.info("")
+        logging.info(response_data)
+        self.write(json.dumps(response_data))
+
     #cache this funtion!!!
     #gets limit books starting from offset, arrange by order
-    def getLibListings(self,limit=30,offset=0,order="title"):
-        lib = Library.all().order(order).fetch(limit=limit,offset=offset)
+    def getLibListings(self,offset=0,order="title"):
+        lib,count = Library.getListings(count=True)
         buySell = []
         for book in lib:
             buy = BuyBook.getListings(book,count_only=True)
             sell = SellBook.getListings(book,count_only=True)
             buySell.append([buy,sell])
-        return lib,buySell
+        return lib,buySell,count
     
     #returns books with unexpired sale listings
     def getSellListings(self,limit=30,offset=0,order="title"):
@@ -173,7 +195,10 @@ class BrowseAdsHandler(PageHandler):
         return show,buySell
         
 class Register(PageHandler):
-    pass
+    def get(self):
+        self.redirect("/")
+    def post(self):
+        self.redirect("/")
 
 class CommentHandler(PageHandler):
     def post(self):

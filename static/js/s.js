@@ -1,3 +1,11 @@
+function ajaxRequest(){
+    var xmlhttp;
+    if (window.XMLHttpRequest)// code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+    else// code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    return xmlhttp;
+}
 //gets the url params
 function parseURLParams(){
     if (location.search != ""){
@@ -235,30 +243,9 @@ function hideSetting(n){
 function openBookPage(book_id){
     location.href="/info?book="+book_id;
 }
-/*
-function loadXMLDoc(){
-    var xmlhttp;
-    if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
-        xmlhttp=new XMLHttpRequest();
-    }else{// code for IE6, IE5
-        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-    }
-    xmlhttp.onreadystatechange=function(){
-        if (xmlhttp.readyState==4 && xmlhttp.status==200){
-            document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
-        }
-    }
-    xmlhttp.open("GET","ajax_info.txt",true);
-    xmlhttp.send();
-}*/
 //function that send message ajax
 function sendMessage(){
-    var xmlhttp;
-    if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
-        xmlhttp=new XMLHttpRequest();
-    }else{// code for IE6, IE5
-        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-    }
+    var xmlhttp = ajaxRequest();
     xmlhttp.onreadystatechange=function(){
         if (xmlhttp.readyState==2){
             showLoading();
@@ -302,12 +289,7 @@ function hidePassword(){
 }
 
 function updatePrivacy(){
-    var xmlhttp;
-    if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
-        xmlhttp=new XMLHttpRequest();
-    }else{// code for IE6, IE5
-        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-    }
+    var xmlhttp = ajaxRequest();
     xmlhttp.onreadystatechange=function(){
         if (xmlhttp.readyState==2){
             //show saving
@@ -359,12 +341,7 @@ function change(n){
     document.getElementById("change-"+n).value = "True";
 }
 function updateProfile(){
-    var xmlhttp;
-    if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
-        xmlhttp=new XMLHttpRequest();
-    }else{// code for IE6, IE5
-        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-    }
+    var xmlhttp = ajaxRequest();
     xmlhttp.onreadystatechange=function(){
         if (xmlhttp.readyState==2){
             //sending request
@@ -412,12 +389,7 @@ function moreInfo(){
     document.getElementById("icon-more-info").className = "icon-ok";
 }
 function loadOrder(order){
-    var xmlhttp;
-    if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
-        xmlhttp=new XMLHttpRequest();
-    }else{// code for IE6, IE5
-        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-    }
+    var xmlhttp = ajaxRequest();
     xmlhttp.onreadystatechange=function(){
         if (xmlhttp.readyState==2){
             document.getElementById(order+"-loading").className = "";
@@ -476,12 +448,7 @@ function showStats(json){
 }
 //get the stats for a book
 function getStats(bid){
-    var xmlhttp;
-    if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
-        xmlhttp=new XMLHttpRequest();
-    }else{// code for IE6, IE5
-        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-    }
+    var xmlhttp = ajaxRequest();
     xmlhttp.onreadystatechange=function(){
         if (xmlhttp.readyState==2){
             document.getElementById("stats-loading").className = "span4 alert alert-success";
@@ -523,13 +490,8 @@ function requestSellers(sort_by,def){
     var order = window.order;
     if (order != "asc" && order != "desc")
         order="desc";
-    var xmlhttp;
+    var xmlhttp = ajaxRequest();
     bid = parseURLParams()["book"];
-    if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
-        xmlhttp=new XMLHttpRequest();
-    }else{// code for IE6, IE5
-        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-    }
     xmlhttp.onreadystatechange=function(){
         if (xmlhttp.readyState === 2){
             document.getElementById("loading").className = "";
@@ -558,7 +520,7 @@ function requestSellers(sort_by,def){
 //fills the list of sellers for a book
 function populateUsers(jdata){
     window.jdata = jdata;
-    
+
     html = "";
     for (var num in window.jdata.books){
         var book = JSON.parse(window.jdata.books[num]);
@@ -685,4 +647,109 @@ function gotoPrevPage(){
     page = window.listing_page-1;
     if (page < 1) return;
     gotoPage(page);   
+}
+
+/* browse scripts */
+function requestLibrary(page){
+    var xmlhttp = ajaxRequest();
+    xmlhttp.onreadystatechange=function(){
+        if (xmlhttp.readyState === 2){
+            document.getElementById("loading").className = "";
+            document.getElementById("load-error").className="hidden";
+        }if (xmlhttp.readyState === 4){
+            if (xmlhttp.status === 200){
+                document.getElementById("loading").className = "hidden";
+                document.getElementById("load-error").className="hidden";
+                var jdata=JSON.parse(xmlhttp.responseText);
+                populateResults(jdata);
+                window.pages = jdata.pages;
+                window.page = jdata.page;
+            }else{
+                document.getElementById("load-error").className="";
+                document.getElementById("loading").className = "hidden";
+            }
+        }
+    }
+    var params = "page="+encodeURIComponent(page);
+    xmlhttp.open("POST","/browse");
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.send(params);
+}
+
+function noImage(){
+    return '<div class="result-img" alt="No image available" title="no image available"><div style="height:25px"></div>'+
+            '<label class="label label-success" style="text-align:center;">No Image<br/>Available</label></div>';
+}
+
+function getDescription(desc){
+    if (!desc)
+        return "No Description available";
+    return desc
+}
+
+function modTitle(title){
+    if (title.length>=28)
+        return title.substr(0,25)+"...";
+    return title;
+}
+function modAuthor(author){
+    if (!author)
+        return "";
+    return author;
+}
+function populateResults(jdata){
+    var i=0;
+    var books = JSON.parse(jdata.books);
+    var buySell = JSON.parse(jdata.buySell);
+    var pages = jdata.pages;
+    window.page = jdata.page;
+
+    var html="";
+    for (i=0;i<books.length;i++){
+        book = JSON.parse(books[i]);
+        var markup = '<div class="browsed"><div class="row-fluid">' +
+        '<span class="browsed-img"><a href="/info?book='+book.key+'" class="book-image">';
+        if (book.image==null)
+            markup += noImage();
+        markup+= '</a></span><div class="browsed-info"><table>'+
+            '<tr><td class="tdmarg"><img src="/static/images/title.png" title="Book Title" class="icon16px"></td>'+
+            '<td><a href="javascript:void(0)" class="link" rel="popover" onclick="openBookPage('+book.key+
+            ')" data-content=\'<b>Author: </b><font color="#049cdb">'+modAuthor(book.author)+'</font><br/>'+
+            '<div style="margin-top:5px;">' +getDescription(book.description)+ '</div>\''+
+            ' data-original-title="'+book.title+'">'+modTitle(book.title)+'</a></td></tr>'+
+            '<tr><td><img src="/static/images/author.png" title="Author" class="icon16px"></td><td>'+
+            modAuthor(book.author) +'</td></tr>'+'</table><span class="browsed-stats">'+
+            '<span title="Buying"><i class="icon-shopping-cart"></i>'+buySell[i][0].toString()+'</span>'+
+            '<span title="Selling"><i class="icon-book"></i>'+buySell[i][1].toString()+'</span></span></div></div></div>';
+        html+=markup;
+    }
+    $("#browsed-div").html(html);
+    $(".link").popover();
+}
+function generateBrowsePaginationMarkup(){
+    var i=0;
+    var limit=15;
+    var data = window.jdata
+
+    //calculate the number of pages
+    var pages = Math.ceil(data.total / limit);
+    window.pages = pages;
+    //current page
+    var page = window.listing_page;
+
+    var markup = "<ul id=\"pagination\"><li";
+    if (page === 1)
+        markup+= " class=\"disabled\"";
+    markup+= "><a href=\"javascript:void(0)\" onclick=\"gotoPrevPage()\">«</a></li>";
+    for (i=1;i<=pages;i++){
+        markup+= "<li";
+        if (i===page)
+            markup+=  " class=\"active\"";
+        markup+="><a href=\"javascript:void(0)\" onclick=\"gotoPage("+ i.toString() +")\">"+ i.toString() + "</a></li>";
+    }
+    markup+="<li";
+    if (page===pages)
+        markup+= " class=\"disabled\"";
+    markup+="><a href=\"javascript:void(0)\" onclick=\"gotoNextPage()\">»</a></li></ul>";
+    return markup;
 }
