@@ -1,0 +1,139 @@
+ADD HANDLERS IN PROFILE PAGE AND SEND MESSAGE
+USER INBOX
+FIX AND PRETIFY BOOK PAGE
+ADD CONTENT TO 'ADD BOOK PAGE'
+ADD CONTENT TO HELP PAGE
+ADD MORE CONTENT TO ABOUT
+TERMS AND AGREEMENTS
+ADD CONSIGNMENT DASHBOARD
+ADD ADMIN DASHBOARD
+FIX BUG ON RESIZING NAV
+MEMCHACHE!!!!!
+
+ADD IMAGES TO HELP AND ABOUT PAGE
+
+FILTER FOR BOOKS
+    *per dept
+    *per subject
+
+BOOK SUGGESTION
+    *by course/subject
+
+IF NO STOCK OF BOOK, IS THE USER WILLING TO PHOTOX?
+ADVANCED SEARCH
+
+NEWS/BLOG
+    *CRAWL AND PARSE ARTICLES FROM UP WEBSITES
+    *CAROUSEL NEWS
+
+OPTIMIZE:
+    check if username/email is already in the list of users
+
+TODO QUEUE:
+
+**LOGIN HANDLER
+**POST ADS
+**POST BUY ORDER
+**VIEW ADS
+**EDIT INFO/PROFILE
+**ABOUT CONTENT
+
+show listings in info page
+DEBUG
+**PROFILE PAGE
+PRIVACY SETTINGS
+    allow users to contact you (i.e show your number to other users)
+    allow anyone to contact you (i.e show in ads page)
+    only allow admin to contact you (i.e book matching )
+
+SEARCH UPGRADE
+BETTER ABOUT PAGE
+TOP BANNER
+
+later...
+CSS OPTIMIZATION
+
+** done
+
+OPTIMIZE CODE!!!!! MAXIMIZE REUSABILITY
+
+JUNE 12 BRAINSTORMING:
+    HOMEPAGE
+        * add newly posted content
+        * recreate search bar to consume less space
+        * add footer
+            terms of service
+            developers
+    PROFILE
+        * user welcome description
+    ADMIN PAGE
+        * admin dashboard where he can view/edit/delete posts,users,comments
+        * admin can make other users admin
+    USER HOME
+        * books for sale under search
+    HELP PAGE
+        * basic FAQ
+        
+        
+    OTHER IDEAS
+        * best sellers
+        * adding friends
+        * every transaction/process must have a guide/step shown (flowchart)
+        * verify thru UP webmail
+        
+GOAL and PURPOSE of the site
+    [AS OF NOW] provide a way for students to sell and purchase used books.
+
+MISSION
+    promote entrepreneurship to scholars
+    
+WHAT WE DONT WANT
+    to be like sulit
+        in what ways?
+            many spammers
+            many ads
+            masakit sa mata
+            
+WAYS TO SELL YOUR BOOKS
+1. CONSIGN let ebenta sell it
+    Consigning is placing any material in the hand of another, but retaining ownership until the goods are sold or person is transferred.
+    How does this work?
+        Basically you let ebenta sell your books for you. This is a good option for students who have no time, or students who doesn't want to get involved in any selling activity.
+    What do I do?
+        You simply give us your item/s, and the right to sell it. We find a decent buyer, sell the item in your behalf, and give you your profits.
+    What you should consider.
+        Depending on the item you are selling, it may take some time before the item gets sold.
+        If such case that you might want to withdraw your item from us, please give us atleast two days to return your item to you.
+    Learn more...
+        To know more about the details on consigning your books to ebenta, click here.
+2. Post a Sell Order
+    Another option for sellers to sell their items is by posting a Sell Order in ebenta classified. Potential buyers can search and view post, and eventually purchase items that are for sale
+    What do I do?
+        You simply start by searching your book in ebenta's library(book database), then post a sell order on that book.
+        Once your sell order has been posted, this will be visible in ebenta for 7 days. This means that other users or guests can view your posting thru the browse or search functions.
+        note: since we are still starting out, sell/buy order would be visible for 1 Month.
+    What you should consider.
+        First your should remember that
+    Privacy Settings
+        User's default privacy settings is set to 'Admin Only', this means contact information of the user is ONLY visible
+        to ebenta admins. If this is the case, potential buyers could not directly contact you regarding your sell order. They could however send you a private message thru ebenta, which is really not the fastest way to communicate. Hence we suggest that you update your privacy settings in your profile.
+    Learn more...
+        To know more about the details on Posting a Sell Order in ebenta, click here
+
+        
+How to Buy Books in eBenta
+Buying books in ebenta is designed to be simple and hassle free. Below are the easy steps to purchase a used book.
+
+Step One. Search
+    Look for the book that you would like to purchase using our search or browse features. Once you find the book you are looking for, check if ebenta has stocks on the book you are looking for or there are Sell Orders posted under that book by other users. If the book you are looking for is not in ebenta Library, or there are no stocks for that book, you might have to post a buy order.
+
+Step Two. Communicate
+    Now that you have found a specific stock or sell order on the book you are interested in, it's time to contact ebenta or the seller. Simply send a message thru SMS, email, or ebenta messaging to us or the seller, stating that you are interested in purchasing the item. 
+
+    Wait for a response, communicate, then agree on the terms of the transaction (i.e mode of payment, meetup location, etc.).
+
+Step Three. Purchase and Receive
+    We encourage buyers to pay for the book upon receiving it during meetups. This makes sure that the buyer has the option of not accepting the item, if he or she thinks that the actual condition of the item is not worth the cash. And also for the seller, he or she is assured that the item would be paid for.
+
+Step Four. Feedback
+    Once a transaction has been complete, please do send a feedback to the other user. Rating and feedbacks would be beneficial to both parties (buyer and seller) because this would increase the trust level on both parties. Click here to know more about user feedback.
