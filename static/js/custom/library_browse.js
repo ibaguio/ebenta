@@ -54,8 +54,8 @@ function populateResults(jdata){
     var buySell = JSON.parse(jdata.buySell);
     var pages = jdata.pages;
     window.jdata = jdata;
-
-    var html="";
+    window.page = jdata.page;
+    var html_code="";
     for (i=0;i<books.length;i++){
         book = JSON.parse(books[i]);
         var markup = '<div class="browsed"><div class="row-fluid">' +
@@ -72,11 +72,14 @@ function populateResults(jdata){
             modAuthor(book.author) +'</td></tr>'+'</table><span class="browsed-stats">'+
             '<span title="Buying"><i class="icon-shopping-cart"></i> '+buySell[i][0].toString()+' </span>'+
             '<span title="Selling"><i class="icon-book"></i> '+buySell[i][1].toString()+' </span></span></div></div></div>';
-        html+=markup;
+        html_code+=markup;
     }
-    $("#browsed-div").html(html);
+    $("#browsed-div").html(html_code);
     $(".link").popover();
     generateBrowsePaginationMarkup();
+    var offset = ((jdata.page-1)*14)+1;
+    var disp = "Showing "+offset+"-"+jdata.items+" of "+jdata.total;
+    $("#display-info").text(disp);
 }
 function generateBrowsePaginationMarkup(){
     var i=0;
@@ -103,7 +106,38 @@ function generateBrowsePaginationMarkup(){
     markup+="><a href=\"javascript:void(0)\" onclick=\"gotoNextPage()\">»</a></li>";
     $("#pagination").html(markup);
 }
+function gotoPage(page){
+    if (window.page === page)
+        return;
+    requestLibrary(page);
+}
+function gotoNextPage(){
+    page = window.page+1;
+    if (page > window.pages) return;
+    gotoPage(page);
+}
+function gotoPrevPage(){
+    page = window.page-1;
+    if (page < 1) return;
+    gotoPage(page);   
+}
 //function to open book page in browse
 function openBookPage(book_id){
     location.href="/info?book="+book_id;
+}
+/* functions for nav in browse page */
+function showNav(){//show nav for browsing
+    document.getElementById("imgHide").className="hidden";
+    document.getElementById("browsed-div").className="span8 well";
+    document.getElementById("browsed-title").className="span9";
+    document.getElementById("browseNav").className="";
+    $("#results-nav").removeClass();
+    $("#results-nav").addClass("span9 offset3");
+}
+function hideNav(){//hide nav for browsing
+    document.getElementById("imgHide").className="";
+    document.getElementById("browsed-div").className="span11-5 well";
+    document.getElementById("browsed-title").className="span12";
+    document.getElementById("browseNav").className="hidden";
+    $("#results-nav").removeClass();
 }

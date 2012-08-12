@@ -98,22 +98,6 @@ function hideAll(){//hide all divs in profile
     document.getElementById("settings-not-updated").className="hidden";
     hideUserHelp();
 }
-/* functions for nav in browse page */
-function showNav(){//show nav for browsing
-    document.getElementById("imgHide").className="hidden";
-    document.getElementById("browsed-div").className="span8 well";
-    document.getElementById("browsed-title").className="span9";
-    document.getElementById("browseNav").className="";
-    $("#results-nav").removeClass();
-    $("#results-nav").addClass("span9 offset3");
-}
-function hideNav(){//hide nav for browsing
-    document.getElementById("imgHide").className="";
-    document.getElementById("browsed-div").className="span11-5 well";
-    document.getElementById("browsed-title").className="span12";
-    document.getElementById("browseNav").className="hidden";
-    $("#results-nav").removeClass();
-}
 /*functions to change user information*/
 function changeName(){
     var n = "name";
@@ -277,57 +261,6 @@ function updateProfile(){
     xmlhttp.open("POST","/user/update",true);
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
     xmlhttp.send(params);
-}
-//more info click in book info
-function moreInfo(){
-    var inf = document.getElementsByName("info");
-    for (var i=0;i< inf.length;i++){
-        inf[i].className = "";
-    }
-    document.getElementById("more-info").onclick="";
-    document.getElementById("icon-more-info").className = "icon-ok";
-}
-function loadOrder(order){
-    var xmlhttp = ajaxRequest();
-    xmlhttp.onreadystatechange=function(){
-        if (xmlhttp.readyState==2){
-            document.getElementById(order+"-loading").className = "";
-        }if (xmlhttp.readyState==4 && xmlhttp.status === 200){
-            document.getElementById(order+"-loading").className = "hidden";
-            var jdata = JSON.parse(xmlhttp.responseText);
-                var html="";
-            for (var i=0;i<jdata.length;i++){
-                var output = '<div class="browsed"><div><table>';
-                var data = JSON.parse(jdata[i]);
-                output+= "<tr><td class='tdmarg'>Title</td><td><a href='/info?book=" + 
-                data.bid.toString() + "'>" + data.title.substr(0,33)+"</a></td></tr>" +
-                "<tr><td>Author</td><td>" + data.author +"</td></tr>" +
-                "<tfoot class='hidden' id='"+order+"-info-item"+i.toString()+"'>";
-                if (data.isbn != "")
-                    output+="<tr><td>ISBN</td><td> " + data.isbn + "</td></tr>";
-                output+="<tr><td>Price</td><td> Php " + data.price + "</td></tr>" +
-                "<tr><td>Rating</td><td> " + data.rating + "/5</td></tr>" +
-                "<tr><td>Posted</td><td> " + data.posted + "</td></tr>";
-                if (data.comments!=null)
-                    output+= "<tr><td>Comments</td><td> " + data.comments + "</td></tr>";
-                output+= "</tfoot></table><a href='#' onclick=\"showItemInfo('"+order+"',"+i.toString()+")\" id='"+order+"-link"+i.toString()+"'>show more</a>"+
-                "</div></div>";
-                html+=output;
-            }
-            document.getElementById(order+"-result").innerHTML = html;
-        }       
-    }
-    var username = "user="+encodeURIComponent(document.getElementById("user_username").value);
-    var order2 = "&type="+order;
-    var params = username+order2;
-    xmlhttp.open("POST","/user/orders",true);
-    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
-    xmlhttp.send(params);
-}
-//type is either sell or buy
-function showItemInfo(type,id){
-    document.getElementById(type+"-info-item"+id).className='';
-    document.getElementById(type+"-link"+id).className='hidden';
 }
 //function that send message ajax
 function sendMessage(){

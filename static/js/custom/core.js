@@ -20,6 +20,17 @@ function parseURLParams(){
         return params;
     }   
 }
+/* returns the visible width of the browser*/
+function getWidth(){
+  return(window.innerWidth)?
+  window.innerWidth:
+  document.documentElement.clientWidth||document.body.clientWidth||0;
+}/* returns the visible height of the browser*/
+function getHeight(){
+  return(window.innerHeight)?
+  window.innerHeight:
+  document.documentElement.clientHeight||document.body.clientHeight||0;
+}
 /* generates markup for stars given a rating */
 function generateStars(rating){
     var markup = "", i=0;

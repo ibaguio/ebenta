@@ -5,7 +5,7 @@
 {% block login %}
     {{ macro.top_welcome(user) }}
 {% endblock %}
-
+{% block script_src%}<script src="/static/js/custom/sell.js"></script>{%endblock%}
 {% if rating: %}
     {% block jscript %}
     if ({%if errors%}true{%else%}false{%endif%})

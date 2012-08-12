@@ -1,8 +1,6 @@
-body{
-    font-family:"lucida grande",tahoma,verdana,arial,sans-serif;
-    font-size:14px;
-}
 
+
+@media 
 input[type=text]{
   background: #ffc;
 }

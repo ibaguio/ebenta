@@ -143,7 +143,7 @@ class BrowseAdsHandler(PageHandler):
         except:
             page = 1
 
-        lib,buySell,count = self.getLibListings()
+        lib,buySell,count = self.getLibListings(offset=(page-1)*limit)
         books = []
         for book in lib:
             books.append(book.toJson(image=True))
@@ -151,7 +151,9 @@ class BrowseAdsHandler(PageHandler):
         response_data ={"books": json.dumps(books),
                         "buySell":json.dumps(buySell),
                         "page": page,
-                        "pages": math.ceil(count/limit)}
+                        "items":len(buySell),#number of returned items
+                        "total":count,
+                        "pages": int(math.ceil(count/limit))}
         logging.info("")
         logging.info(response_data)
         self.write(json.dumps(response_data))
@@ -159,7 +161,7 @@ class BrowseAdsHandler(PageHandler):
     #cache this funtion!!!
     #gets limit books starting from offset, arrange by order
     def getLibListings(self,offset=0,order="title"):
-        lib,count = Library.getListings(count=True,limit=14)
+        lib,count = Library.getListings(count=True,limit=14,offset=offset)
         buySell = []
         for book in lib:
             buy = BuyBook.getListings(book,count_only=True)
@@ -290,6 +292,10 @@ class TestDb(PageHandler):
             loadOtherBooks()
         self.redirect("/")
 
+class TestHandler(PageHandler):
+    def get(self):
+        self.render("test.html")
+
 class VersionShow(PageHandler):
     def get(self):
         global vs
@@ -332,5 +338,5 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/about/version_check',VersionShow),
                                (r'/help/?',HelpHandler),
                                (r'/help/(\w+)/?',Help2Handler),
-                               (r'/item/book/stats/?',BookStatsHandler)
+                               (r'/item/book/stats/?',BookStatsHandler),
                               ],debug=True)
