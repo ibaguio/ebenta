@@ -9,18 +9,27 @@
     {% endif %}
 {% endblock %}
 
+{% block script_src%}<script src="/static/js/custom/library_browse.js"></script>{%endblock%}
+
 {% block content%}
   {{showBrowseNav()}}
-  <div class="span9" id="browsed-title">
+  <div class="span9" id="browsed-title" >
     <div class="pull-right" style="margin-right:40px;margin-top:10px;">
       <i class="request-loading hidden" id="loading"></i>
       <img title="Error in fetching listings" src="/static/images/error.gif" class="hidden" id="load-error">
     </div>
     <h2><a href="javascript:void(0)"><img src="/static/images/list_icon.png" style="margin-top:-5px" title="Show Navigation" id="imgHide" onclick="showNav()" class="hidden"/></a> Showing {{ showing(q) }}</h2>
   </div>
+
   <div class="span8 well" id="browsed-div">
   </div>
-  <div id="pagination">
+  <div id="results-nav" class="span9 offset3">
+    <div>
+      <center><h3><small id="display-info">Showing 0-0 of 0</small></h3></center>
+    </div>
+    <div class="pagination pagination-centered" style="margin-top:0" >
+      <ul id="pagination"></ul>
+    </div>
   </div>
 {% endblock %}
 
@@ -59,7 +68,7 @@
 {% endmacro %}
 
 {% macro showBrowseNav() %}
-  <div id="browseNav" class="">
+  <div id="browseNav">
   <div class="span3 well" style="padding:8px 0;">
       <ul class="nav nav-list">
         <li class="nav-header">Book<span class="pull-right"><a href="javascript:void(0)" onclick="hideNav()">hide</a></span></li>

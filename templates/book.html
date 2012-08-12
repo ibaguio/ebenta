@@ -9,6 +9,9 @@
         {{ macro.top_login() }}
     {% endif %}
 {% endblock %}
+{% block script_src%}
+    <script src="/static/js/custom/book_info.js"></script>
+{% endblock%}
 
 {% block content %}
     {% if msg: %}
@@ -49,12 +52,13 @@
                         <tr><td></td><td></td></tr>
                     </table>
                 </div>
-                <div class="span4"></div>
-                    <div id="stats-loading" class="hidden">
+                <div id="err-container" class="hidden" style="margin-top:25px;">
+                    <div id="stats-loading" class="span2 alert alert-success">
                     <i class="request-loading"></i>Loading Book Stats
                 </div>
-                <div id="show-error-stats" style="border:solid" class="hidden">
+                <div id="stats-error-show" class="span4 alert alert-error">
                     <strong>Failed</strong> to load book stat
+                </div>
                 </div>
             </div>
             <div id="mini-nav" class="well span3 pull-right" style="padding:8px 0;width:160px;margin-top:25px;margin-right:20px">
@@ -109,10 +113,12 @@
 {% endblock %}
 
 {% block jscript%}
+    $("[id^=stats-]").hide();
     window.sortBy="posted";
     window.offset=0;
     activate('desc');
     document.onload = requestSellers('posted');
+    $("#err-container").removeClass();
 {% endblock %}
 
 {% macro getDesc(rating) %}
@@ -143,7 +149,7 @@
 {%endif%}
 {% endmacro %}
 
-{% macro nothin%}
+{% macro nothin() %}
 {% for item in for_sale%}
                 <div id="item-info" class="row span5" style="position:relative;padding:14px 0px">
                     <span class="thumbnail" style="margin:0 15px;width:105px;">

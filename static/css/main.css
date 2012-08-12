@@ -18,16 +18,13 @@ ul{
   width: 930px;
   margin: 0 auto;
 }
-
 .top-links{
   position: absolute;
   bottom: 0px;
   left: 0px;
-  /* border:solid; */
   height: 40px;
   width: 900px;
 }
-
 .top-login{
   position: absolute;
   top:0px;

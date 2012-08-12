@@ -90,3 +90,22 @@ def getAllUsers():
 
 def generateMoreSellOrder():
     createTestSellOrder(getAllUsers(),10)
+
+def loadOtherBooks():
+    f = open("database/books.json")
+    books_json = json.loads(f.read())
+    logging.info(type(books_json))
+    for category in books_json:
+        logging.info(category)
+        for book in books_json[category]:
+
+            logging.info(book)
+            new = Library(title=book['title'],author=book['author'])
+            try:
+                new.isbn = book['isbn']
+            except:
+                pass
+            new.generateSk()
+            new.put()
+    logging.info("other books loaded")
+

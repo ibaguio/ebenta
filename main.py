@@ -24,10 +24,9 @@ class ItemInfoHandler(PageHandler):
     def get(self):
         bid = self.request.get("book")
         book = Library.get_by_id(int(bid))
-        selling = SellBook.getListings(book,limit=10)
+
         if book:
-            logging.info("for-sale:",selling[0].toJson())
-            self.render("book.html",book=book,for_sale=[])
+            self.render("book.html",book=book)
 
     #handles ajax request to update listings
     #SellOrder
@@ -136,7 +135,7 @@ class BrowseAdsHandler(PageHandler):
             self.render("browse.html",show=lib,info=buySell,lenS=len(lib),q="buy",buy_active="active")
 
     def post(self):
-        limit = 15
+        limit = 14
         page = self.request.get("page")
         try:
             page = int(page)
@@ -152,7 +151,7 @@ class BrowseAdsHandler(PageHandler):
         response_data ={"books": json.dumps(books),
                         "buySell":json.dumps(buySell),
                         "page": page,
-                        "pages": count/limit+1}
+                        "pages": math.ceil(count/limit)}
         logging.info("")
         logging.info(response_data)
         self.write(json.dumps(response_data))
@@ -160,7 +159,7 @@ class BrowseAdsHandler(PageHandler):
     #cache this funtion!!!
     #gets limit books starting from offset, arrange by order
     def getLibListings(self,offset=0,order="title"):
-        lib,count = Library.getListings(count=True)
+        lib,count = Library.getListings(count=True,limit=14)
         buySell = []
         for book in lib:
             buy = BuyBook.getListings(book,count_only=True)
@@ -287,6 +286,8 @@ class TestDb(PageHandler):
         elif pid == '2':
             logging.info("Generating more sell Order")
             generateMoreSellOrder()
+        elif pid == '3':
+            loadOtherBooks()
         self.redirect("/")
 
 class VersionShow(PageHandler):
@@ -302,7 +303,7 @@ class VersionShow(PageHandler):
         <br/><h1>VERSION 2</h1>
         twitter bootstrap as frontend
         """)
-        
+
 app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/register/?',Register),
                                (r'/home/?',UserHome),
