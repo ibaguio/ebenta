@@ -82,8 +82,8 @@ class User(db.Model):
         return "/static/images/no_profile_pic.jpg"
 
     def getConversations(self,limit=10,offset=0,order="-updated"):
-        conA = self.conversation_a.order(order).fetch(10)
-        conB = self.conversation_b.order(order).fetch(10)
+        conA = self.conversation_a.order(order).fetch(10+offset)
+        conB = self.conversation_b.order(order).fetch(10+offset)
 
         if not conA and not conB:
             return
@@ -92,18 +92,15 @@ class User(db.Model):
         else:
             return conA
 
-        return sortCon(conA,conB)
+        if len(conA) < len(conB):
+            conA,conB = conB,conA
 
-    def sumCon(a,b):
-        if len(a) < len(b):
-            a,b = b,a
-
-        for i in len(b):
-            for v in len(a):
+        for i in len(conB):
+            for v in len(conA):
                 if v > limit: continue
-                if b[i].posted > a[i].posted:
-                    a.insert(b[i])
-        return a[:10]
+                if conB[i].posted > conA[i].posted:
+                    conA.insert(v,conB[i])
+        return conA[offset:10]
 
 class Image(db.Model):
     entity = db.ReferenceProperty(required=True)
