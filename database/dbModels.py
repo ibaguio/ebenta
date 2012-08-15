@@ -133,9 +133,10 @@ class Library(db.Model):
         q.order(order)
         if count_only:
             return q.count()
+        ret = q.fetch(limit=limit,offset=offset)
         if count:
-            return q.fetch(limit=limit,offset=offset), q.count()
-        return q.fetch(limit=limit,offset=offset)
+            return ret, q.count()
+        return ret
 
 class Feedback(db.Model):
     comment = db.StringProperty(required=True)
@@ -226,23 +227,29 @@ class SellBook(db.Model):
             pass
         if count_only:
             return q.count()
+        ret = q.fetch(limit=limit,offset=offset)
         if count:    #include count in return, returns a tuple, see comment below
-            return (q.fetch(limit=limit,offset=offset), q.count())
+            return (ret, q.count())
         else:
-            return q.fetch(limit=limit,offset=offset)
-#send message
+            return ret
+
+#contains messages from 2 users
+class Conversation(db.Model):
+    userA = db.ReferenceProperty(User,required=True,collection_name="conversation_a") #receiver
+    userB = db.ReferenceProperty(User,required=True,collection_name="conversation_b") #sender
+
+    def getMessages(self):
+        messages = self.messages.order("-posted")
+        return messages
+
+#message from user to user
 class Message(db.Model):
     title = db.StringProperty()
     message = db.TextProperty(required=True)
     read = db.BooleanProperty(required=True)
-    sent_from = db.ReferenceProperty(User)  #if the sender is logged in, reference him
-    sent_from_info = db.StringListProperty()
-    posted = db.DateTimeProperty(auto_now_add=True)
-
-    def setSenderInfo(self,name,email,contactNum):
-        self.sent_from_info.append(name)
-        self.sent_from_info.append(email)
-        self.sent_from_info.append(contactNum)
+    #the conversation where this message is linked to
+    conversation = db.ReferenceProperty(Conversation,collection_name="messages")
+    sender = db.ReferenceProperty(User)  #if the sender is logged in, reference him
 
 class Comment(db.Model):
     user = db.ReferenceProperty(User, required=True)
