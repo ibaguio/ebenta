@@ -81,6 +81,30 @@ class User(db.Model):
     def getImage(self):
         return "/static/images/no_profile_pic.jpg"
 
+    def getConversations(self,limit=10,offset=0,order="-updated"):
+        conA = self.conversation_a.order(order).fetch(10)
+        conB = self.conversation_b.order(order).fetch(10)
+
+        if not conA and not conB:
+            return
+        elif not conA:
+            return conB
+        else:
+            return conA
+
+        return sortCon(conA,conB)
+
+    def sumCon(a,b):
+        if len(a) < len(b):
+            a,b = b,a
+
+        for i in len(b):
+            for v in len(a):
+                if v > limit: continue
+                if b[i].posted > a[i].posted:
+                    a.insert(b[i])
+        return a[:10]
+
 class Image(db.Model):
     entity = db.ReferenceProperty(required=True)
     image = db.BlobProperty(required=True)
@@ -129,7 +153,7 @@ class Library(db.Model):
 
     @classmethod
     def getListings(cls,limit=15,offset=0,order="title",count_only=False,count=False):
-        q = Library.all()
+        q = cls.all()
         q.order(order)
         if count_only:
             return q.count()
@@ -232,11 +256,12 @@ class SellBook(db.Model):
             return (ret, q.count())
         else:
             return ret
-
+ 
 #contains messages from 2 users
 class Conversation(db.Model):
     userA = db.ReferenceProperty(User,required=True,collection_name="conversation_a") #receiver
     userB = db.ReferenceProperty(User,required=True,collection_name="conversation_b") #sender
+    updated = db.DateTimeProperty(auto_now_add=True)
 
     def getMessages(self):
         messages = self.messages.order("-posted")
