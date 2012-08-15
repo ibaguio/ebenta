@@ -81,9 +81,13 @@ class User(db.Model):
     def getImage(self):
         return "/static/images/no_profile_pic.jpg"
 
-    def getConversations(self,limit=10,offset=0,order="-updated"):
-        conA = self.conversation_a.order(order).fetch(10+offset)
-        conB = self.conversation_b.order(order).fetch(10+offset)
+    def getConversations(self,limit=10,offset=0,order="-updated",count=False):
+        qA = self.conversation_a.order(order)
+        qB = self.conversation_b.order(order)
+
+        count = qA.count() + qB.count()
+
+        conA,conB = qA.fetch(10+offset), qB.fetch(10+offset)
 
         if not conA and not conB:
             return
@@ -263,6 +267,12 @@ class Conversation(db.Model):
     def getMessages(self):
         messages = self.messages.order("-posted")
         return messages
+
+    def toJson(self):
+        data = {"usr1":userA.username,
+                "usr2":userB.username,
+                "updated":updated}
+        return json.dumps(data)
 
 #message from user to user
 class Message(db.Model):
