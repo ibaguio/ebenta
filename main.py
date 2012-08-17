@@ -17,6 +17,7 @@ from pagehandlers.UserProfileHandler import *
 from pagehandlers.HomePage import *
 from pagehandlers.SendMessage import *
 from pagehandlers.StatsHandler import *
+from pagehandlers.AdminHandler import *
 #version/upload number
 vs = 4
 

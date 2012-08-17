@@ -30,9 +30,11 @@ class PageHandler(webapp2.RequestHandler):
     def write(self,*a,**kw):
         self.response.out.write(*a,**kw)
     
-    #funtions that renders template using given args
-    def render(self,template,**kw):
-        self.response.out.write(render_str(template,user=self.getUser(),**kw))
+    #funtions that renders template using given args, sets the user
+    def render(self,template,user=None,**kw):
+        if not user:
+            user = self.getUser()
+        self.response.out.write(render_str(template,user=user,**kw))
     
     def render_noUser(self,template,**kw):
         self.response.out.write(render_str(template,**kw))
