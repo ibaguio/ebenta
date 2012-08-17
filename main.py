@@ -296,20 +296,6 @@ class TestHandler(PageHandler):
     def get(self):
         self.render("test.html")
 
-class VersionShow(PageHandler):
-    def get(self):
-        global vs
-        self.write("Upload Number "+str(vs))
-        self.write("""
-        <br/>2. Fixed postings
-        <br/>2. Added browsing
-        <br/>2. Changed Models
-        <br/>3. Updated Profile Page
-        <br/>3. Fixed GUI of view privacy
-        <br/><h1>VERSION 2</h1>
-        twitter bootstrap as frontend
-        """)
-
 app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/register/?',Register),
                                (r'/home/?',UserHome),
@@ -335,7 +321,6 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/browse/((.)+)/?',BrowseAdsHandler),
                                (r'/about/?',AboutHandler),
                                (r'/about/(\w+)/?',About2Handler),
-                               (r'/about/version_check',VersionShow),
                                (r'/help/?',HelpHandler),
                                (r'/help/(\w+)/?',Help2Handler),
                                (r'/item/book/stats/?',BookStatsHandler),
