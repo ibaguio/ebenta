@@ -14,6 +14,10 @@ function requestSellers(sort_by,def){
             setSortOrderVal("asc");
         else
             setSortOrderVal("desc");
+
+    if (sort_by !== window.sortBy)
+        window.offset = 0;
+
     var order = window.order;
     if (order != "asc" && order != "desc")
         order="desc";
@@ -24,14 +28,21 @@ function requestSellers(sort_by,def){
             document.getElementById("loading").className = "";
             document.getElementById("load-error").className="hidden";
         }if (xmlhttp.readyState === 4){
+            document.getElementById("loading").className = "hidden";
+            document.getElementById("load-error").className="hidden";
             if (xmlhttp.status === 200){
-               document.getElementById("loading").className = "hidden";
-               document.getElementById("load-error").className="hidden";
-               populateUsers(JSON.parse(xmlhttp.responseText));
-               displayTab(sort_by);
+                populateUsers(JSON.parse(xmlhttp.responseText));
+                displayTab(sort_by);
+                $("#sorting-nav").show();
+                $("#results-nav").show();
+            }else if (xmlhttp.status === 401){//no listings for this item11
+                $("#sorting-nav").hide();
+                $("#results-nav").hide();
+                $("#no-results").removeClass();
             }else{
+                $("#sorting-nav").show();
                 document.getElementById("load-error").className="";
-                document.getElementById("loading").className = "hidden";
+                $("#results-nav").hide();
             }
         }
     }
@@ -40,7 +51,7 @@ function requestSellers(sort_by,def){
     params+= "&order="+order;
     if (window.offset)
         params+="&offset="+encodeURIComponent(window.offset);
-    xmlhttp.open("POST","/info",true);
+    xmlhttp.open("POST","/book/info",true);
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xmlhttp.send(params);
 }
@@ -71,7 +82,7 @@ function populateUsers(jdata){
     document.getElementById("display-info").innerText = "Showing "+ (jdata.offset+1).toString() + "-"+(jdata.offset+jdata.limit).toString()+" of " + jdata.total.toString();
     document.getElementById("pagination").innerHTML = generatePaginationMarkup();
     $("a.stars").popover(); 
-    $("#sellers-list").show();
+    $("#sellers-list").show(700);
 }
 
 /*  sends ajax request to get stats for the book */

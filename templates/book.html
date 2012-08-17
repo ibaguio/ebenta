@@ -72,7 +72,7 @@
         </div>
     	<div class="span7">
     		<h3>People Selling this book </h3>
-            <div style="position:relative">
+            <div style="position:relative;" id="sorting-nav">
                 <div style="margin-left:185px;position:absolute">
                     <h2><small>Sort by</small></h2>
                 </div>
@@ -91,10 +91,13 @@
                             <li id="li-sort-desc" ><a href="javascript:void(0)" onclick="reorder('desc')">Descending</a></li>    
                         </ul>
                 </ul>
-                {# used by ajax and JS#}
                 </div>
             </div>
-            <div style="display:table" id="sellers-list">
+            <div style="width:360px;margin-left:90px" id="no-results" class="hidden">
+                <h2><small>No one is selling this item as of the moment</small></h2>
+                <a href="/book/request?book={{book.key().id()}}">Click here to request</a> a copy of this book
+            </div>
+            <div style="display:table;" id="sellers-list">
             </div>
             <div id="results-nav">
                 <div>

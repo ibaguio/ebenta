@@ -24,7 +24,6 @@ class ItemInfoHandler(PageHandler):
     def get(self):
         bid = self.request.get("book")
         book = Library.get_by_id(int(bid))
-
         if book:
             self.render("book.html",book=book)
 
@@ -66,6 +65,11 @@ class ItemInfoHandler(PageHandler):
         #breaks down the tuple
         listings_raw,total_count = query[0],query[1]
 
+        if total_count == 0:    #tells the client that there is now listings for this book
+            self.response.status_int = 401  #change this to something reasonable in http
+            logging.info("No sellers for book")
+            return
+
         listings_json = []
         for listing in listings_raw:
             listings_json.append(listing.toJson())
@@ -84,7 +88,7 @@ class ItemInfoHandler(PageHandler):
             return
 
         response = json.dumps(response_data)
-        logging.info(response)
+        #logging.info(response)
         self.write(response)
 
     def getPage(self,offset,limit):
@@ -154,8 +158,6 @@ class BrowseAdsHandler(PageHandler):
                         "items":len(buySell),#number of returned items
                         "total":count,
                         "pages": int(math.ceil(count/limit))}
-        logging.info("")
-        logging.info(response_data)
         self.write(json.dumps(response_data))
 
     #cache this funtion!!!
@@ -292,10 +294,6 @@ class TestDb(PageHandler):
             loadOtherBooks()
         self.redirect("/")
 
-class TestHandler(PageHandler):
-    def get(self):
-        self.render("test.html")
-
 app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/register/?',Register),
                                (r'/home/?',UserHome),
@@ -315,7 +313,7 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/user/inbox',SendMessage),
                                (r'/user/orders',UserOrder),
                                (r'/user/?',UserProfile),
-                               (r'/info/?',ItemInfoHandler),
+                               (r'/book/info/?',ItemInfoHandler),
                                (r'/books/add/?',AddBookHandler),
                                (r'/browse/?',BrowseAdsHandler),
                                (r'/browse/((.)+)/?',BrowseAdsHandler),
@@ -324,4 +322,5 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/help/?',HelpHandler),
                                (r'/help/(\w+)/?',Help2Handler),
                                (r'/item/book/stats/?',BookStatsHandler),
+                               (r'/admin',AdminHandler),
                               ],debug=True)

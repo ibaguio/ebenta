@@ -59,7 +59,7 @@ function populateResults(jdata){
     for (i=0;i<books.length;i++){
         book = JSON.parse(books[i]);
         var markup = '<div class="browsed"><div class="row-fluid">' +
-        '<span class="browsed-img"><a href="/info?book='+book.key+'" class="book-image">';
+        '<span class="browsed-img"><a href="book/info?book='+book.key+'" class="book-image">';
         if (book.image==null)
             markup += noImage();
         markup+= '</a></span><div class="browsed-info"><table>'+
@@ -123,14 +123,18 @@ function gotoPrevPage(){
 }
 //function to open book page in browse
 function openBookPage(book_id){
-    location.href="/info?book="+book_id;
+    location.href="book/info?book="+book_id;
 }
 /* functions for nav in browse page */
 function showNav(){//show nav for browsing
     document.getElementById("imgHide").className="hidden";
-    document.getElementById("browsed-div").className="span8 well";
-    document.getElementById("browsed-title").className="span9";
-    document.getElementById("browseNav").className="";
+    document.getElementById("browsed-div").className="hidden";
+    document.getElementById("browsed-title").className="hidden";
+    $("#browseNav").show(300,function(){
+        document.getElementById("browsed-div").className="span8 well";
+        document.getElementById("browsed-title").className="span9";
+    });
+    
     $("#results-nav").removeClass();
     $("#results-nav").addClass("span9 offset3");
 }
@@ -138,6 +142,6 @@ function hideNav(){//hide nav for browsing
     document.getElementById("imgHide").className="";
     document.getElementById("browsed-div").className="span11-5 well";
     document.getElementById("browsed-title").className="span12";
-    document.getElementById("browseNav").className="hidden";
+    $("#browseNav").hide(300);
     $("#results-nav").removeClass();
 }

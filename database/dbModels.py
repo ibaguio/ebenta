@@ -236,7 +236,6 @@ class SellBook(db.Model):
              "comment":self.comment,
              "posted": self.posted.strftime("%B %d, %Y")}
         d["user"] = self.user.toJson()
-        logging.error("user json:"+str(d["user"]))
 
         return json.dumps(d)
 
