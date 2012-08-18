@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 from pagehandlers.PageHandler import *
 
-class AdminHandler(PageHandler):
+class ConsigneeHandler(PageHandler):
 	def get(self):
 		user = self.getUser()
-		if not user or not user.admin:
+		if not user or not user.consignee:
 			self.redirect("/")
 			return
 
-		self.render("admin.html",user=user,admin_active=True)
+		self.render("consignee.html",user=user,consign_active=True)

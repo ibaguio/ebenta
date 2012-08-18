@@ -18,6 +18,7 @@ from pagehandlers.HomePage import *
 from pagehandlers.SendMessage import *
 from pagehandlers.StatsHandler import *
 from pagehandlers.AdminHandler import *
+from pagehandlers.ConsigneeHandler import *
 #version/upload number
 vs = 4
 
@@ -324,4 +325,5 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/help/(\w+)/?',Help2Handler),
                                (r'/item/book/stats/?',BookStatsHandler),
                                (r'/admin',AdminHandler),
+                               (r'/consignee',ConsigneeHandler),
                               ],debug=True)

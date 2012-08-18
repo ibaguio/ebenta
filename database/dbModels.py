@@ -236,7 +236,7 @@ class SellBook(db.Model):
              "comment":self.comment,
              "posted": self.posted.strftime("%B %d, %Y")}
         d["user"] = self.user.toJson()
-
+        logging.info(json.dumps(d))
         return json.dumps(d)
 
     #returns all of the sell listings for a given book

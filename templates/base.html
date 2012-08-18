@@ -41,6 +41,7 @@
                 </ul>
               </li>
               <li class="{{sell_active}}"><a href="/sell">Sell</a></li>
+              {% if user%}{%if user.admin%}<li class="{{admin_active}}"><a href="/admin">Admin</a></li>{%elif user.consignee%}<li class="{{consign_active}}"><a href="/consignee">Consign</a></li>{%endif%}{%endif%}
             </ul>
           </div>
       </div>

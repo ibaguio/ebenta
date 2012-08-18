@@ -69,8 +69,10 @@ function populateUsers(jdata){
             '<a class="thumbnail" href="/user?usr=' + user.username + '"><img src="' +user.image + '" class="img100"></a></span>\n'+
             '<table class="table table-condensed" style="position:absolute;top:15px;left:140px;">\n' +
             '<tr><td>Seller</td><td><a href="/user?usr=' + user.username + '">' + user.username + '</a></td></tr>\n' +
-            '<tr><td>Book Rating</td><td><a class=\"stars\" rel=\"popover\" data-content=\"' + getDesc(book.rating).toString() +
-            "\" data-original-title=\""+ getDescTitle(book.rating)+ "\">" + generateStars(book.rating)+ '</a></td></tr>\n' +
+            '<tr><td>Book Rating</td><td><a class=\"stars\" rel=\"popover\" data-content=\"' + getDesc(book.rating).toString();
+            if (book.comment !== null)
+                 markup+= "<br/><br/><b>Seller's Comment:</b><p>" + book.comment + "</p>";
+            markup += "\" data-original-title=\""+ getDescTitle(book.rating)+ "\">" + generateStars(book.rating)+ '</a></td></tr>\n' +
             '<tr><td>Price</td><td>Php '+ book.price +'</td></tr>';
         if (book.comment !=null)
             markup+= '<tr><td>Comments</td><td>'+book.comment+'</td></tr>';
