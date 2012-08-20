@@ -198,12 +198,6 @@ class BrowseAdsHandler(PageHandler):
                 show.append(book)
                 buySell.append([buy,sell])
         return show,buySell
-        
-class Register(PageHandler):
-    def get(self):
-        self.redirect("/")
-    def post(self):
-        self.redirect("/")
 
 class CommentHandler(PageHandler):
     def post(self):
@@ -279,14 +273,14 @@ class AddBookHandler(PageHandler):
                 return
             self.redirect("/books?id="+new_book.key().id())
             
-class BookInfoHandler(PageHandler):
-#            self.render("book.html",book = new_book,msg="Book Successfully Added")
-    pass
-
 class TestDb(PageHandler):
     def get(self,pid):
         logging.info("pid="+str(pid))
-        if pid == '1':
+        if pid == '0':
+            generalTest()
+            generateMoreSellOrder()
+            loadOtherBooks()
+        elif pid == '1':
             logging.info("Creating initial dummy db")
             generalTest()
         elif pid == '2':
@@ -297,7 +291,7 @@ class TestDb(PageHandler):
         self.redirect("/")
 
 app = webapp2.WSGIApplication([(r'/', HomePage),
-                               (r'/register/?',Register),
+                               (r'/register/?',RegisterHandler),
                                (r'/home/?',UserHome),
                                (r'/logout/?',LogoutHandler),
                                (r'/login/?',LoginHandler),

@@ -295,7 +295,6 @@ class DegreeCourse(db.Model):
     degree = db.StringProperty(required=True)
     college = db.ReferenceProperty(Colleges,required=True)
 
-
 '''if i return a non-tuple, (i.e q.fetch(...),q.count()) 
 python would match every item returned in fetch to count 
 (i.e item1,q.count, item2,q.count ...) which would return error'''

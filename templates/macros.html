@@ -20,18 +20,18 @@
             {% endfor %}
     </div>
     {% endif %}
-    <form action="/" method="post" class="well">
+    <form action="/register" method="post" class="well">
         <div class="control-group {%if 'uname' in errs:%}error{%endif%}">
         <label>Username</label>
         <input type="text" name="username" value="{{val['user']}}" placeholder="Username" tabindex="1"/>
-        <a href="javascript:void(0)" rel="popover" title="Username"data-content="Username must be 6-15 characters, alphanumeric or underscore only.">
+        <a href="#" rel="popover" title="Username"data-content="Username must be 6-15 characters, alphanumeric or underscore only.">
             <i class="icon-question-sign"></i></a>
         </div>
 
         <div class="control-group {%if 'pass' in errs:%}error{%endif%}">
         <label>Password</label>
         <input type="password" name="pass" placeholder="Password" tabindex="2">
-        <a href="javascript:void(0)" rel="popover" title="Password" data-content="Password must be 6-15 characters."/>
+        <a href="#" rel="popover" title="Password" data-content="Password must be 6-15 characters."/>
         <i class="icon-question-sign"></i></a>
         </div>
         
@@ -49,7 +49,7 @@
         <div class="control-group {%if 'con' in errs:%}error{%endif%}">
         <label>Contact Number</label>   
         <input type="text" name="contactNo" value="{{val['con']}}" placeholder="Contact Number" tabindex="6">
-        <a href="javascript:void(0)" rel="popover" title="Contact Number"data-content="Please use this format 09XX XXX XXXX">
+        <a href="#" rel="popover" title="Contact Number"data-content="Please use this format 09XX XXX XXXX">
             <i class="icon-question-sign"></i></a>
         </div>
 

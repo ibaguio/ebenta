@@ -10,6 +10,24 @@ class HomePage(PageHandler):
         else:   #user is logged in, redir to home
             self.redirect('/home')
     
+class UserHome(PageHandler):
+    def get(self):
+        user = self.isLogged()
+        if user:
+            if self.request.get("comment") == 'success':
+                self.render('user_home.html',username = user, comment=True)
+            else:
+                self.render('user_home.html',username = user)
+        else:
+            self.redirect("/")
+
+class RegisterHandler(PageHandler):
+    def get(self):
+        if self.isLogged():
+            self.redirect("/")
+            return
+        self.render_noUser("register.html",val={},err={})
+
     #REGISTER form post
     def post(self):
         err,errs,val = self.checkErrors()
@@ -43,7 +61,12 @@ class HomePage(PageHandler):
         val = self.getRegister()
         err = []
         errs = []
-        if not valid_username(val.get('user')):
+
+        #check if username already in db
+        if User.get_by_key_name(val.get('user')):
+            err.append("Username already exists!")
+            errs.append("uname")
+        elif not valid_username(val.get('user')):
             err.append("Invalid Username")
             errs.append("uname")
         if val.get('pass') != val.get('ver'):
@@ -75,15 +98,3 @@ class HomePage(PageHandler):
                 'last': self.request.get("lastName"),
                 'con':  self.request.get("contactNo"),
                 'email': self.request.get("email")}
-
-class UserHome(PageHandler):
-    def get(self):
-        user = self.isLogged()
-        if user:
-            if self.request.get("comment") == 'success':
-                self.render('user_home.html',username = user, comment=True)
-            else:
-                self.render('user_home.html',username = user)
-        else:
-            self.redirect("/")
-

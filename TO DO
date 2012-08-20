@@ -136,3 +136,21 @@ Step Three. Purchase and Receive
 
 Step Four. Feedback
     Once a transaction has been complete, please do send a feedback to the other user. Rating and feedbacks would be beneficial to both parties (buyer and seller) because this would increase the trust level on both parties. Click here to know more about user feedback.
+
+
+ADMIN:
+    View Users
+    View Consignees
+    Admin nav for books
+        * Add New Book
+        * Add/change book info/stats
+        * Remove book
+        * Add new book copy (from consignee)
+        *
+    
+Consignee:
+    View Sold books
+    View Pending books
+    
+How to Buy
+    * Use Modals

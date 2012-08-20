@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% import "macros.html" as macro %}
 
 {% block login %}
@@ -67,6 +66,7 @@
                         <i class="icon-info-sign" id="icon-more-info"></i>More Info</a></li>
                     <li ><a href="javascript:void(0)" onclick="getStats({{book.key().id()}})" id="show-stats-link"><i class="icon-list-alt" id="icon-show-stats"></i>Show stats</a></li>
                     <li><a href="/sell/step3?book={{book.key().id()}}"><i class="icon-book" id="icon-sell-book"></i>Sell your copy</a></li>
+                    <li><a href="javascript:void"><i class="icon-question-mark"></i>How to Buy?</a></li>
                 </ul>
             </div> 
         </div>

@@ -4,21 +4,17 @@ from database.privacy import *
 
 class UserProfile(PageHandler):
     def get(self):
-        usr = self.request.get("usr")   #gets the username of user from url
+        usr = self.request.get("usr")  #gets the username of user from url
         try:
             uid = int(usr)
         except:
             uid = None
-            pass
-        me = self.isLogged()
-        if me:  #user is logged in
-            me = User.all().filter('username',me).get() #gets my username
-        else:
-            me = None
+        me = self.getUser()
         if uid:        #show profile of given uid
-            user = User.get_by_id(int(uid))
+            user = User.get_by_id(uid)
         elif usr:      #show profile of given user
-            user = User.all().filter('username',usr).get()
+            user = User.get_by_key(usr)
+            logging.info("user is "+user.username)
         else:        #show logged in user's profile
             self.showProfile(me,me)
             return
