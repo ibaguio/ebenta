@@ -31,28 +31,29 @@ class SellHandler(PageHandler):
         else:
             self.redirect('/sell')
     
+    #new sell order
     def post(self):
         comments = self.request.get("comment")
         price = self.request.get("price")
         try:
             bid = int(self.request.get("bid"))
             rating = int(self.request.get("rating"))
-        except ValueError:
+            book = Library.get_by_id(bid)
+            user = self.getUser()
+            if not book or not user: 
+
+                raise
+        except:
             self.redirect('/sell/error')
             return
+
         errors=[]
         if rating not in range(1,6):
             errors.append("Invalid Rating Score")
             
         if not valid_price(price):
             errors.append("Price must be of the format: xxxxx.xx")
-
-        book = Library.get_by_id(bid)
-        user = self.getUser()
-        if not book or not user:
-            self.redirect('/sell/error')
-            return
-
+        
         if len(errors)>0:
             self.render("sell_step.html",step=3,book=[book],errors=errors,rating=rating)
         else:
@@ -64,4 +65,27 @@ class SellHandler(PageHandler):
             if comments:
                 new_ad.comment=comments
             new_ad.put()
+
+            #get images
+            images = []
+            img = self.request.get("img1")
+            if img: images.append(img)
+            img = self.request.get("img2")
+            if img: images.append(img)
+            img = self.request.get("img3")
+            if img: images.append(img)
+            
+            logging.info("len:"+str(len(images)))
+            for image in images:
+                logging.info("image type:"+str(self.getImageFormat(image)))
+                new_image = Image(image=db.Blob(image),ref=new_ad)
+                new_image.put()
+            
             self.redirect('/sell/step4?book='+str(bid))
+
+    #returns the image format
+    def getImageFormat(self, image):
+        if image[1:4] == 'PNG': return 'image/png'
+        if image[0:3] == 'GIF': return 'image/gif'
+        if image[6:10] == 'JFIF': return 'image/jpeg'
+        return None

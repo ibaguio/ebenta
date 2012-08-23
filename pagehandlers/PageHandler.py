@@ -6,6 +6,8 @@ from utils.search import *
 from database.dbModels import *
 from database.test import *
 
+from google.appengine.ext import db
+
 import json
 import os
 import webapp2
@@ -69,3 +71,10 @@ class PageHandler(webapp2.RequestHandler):
         uname = self.getCookie('user')
         if uname:
             return User.all().filter('username',uname).get()
+
+    def newImage(self,blob,ref=None):
+        if reference:
+            img = Image(image=blob,ref=ref)
+        else:
+            img = Image(image=blob)
+        return img

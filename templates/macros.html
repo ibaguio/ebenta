@@ -121,14 +121,14 @@
         {% for book in books: %}
         <div class="search-results">
             {% if book.image: %}
-                <a href="/info?book={{book.key().id()}}"><img src="/static/images/{{book.image}}" class="result-img" alt="no image available"/></a>
+                <a href="/book/info?book={{book.key().id()}}"><img src="/static/images/{{book.image}}" class="result-img" alt="no image available"/></a>
             {% else:%}
                 <div class="result-img"><div style="height:10px"></div>
-                <a href="/info?book={{book.key().id()}}"><label class="label label-success" alt="no image available" title="no image available" style="text-align:center"/>No image<br/>available</label></a></div>
+                <a href="/book/info?book={{book.key().id()}}"><label class="label label-success" alt="no image available" title="no image available" style="text-align:center"/>No image<br/>available</label></a></div>
             {% endif %}
             <div class="result-info">
                 <table>
-                    <tr><td style="width:53px;">Title</td><td><a class="link" href="/info?book={{book.key().id()}}">{{book.title}}</a></td></tr>
+                    <tr><td style="width:53px;">Title</td><td><a class="link" href="/book/info?book={{book.key().id()}}">{{book.title}}</a></td></tr>
                     <tr><td>Author</td><td>{{book.author}}</td></tr>
                 </table>
             </div>

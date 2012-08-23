@@ -1,14 +1,8 @@
 #!/usr/bin/env python
-import webapp2, os
 import logging
 import jinja2
 import math
 from math import ceil
-from utils.crypto import *
-from utils.regex import *
-from utils.search import *
-from database.dbModels import *
-from database.test import *
 from pagehandlers.PageHandler import *
 from pagehandlers.BuyHandler import *
 from pagehandlers.SellHandler import *
@@ -232,6 +226,15 @@ class TestDb(PageHandler):
             loadOtherBooks()
         self.redirect("/")
 
+class TestImage(PageHandler):
+    def get(self):
+        i = Image.get_by_id(int(self.request.get("img")))
+        if i.image:
+            self.response.headers['Content-Type'] = "image/png"
+            self.response.out.write(i.image)
+        else:
+            self.error(404)
+
 app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/register/?',RegisterHandler),
                                (r'/home/?',UserHome),
@@ -263,4 +266,5 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/help/(\w+)/?',Help2Handler),
                                (r'/admin',AdminHandler),
                                (r'/consignee',ConsigneeHandler),
+                               (r'/testimage',TestImage),
                               ],debug=True)

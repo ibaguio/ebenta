@@ -13,8 +13,7 @@ class UserProfile(PageHandler):
         if uid:        #show profile of given uid
             user = User.get_by_id(uid)
         elif usr:      #show profile of given user
-            user = User.get_by_key(usr)
-            logging.info("user is "+user.username)
+            user = User.get_by_key_name(usr)
         else:        #show logged in user's profile
             self.showProfile(me,me)
             return
@@ -24,7 +23,7 @@ class UserProfile(PageHandler):
     #me is the dbmodel of the current(loggedin) user
     def showProfile(self,user,me):
         if user:
-            if me and me.key().id() == user.key().id():
+            if me and me.key() == user.key():
                 user = me
             self.render_noUser('profile.html',user=user,me=me)
         else:

@@ -19,8 +19,9 @@
     Step 3: Finalize 
         <ul>
             <li>Enter some info about {% if method=='sell': %}your copy of {% endif %} the book.</li>
-            <li>Pricing: {% if method=='sell' %}Enter the minimum price you would sell your book.{% else: %} Enter the maximum price you would like to buy for this book.{% endif %}</li>
+            <li>Pricing: {% if method=='sell' %}Enter the price you would sell your book.{% else: %} Enter the price you are willing to pay for this book.{% endif %}</li>
             <li>Rating: Click on the help button (beside rating) to see Rating Guide.</li>
+            <li>Image: Upload images of your copy of the book.<br/>(Max 3 images)</li>
         </ul>
     </div>
     <div {% if step== 4 %} class="alert alert-success" {% endif %}>
@@ -74,11 +75,32 @@
 <h3>You are selling your copy of:</h3>
 {{ macro.showBookInfo(book,False) }}
 <div style="heght:auto;width:430px;margin:0 auto;margin-top:-30px;">
-    <form action="/sell" method="post"><br/>
+    <form action="/sell" enctype="multipart/form-data" method="post"><br/>
     <table class="sell-table">
-        <tr><td style="width:70px;height:40px;">Condition{{req|safe}}</td><td>{{macro.showRating()}}</td><td><a href="javascript:void(0)" onclick="toggleHelp()"><img src="/static/images/help.png"></a></td></tr>
+        <tr><td style="width:70px;height:40px;">Condition{{req|safe}}</td><td>{{macro.showRating()}} <span style="margin-left:94px;margin-top:7px"><a href="javascript:void(0)" onclick="toggleHelp()"><i class="icon-question-sign"></i></a></span></td></tr>
         <tr><td>Price{{req|safe}}</td><td><span class="input-prepend"><span class="add-on">Php</span><input type="text" name="price" style="width:60px;" {% if price: %}value="{{price}}"{% endif %}></span></td></tr>
         <tr><td>Comments</td><td><textarea style="height:40px;width:230px;" onfocus="blank(this)" name="comment"></textarea></td></tr>
+        <tr><td>Image</td>
+            <td>
+                <span id="simg1">
+                    <input type="file" name="img1" onchange="showAddImg(2)"/>
+                    <a href="#" onclick="removeImage(1)">
+                        <i class="icon-remove-sign"></i>
+                    </a>
+                </span>
+                <span id="simg2" style="display:none">
+                    <input type="file" name="img2" onchange="showAddImg(3)"/>
+                    <a href="#" onclick="removeImage(2)">
+                        <i class="icon-remove-sign"></i>
+                    </a>
+                </span>
+                <span id="simg3" style="display:none">
+                    <input type="file" name="img3"/>
+                    <a href="#" onclick="removeImage(3)">
+                        <i class="icon-remove-sign"></i>
+                    </a>
+                </span>
+            </td></tr>
     </table>
     <center>
         {% if errors: %}

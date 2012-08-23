@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import json,datetime
-import re,logging,sys
+import re,sys
 
 from google.appengine.ext import db
 from utils.crypto import *
@@ -107,9 +107,9 @@ class User(db.Model):
         return conA[offset:10]
 
 class Image(db.Model):
-    entity = db.ReferenceProperty(required=True)
+    ref = db.ReferenceProperty(collection_name="images")
     image = db.BlobProperty(required=True)
-    comment = db.StringProperty(default="")
+    comment = db.StringProperty(default=None)
     posted = db.DateTimeProperty(auto_now_add=True)
 
 class Library(db.Model):
@@ -142,8 +142,7 @@ class Library(db.Model):
             k = re.split('\W+',self.title.lower()) + re.split('\W+',self.author.lower())
             self.searchKeys = k
         except BaseException as e:
-            logging.error("generate SK error")
-            err = sys.exc_info()
+            pass
         
     def addSk(self, *keys):
         for k in keys:
@@ -236,7 +235,6 @@ class SellBook(db.Model):
              "comment":self.comment,
              "posted": self.posted.strftime("%B %d, %Y")}
         d["user"] = self.user.toJson()
-        logging.info(json.dumps(d))
         return json.dumps(d)
 
     #returns all of the sell listings for a given book
