@@ -235,6 +235,35 @@ class TestImage(PageHandler):
         else:
             self.error(404)
 
+#debug ONLY, remove during production
+class ClearDatastore(PageHandler):
+    def get(self):
+        if self.request.get("do_it_") != "true":
+            self.write("Unable to process request`")
+            return
+
+        users = Users.all()
+        for u in users:
+            u.delete()
+        lib = Library.all()
+        for book in lib:
+            book.delete()
+        s_ord = SellBook.all()
+        for ordd in s_ord:
+            ordd.delete()
+        b_ord = BuyBook.all()
+        for ordd in b_ord:
+            ordd.delete()
+        col = Colleges.all()
+        for c in col:
+            c.delete()
+        priv = PrivacySetting.all()
+        for p in priv:
+            p.delete()
+
+        self.write("Datastore Cleared Boss")
+
+
 app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/register/?',RegisterHandler),
                                (r'/home/?',UserHome),
