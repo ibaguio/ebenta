@@ -8,4 +8,4 @@ class ConsigneeHandler(PageHandler):
 			self.redirect("/")
 			return
 
-		self.render("consignee.html",user=user,consign_active=True)
+		self.render("consignee.html",user=user,consign_active="active")

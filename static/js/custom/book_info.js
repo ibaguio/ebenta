@@ -87,42 +87,13 @@ function populateUsers(jdata){
     $("#sellers-list").show(700);
 }
 
-/*  sends ajax request to get stats for the book */
-function getStats(bid){
-    var xmlhttp = ajaxRequest();
-    xmlhttp.onreadystatechange=function(){
-        if (xmlhttp.readyState===2){
-            $("#stats-loading").show();
-        }if (xmlhttp.readyState===4 ){
-            $("#stats-loading").hide();
-            if (xmlhttp.status === 200){
-                $("#book-stats").removeClass();
-                showStats(xmlhttp.responseText);
-            }else
-                $("#stats-error-show").show();
-        }
-    }
-    var params = "book="+bid;
-    xmlhttp.open("POST","/item/book/stats",true);
-    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
-    xmlhttp.send(params);
+/* show the book stats*/
+function getStats(){
+    $("#book-stats").show(500,function(){
+        $("#icon-show-stats").removeClass();
+        $("#icon-show-stats").addClass("icon-ok");
+    });
 }
-/*  generates markup to display book stats*/
-function showStats(json){
-    var jdata = JSON.parse(json)
-    document.getElementById("total-listed").innerText = jdata.listings;
-    if (jdata.totalSold>0)
-        document.getElementById("total-sold").innerText = jdata.totalSold+" books";
-    else
-        document.getElementById("total-sold").innerText = "None yet";
-    document.getElementById("ave-price").innerText = "Php "+jdata.avePrice;
-    if (jdata.newPrice > 0)
-        document.getElementById("new-price").innerText = "Php "+jdata.newPrice;
-    else
-        document.getElementById("new-price").innerText = "No Data";
-    document.getElementById("icon-show-stats").className = "icon-ok";
-}
-
 //asc desc setting of active
 function activate(order){
     if (window.order === order)

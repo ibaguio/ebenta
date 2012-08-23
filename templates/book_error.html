@@ -8,10 +8,11 @@
       <br/>
       <br/>
       <h2>Oopss!</h2>
-      <br/>You must be logged in to enter this page.
-      <br/>Not yet a member? You may register beside.
+      <br/>Book Not Found
   {% endblock%}
   
   {% block right_content %}
+    {% if not user%}
       {{ macro.getRegistrationForm([],[]) }}
+    {% endif%}
   {% endblock %}

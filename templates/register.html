@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 {% import "macros.html" as macro %}
 
+{% block login %}
+    {{ macro.top_login() }}
+{% endblock %}
+
 {% block content %}
 	<div class="span6 offset3">
-	{{ macro.getRegistrationForm(val,err,errs)}}
+	{{ macro.getRegistrationForm(val,err,errs,"/register")}}
 	</div>
 {% endblock %}

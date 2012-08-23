@@ -16,7 +16,7 @@
     {% if msg: %}
     {{ msg }}
     {% endif %}
-    <div class="span8" >
+    <div class="span12">
     	<div style=";margin-top:10px;height:180px;width:920px;" class="row">
             <div class="result-image pull-left" >
             {% if book.image: %}
@@ -37,39 +37,32 @@
                 </table>
             </div>
             <div class="span3">
-                <div id="book-stats" class="hidden">
+                <div id="book-stats" style="display:none">
                     <h3><small>Book Statistics</small></h3>
                     <table class="table table-condensed">
                         <tr><td style="width:90px">Listed</td>
-                            <td><span id="total-listed"></span></td></tr>
+                            <td>{{stats["listed"]}}</td></tr>
                         <tr><td>Total Sold</td>
-                            <td><span id="total-sold"></span></td></tr>
-                        <tr><td>Ave Price</td><td>
-                            <span id="ave-price"></span></td></tr>
-                        <tr><td>New Price</td><td>
-                            <span id="new-price"></span></td></tr>
+                            <td>{{stats["totalSold"]}}</td></tr>
+                        <tr><td>Ave Price</td>
+                            <td>{{stats["avePrice"]}}</td></tr>
+                        <tr><td>New Price</td>
+                            <td>{{stats["newPrice"]}}</td></tr>
                         <tr><td></td><td></td></tr>
                     </table>
-                </div>
-                <div id="err-container" class="hidden" style="margin-top:25px;">
-                    <div id="stats-loading" class="span2 alert alert-success">
-                    <i class="request-loading"></i>Loading Book Stats
-                </div>
-                <div id="stats-error-show" class="span4 alert alert-error">
-                    <strong>Failed</strong> to load book stat
-                </div>
                 </div>
             </div>
             <div id="mini-nav" class="well span3 pull-right" style="padding:8px 0;width:160px;margin-top:25px;margin-right:20px">
                 <ul class="nav nav-list">
                     <li><a style="margin-top:5px" href="javascript:void(0)" id="more-info" onclick="moreInfo()" class="">
                         <i class="icon-info-sign" id="icon-more-info"></i>More Info</a></li>
-                    <li ><a href="javascript:void(0)" onclick="getStats({{book.key().id()}})" id="show-stats-link"><i class="icon-list-alt" id="icon-show-stats"></i>Show stats</a></li>
+                    <li ><a href="javascript:void(0)" onclick="getStats()" id="show-stats-link"><i class="icon-list-alt" id="icon-show-stats"></i>Show stats</a></li>
                     <li><a href="/sell/step3?book={{book.key().id()}}"><i class="icon-book" id="icon-sell-book"></i>Sell your copy</a></li>
-                    <li><a href="javascript:void"><i class="icon-question-mark"></i>How to Buy?</a></li>
+                    <li><a href="#how-to-buy" data-toggle="modal"><i class="icon-question-sign"></i>How to Buy?</a></li>
                 </ul>
-            </div> 
+            </div>
         </div>
+        <div class="row">
     	<div class="span7">
     		<h3>People Selling this book </h3>
             <div style="position:relative;" id="sorting-nav">
@@ -113,7 +106,37 @@
                 </div>
             </div>
     	</div>
+        {% if user.admin%}
+        <div class="span well" style="width:160px;margin-left:180px;padding:8px 0 " id="admin-mini-nav">
+            <ul class="nav nav-list">
+                <li class="nav-header">Admin Nav</li>
+                <li><a href="javascript:void(0)" id="" onclick="" class="">
+                    <i class="icon-pencil"></i>Edit Information</a></li>
+                <li ><a href="javascript:void(0)" id="" onclick="">
+                    <i class="icon-plus-sign" ></i>Add Consignee</a></li>
+                <li ><a href="javascript:void(0)" id="" onclick="">
+                    <i class="icon-picture" ></i>Add Image</a></li>                    
+                <li ><a href="javascript:void(0)" id="" onclick="">
+                    <i class="icon-time" ></i>View History</a></li>                
+            </ul>
+        </div>
+        {% endif %}
+        </div>
 	</div>
+    <div class="modal hide fade" id="how-to-buy">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">×</button>
+            <h3>How to Buy</h3>
+        </div>
+        <div class="modal-body">
+            <p>One fine body…</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn" data-dismiss="modal">Close</a>
+        </div>
+    </div>
+
+
 {% endblock %}
 
 {% block jscript%}

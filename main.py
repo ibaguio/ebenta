@@ -16,85 +16,11 @@ from pagehandlers.log_in_out import *
 from pagehandlers.UserProfileHandler import *
 from pagehandlers.HomePage import *
 from pagehandlers.SendMessage import *
-from pagehandlers.StatsHandler import *
+from pagehandlers.BookInfoHandler import *
 from pagehandlers.AdminHandler import *
 from pagehandlers.ConsigneeHandler import *
 #version/upload number
 vs = 4
-
-class ItemInfoHandler(PageHandler):
-    def get(self):
-        bid = self.request.get("book")
-        book = Library.get_by_id(int(bid))
-        if book:
-            self.render("book.html",book=book)
-
-    #handles ajax request to update listings
-    #SellOrder
-    def post(self):
-        sort = self.request.get("sort")
-        order = self.request.get("order")
-        book_id = self.request.get("bid")
-        limit = self.request.get("limit")
-        offset = self.request.get("offset")
-        try:
-            book = Library.get_by_id(int(book_id))
-        except:
-            pass
-
-        if not limit:   #limit to number of postings to display
-            limit = 5
-        else: limit = int(limit)
-        if not offset:  #offset for search
-            offset = 0
-        else: offset = int(offset)
-
-        assert offset >= 0
-        assert limit >= 0
-        
-        if not book:
-            self.response.status_int = 400   #tell receiver that his post data is invalid
-            return
-        if order == "asc":
-            qOrder = sort
-        elif order == "desc":
-            qOrder = "-"+sort
-        else:
-            raise BaseException
-        
-        #gets the result as a tuple
-        query = SellBook.getListings(book,order=qOrder,limit=limit,offset=offset,count=True)
-        #breaks down the tuple
-        listings_raw,total_count = query[0],query[1]
-
-        if total_count == 0:    #tells the client that there is now listings for this book
-            self.response.status_int = 401  #change this to something reasonable in http
-            logging.info("No sellers for book")
-            return
-
-        listings_json = []
-        for listing in listings_raw:
-            listings_json.append(listing.toJson())
-
-        page = self.getPage(offset,limit)
-
-        response_data ={"books": listings_json,
-                        "order": qOrder,
-                        "limit": len(listings_json),
-                        "offset": offset,
-                        "total": total_count,
-                        "page": page}
-
-        if page > total_count:
-            self.response.status_int = 400  #invalid page
-            return
-
-        response = json.dumps(response_data)
-        #logging.info(response)
-        self.write(response)
-
-    def getPage(self,offset,limit):
-        return (offset/limit) +1
 
 class AboutHandler(PageHandler):
     def get(self):
@@ -272,7 +198,23 @@ class AddBookHandler(PageHandler):
                 self.redirect("/"+next+"/step3?book="+str(new_book.key().id()))
                 return
             self.redirect("/books?id="+new_book.key().id())
-            
+
+class RequestBookHandler(PageHandler):
+    def get(self):
+        bid = self.request.get("book")
+        try:
+            book = Library.get_by_id(int(bid))
+            if not book: raise
+        except:
+            self.redirect("/book/error")
+            return
+        self.render("book_request.html",book=book)
+
+
+class BookError(PageHandler):
+    def get(self):
+        self.render("book_error.html")
+
 class TestDb(PageHandler):
     def get(self,pid):
         logging.info("pid="+str(pid))
@@ -309,15 +251,16 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/user/inbox',SendMessage),
                                (r'/user/orders',UserOrder),
                                (r'/user/?',UserProfile),
-                               (r'/book/info/?',ItemInfoHandler),
-                               (r'/books/add/?',AddBookHandler),
+                               (r'/book/info/?',BookInfoHandler),
+                               (r'/book/add/?',AddBookHandler),
+                               (r'/book/request/?',RequestBookHandler),
+                               (r'/book/error/?',BookError),
                                (r'/browse/?',BrowseAdsHandler),
                                (r'/browse/((.)+)/?',BrowseAdsHandler),
                                (r'/about/?',AboutHandler),
                                (r'/about/(\w+)/?',About2Handler),
                                (r'/help/?',HelpHandler),
                                (r'/help/(\w+)/?',Help2Handler),
-                               (r'/item/book/stats/?',BookStatsHandler),
                                (r'/admin',AdminHandler),
                                (r'/consignee',ConsigneeHandler),
                               ],debug=True)

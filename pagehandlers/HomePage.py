@@ -32,10 +32,13 @@ class RegisterHandler(PageHandler):
     def post(self):
         err,errs,val = self.checkErrors()
         if len(err) > 4: #accidentally pressed register and no input was placed, redir to home
-            self.redirect("/")
+            self.redirect(val['from'])
             return
         elif len(err)>0:
-            self.render("homepage.html",err=err,errs=errs,val=val)
+            if val["from"] == '/register':
+                self.render("register.html",err=err,errs=errs,val=val)
+            else:
+                self.render("homepage.html",err=err,errs=errs,val=val)
             return
             
         # get the default privacy setting            
@@ -97,4 +100,5 @@ class RegisterHandler(PageHandler):
                 'first': self.request.get("firstName"),
                 'last': self.request.get("lastName"),
                 'con':  self.request.get("contactNo"),
-                'email': self.request.get("email")}
+                'email': self.request.get("email"),
+                'from': self.request.get("from")}

@@ -8,7 +8,7 @@
   </div>
 {%- endmacro %}
 
-{% macro getRegistrationForm(val,err,errs) %}
+{% macro getRegistrationForm(val,err,errs,from="/") %}
     <br/>
     <div class="span5" style="padding-left:25px;">   
     <h3>Register for FREE</h3>
@@ -24,14 +24,14 @@
         <div class="control-group {%if 'uname' in errs:%}error{%endif%}">
         <label>Username</label>
         <input type="text" name="username" value="{{val['user']}}" placeholder="Username" tabindex="1"/>
-        <a href="#" rel="popover" title="Username"data-content="Username must be 6-15 characters, alphanumeric or underscore only.">
+        <a class="pops" href="#" rel="popover" title="Username" data-content="Username must be 6-15 characters, alphanumeric or underscore only.">
             <i class="icon-question-sign"></i></a>
         </div>
 
         <div class="control-group {%if 'pass' in errs:%}error{%endif%}">
         <label>Password</label>
         <input type="password" name="pass" placeholder="Password" tabindex="2">
-        <a href="#" rel="popover" title="Password" data-content="Password must be 6-15 characters."/>
+        <a class="pops" href="#" rel="popover" title="Password" data-content="Password must be 6-15 characters."/>
         <i class="icon-question-sign"></i></a>
         </div>
         
@@ -49,7 +49,7 @@
         <div class="control-group {%if 'con' in errs:%}error{%endif%}">
         <label>Contact Number</label>   
         <input type="text" name="contactNo" value="{{val['con']}}" placeholder="Contact Number" tabindex="6">
-        <a href="#" rel="popover" title="Contact Number"data-content="Please use this format 09XX XXX XXXX">
+        <a class="pops"  href="#" rel="popover" title="Contact Number"data-content="Please use this format 09XX XXX XXXX">
             <i class="icon-question-sign"></i></a>
         </div>
 
@@ -59,8 +59,12 @@
         </div>
         
         <label><input type="submit" value="Register" class="btn btn-success" tabindex="8"></label>
+        <input type="hidden" name="from" value="{{from}}">
     </form>
     </div>
+    <script type="text/javascript">
+        $(document).ready(function(){$("a.pops").popover();});
+    </script>
 {%- endmacro %}
 
 {% macro getAbout() -%}
@@ -85,7 +89,6 @@
     </div>
     </li></ul>
     </div>
-    <script type="text/javascript">window.onload = function(){$("a#login-form").dropdown();}</script>
 {% endmacro %}
 
 {% macro top_welcome(user) %}

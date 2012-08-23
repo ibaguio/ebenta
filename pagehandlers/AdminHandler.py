@@ -8,4 +8,4 @@ class AdminHandler(PageHandler):
 			self.redirect("/")
 			return
 
-		self.render("admin.html",user=user,admin_active=True)
+		self.render("admin.html",user=user,admin_active="active")
