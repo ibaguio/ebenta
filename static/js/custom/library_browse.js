@@ -4,19 +4,19 @@ function requestLibrary(page){
     var xmlhttp = ajaxRequest();
     xmlhttp.onreadystatechange=function(){
         if (xmlhttp.readyState === 2){
-            document.getElementById("loading").className = "";
-            document.getElementById("load-error").className="hidden";
+            $("#loading").show();
+            $("#load-error").hide();
         }if (xmlhttp.readyState === 4){
             if (xmlhttp.status === 200){
-                document.getElementById("loading").className = "hidden";
-                document.getElementById("load-error").className="hidden";
+                $("#loading").hide();
+                $("#load-error").hide();
                 var jdata=JSON.parse(xmlhttp.responseText);
                 populateResults(jdata);
                 window.pages = jdata.pages;
                 window.page = jdata.page;
             }else{
-                document.getElementById("load-error").className="";
-                document.getElementById("loading").className = "hidden";
+                $("#loading").hide();
+                $("#load-error").show();
             }
         }
     }

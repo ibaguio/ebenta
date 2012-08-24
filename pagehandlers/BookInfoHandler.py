@@ -16,7 +16,7 @@ class BookInfoHandler(PageHandler):
             return
         self.redirect("/book/error")
 
-    #handles ajax request to update listings
+    #handles ajax request to get listings
     #SellOrder
     def post(self):
         sort = self.request.get("sort")

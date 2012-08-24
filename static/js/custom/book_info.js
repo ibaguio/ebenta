@@ -64,11 +64,11 @@ function populateUsers(jdata){
     for (var num in window.jdata.books){
         var book = JSON.parse(window.jdata.books[num]);
         var user = JSON.parse(book.user);
-        var markup = '<div id="item-info" class="row span5" style="position:relative;padding:14px 0px">\n' +
+        var markup = '<div class="span7" style="margin-bottom:20px"><div id="item-info" class="row span5" style="position:relative;padding:14px 0px;">\n' +
             '<span class="thumbnail" style="margin:0 15px;width:105px;">\n' +
-            '<a class="thumbnail" href="/user?usr=' + user.username + '"><img src="' +user.image + '" class="img100"></a></span>\n'+
+            '<a class="thumbnail" href="/user?usr=' + user.username + '" target="blank"><img src="' +user.image + '" class="img100"></a></span>\n'+
             '<table class="table table-condensed" style="position:absolute;top:15px;left:140px;">\n' +
-            '<tr><td>Seller</td><td><a href="/user?usr=' + user.username + '">' + user.username + '</a></td></tr>\n' +
+            '<tr><td>Seller</td><td><a href="/user?usr=' + user.username + '" target="blank">' + user.username + '</a></td></tr>\n' +
             '<tr><td>Book Rating</td><td><a class=\"stars\" rel=\"popover\" data-content=\"' + getDesc(book.rating).toString();
             if (book.comment !== null)
                  markup+= "<br/><br/><b>Seller's Comment:</b><p>" + book.comment + "</p>";
@@ -76,7 +76,10 @@ function populateUsers(jdata){
             '<tr><td>Price</td><td>Php '+ book.price +'</td></tr>';
         if (book.comment !=null)
             markup+= '<tr><td>Comments</td><td>'+book.comment+'</td></tr>';
-        markup+= '<tr><td>Date Posted</td><td>'+ book.posted +'</table></div>';
+        markup+= '<tr><td>Date Posted</td><td>'+ book.posted +'</td></tr></table></div>'+
+        '<span class="pull-right" style="margin-top:130px">'+
+        '<button type="button" class="btn btn-success btn-mini" onclick="viewDetails('+book.sellid+')">View Details</button> '+
+        '</span></div>';
         html += markup;
     }
     window.listing_page = jdata.page;
@@ -242,6 +245,29 @@ function displayTab(sort_by){
 function reorder(order){
     if (window.order === order)
         return;
-    activate(order)
+    activate(order);
     requestSellers(window.sortBy,false);
+}
+
+/* ajax request to load details */
+function getDetails(sellid){
+    var xmlhttp = ajaxRequest();
+    xmlhttp.onreadystatechange = function(){
+        if (xmlhttp.readyState === 2){
+
+        }
+    }
+    var params= "sellid="+encodeURIComponent(sellid);
+    xmlhttp.open("POST","/book/info",true);
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.send(params);
+
+}
+
+function viewDetails(sellid){
+    $("div#modal-order-details").modal();
+}
+/* adds the data for the books in window*/
+function addLoadedData(books){
+
 }

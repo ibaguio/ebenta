@@ -15,8 +15,8 @@
   {{showBrowseNav()}}
   <div class="span9" id="browsed-title" >
     <div class="pull-right" style="margin-right:40px;margin-top:10px;">
-      <i class="request-loading hidden" id="loading"></i>
-      <img title="Error in fetching listings" src="/static/images/error.gif" class="hidden" id="load-error">
+      <i class="request-loading" id="loading" style="display:none"></i>
+      <img title="Error in fetching listings" src="/static/images/error.gif" style="display:none;width:20px;margin-right:5px" id="load-error">
     </div>
     <h2><a href="javascript:void(0)"><img src="/static/images/list_icon.png" style="margin-top:-5px" title="Show Navigation" id="imgHide" onclick="showNav()" class="hidden"/></a> Showing {{ showing(q) }}</h2>
   </div>

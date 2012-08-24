@@ -238,11 +238,11 @@ class TestImage(PageHandler):
 #debug ONLY, remove during production
 class ClearDatastore(PageHandler):
     def get(self):
-        if self.request.get("do_it_") != "true":
-            self.write("Unable to process request`")
+        if self.request.get("do_it") != "true":
+            self.write("Unable to process request")
             return
 
-        users = Users.all()
+        users = User.all()
         for u in users:
             u.delete()
         lib = Library.all()
@@ -263,7 +263,6 @@ class ClearDatastore(PageHandler):
 
         self.write("Datastore Cleared Boss")
 
-
 app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/register/?',RegisterHandler),
                                (r'/home/?',UserHome),
@@ -272,6 +271,7 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/sell/?',SellHandler),
                                (r'/sell/(step[1-4])/?',SellHandler),
                                (r'/sell/search/?',SearchHandler),
+                               (r'/sell/orders/?',SearchHandler),
                                (r'/buy/?',BuyHandler),
                                (r'/buy/(step[1-4])/?',BuyHandler),
                                (r'/buy/search/?',SearchHandler),
@@ -296,4 +296,5 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/admin',AdminHandler),
                                (r'/consignee',ConsigneeHandler),
                                (r'/testimage',TestImage),
+                               (r'/clear/datastore/?',ClearDatastore),
                               ],debug=True)

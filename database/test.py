@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #test cases for db
 import random,string
-import datetime
+import datetime,logging
 from dbModels import *
 from privacy import *
 

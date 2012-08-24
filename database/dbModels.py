@@ -226,10 +226,11 @@ class SellBook(db.Model):
 
     def toJson(self, userInfo=False):
         book = self.parent()
-        d = {"title": book.title,
-             "author": book.author,
-             "bid": book.key().id(),
-             "isbn": book.isbn,
+        d = {#"title": book.title,
+             #"author": book.author,
+             #"bid": book.key().id(),
+             #"isbn": book.isbn,
+             "sellid": self.key().id(),
              "rating": self.rating,
              "price": str(self.price),
              "comment":self.comment,
