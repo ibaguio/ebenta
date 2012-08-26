@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import json,datetime
-import re,sys
+import re,logging
 
 from google.appengine.ext import db
 from utils.crypto import *
@@ -49,26 +49,31 @@ class User(db.Model):
     privacy= db.ReferenceProperty(PrivacySetting,required=True)
     admin = db.BooleanProperty(default=False)
     consignee = db.BooleanProperty(default=False)
+    score = db.IntegerProperty(default=0)
 
     #0 - guest  1 - user  3 - admin (AND YES ITS 3)
     def toJson(self,_all=False,viewer=0):
+        logging.info("viewer:"+str(viewer))
         d ={"username": self.username,
-            "image": self.getImage()}
+            "image": self.getImage(),
+            "score": self.score}
         if _all:    #show all info, subject to viewer and privacy
             d.update({"firstName":self.firstName,
                     "lastName":self.lastName,
                     "admin":self.admin,
                     "consignee":self.consignee})
-            if (viewer == 0 and self.privacy.showContact == "guest")\
-                or (viewer == 1 and self.privacy.showContact in ["user","guest"])\
-                or viewer == 3:
-                    d["contactNum"] = self.contactNum
-                    d["email"] = self.email
-            if (viewer == 0 and self.privacy.showContact == "guest")\
-                or (viewer == 1 and self.privacy.showContact in ["user","guest"])\
-                or viewer == 3:
-                    d["college"] = self.college
-                    d["degree"] = self.degree
+        if (viewer == 0 and self.privacy.showContact == "guest")\
+            or (viewer == 1 and self.privacy.showContact in ["user","guest"])\
+            or viewer == 3:
+                logging.info("here")
+                d["contactNum"] = self.contactNum
+                d["email"] = self.email
+        if (viewer == 0 and self.privacy.showCollege == "guest")\
+            or (viewer == 1 and self.privacy.showCollege in ["user","guest"])\
+            or viewer == 3:
+                d["college"] = self.college
+                d["degree"] = self.degree
+
         return json.dumps(d)
     
     def completeName(self):
@@ -224,7 +229,7 @@ class SellBook(db.Model):
     expire = db.DateTimeProperty()
     transaction = db.ReferenceProperty(Transaction, default=None)
 
-    def toJson(self, userInfo=False):
+    def toJson(self, viewer):
         book = self.parent()
         d = {#"title": book.title,
              #"author": book.author,
@@ -235,7 +240,8 @@ class SellBook(db.Model):
              "price": str(self.price),
              "comment":self.comment,
              "posted": self.posted.strftime("%B %d, %Y")}
-        d["user"] = self.user.toJson()
+        d["user"] = self.user.toJson(viewer=viewer)
+        logging.info(str(d))
         return json.dumps(d)
 
     #returns all of the sell listings for a given book

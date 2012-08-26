@@ -3,6 +3,9 @@ from pagehandlers.PageHandler import *
 
 class LoginHandler(PageHandler):
     def get(self):
+        if self.getUser():
+            self.redirect("/")
+            return
         self.render('login.html')
         
     def post(self):
@@ -19,7 +22,11 @@ class LoginHandler(PageHandler):
                 #login the user
                 cookie = generateCookie(val.get('user'))    #dictionary
                 self.setCookies(cookie,expire = expire)
-                self.redirect('/home')
+                ref = self.request.referer
+                if ref:
+                    self.redirect(ref)
+                else:
+                    self.redirect("/home")
                 return
                 
         #username or password form is empty, show error

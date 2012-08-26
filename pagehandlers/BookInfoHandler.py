@@ -49,6 +49,14 @@ class BookInfoHandler(PageHandler):
         else:
             raise BaseException
         
+        logged_user = self.getUser()
+        if not logged_user:
+            viewer = 0
+        elif not logged_user.admin:
+            viewer = 1
+        elif logged_user.admin:
+            viewer = 3
+
         #gets the result as a tuple
         query = SellBook.getListings(book,order=qOrder,limit=limit,offset=offset,count=True)
         #breaks down the tuple
@@ -61,7 +69,7 @@ class BookInfoHandler(PageHandler):
 
         listings_json = []
         for listing in listings_raw:
-            listings_json.append(listing.toJson())
+            listings_json.append(listing.toJson(viewer=viewer))
 
         page = self.getPage(offset,limit)
 
@@ -70,7 +78,8 @@ class BookInfoHandler(PageHandler):
                         "limit": len(listings_json),
                         "offset": offset,
                         "total": total_count,
-                        "page": page}
+                        "page": page,
+                        "bid": book_id}
 
         if page > total_count:
             self.response.status_int = 400  #invalid page

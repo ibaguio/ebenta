@@ -13,6 +13,7 @@ from pagehandlers.SendMessage import *
 from pagehandlers.BookInfoHandler import *
 from pagehandlers.AdminHandler import *
 from pagehandlers.ConsigneeHandler import *
+from pagehandlers.SellOrdersHandler import *
 #version/upload number
 vs = 4
 
@@ -271,7 +272,7 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/sell/?',SellHandler),
                                (r'/sell/(step[1-4])/?',SellHandler),
                                (r'/sell/search/?',SearchHandler),
-                               (r'/sell/orders/?',SearchHandler),
+                               (r'/sell/order/?',SellOrdersHandler),
                                (r'/buy/?',BuyHandler),
                                (r'/buy/(step[1-4])/?',BuyHandler),
                                (r'/buy/search/?',SearchHandler),

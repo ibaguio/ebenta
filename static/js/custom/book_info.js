@@ -150,8 +150,6 @@ function loadOrder(order){
                 data.bid.toString() + "'>" + data.title.substr(0,33)+"</a></td></tr>" +
                 "<tr><td>Author</td><td>" + data.author +"</td></tr>" +
                 "<tfoot class='hidden' id='"+order+"-info-item"+i.toString()+"'>";
-                if (data.isbn != "")
-                    output+="<tr><td>ISBN</td><td> " + data.isbn + "</td></tr>";
                 output+="<tr><td>Price</td><td> Php " + data.price + "</td></tr>" +
                 "<tr><td>Rating</td><td> " + data.rating + "/5</td></tr>" +
                 "<tr><td>Posted</td><td> " + data.posted + "</td></tr>";
@@ -254,18 +252,52 @@ function getDetails(sellid){
     var xmlhttp = ajaxRequest();
     xmlhttp.onreadystatechange = function(){
         if (xmlhttp.readyState === 2){
-
         }
     }
     var params= "sellid="+encodeURIComponent(sellid);
-    xmlhttp.open("POST","/book/info",true);
+    params+="&bid="+encodeURIComponent(window.jdata.bid);
+    xmlhttp.open("POST","/sell/order",true);
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xmlhttp.send(params);
-
 }
 
 function viewDetails(sellid){
     $("div#modal-order-details").modal();
+    $("#loading-details").show();
+    //getDetails(sellid);
+    var theBook;
+    for (var num in window.jdata.books){
+        var b = JSON.parse(window.jdata.books[num]);
+        if (b.sellid == sellid){
+            //theBook = b;
+            $("#loading-details").hide();
+            populateModal(b);
+            break;
+        }
+    }
+}
+
+function populateModal(book){
+    seller = JSON.parse(book.user);
+    
+    var html = '<div class="span5"><h3>User Info</h3><table class="table table-condensed">'+
+        '<tr><td style="width:130px">Seller</td><td>'+seller.username+'</td></tr>'+
+        '<tr><td>Contact Num</td><td>';
+        if (seller.contactNum) html+= seller.contactNum;
+        else html+= " Info Private";
+        html+='</td></tr><tr><td>Email</td><td>';
+        if (seller.email) html+= seller.email;
+        else html+=
+            " Info Private";
+        html+='</td></tr><tr><td>Feedback Score</td><td>'+seller.score+'</td></tr>'+
+        '</table></div><div class="span5"><h3>Book Info</h3><table class="table table-condensed">'+
+            '<tr><td style="width:130px">Rating</td><td>'+generateStars(book.rating)+'</td></tr>'+
+            '<tr><td>Price</td><td>Php '+book.price+'</td></tr>'+
+            '<tr><td></td><td></td></tr>'+
+        '</table></div>';
+
+    document.getElementById("order-details").innerHTML = html;
+
 }
 /* adds the data for the books in window*/
 function addLoadedData(books){
