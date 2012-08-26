@@ -6,6 +6,10 @@ threadsafe: yes
 #default_expiration: "1h"
 
 handlers:
+- url: /book/list.txt
+  static_files: list.txt
+  upload: list.txt
+
 - url: /favicon\.ico
   static_files: static/favicon.ico
   upload: /static/favicon\.ico

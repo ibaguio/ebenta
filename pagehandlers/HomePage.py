@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 from pagehandlers.PageHandler import *
 from database.privacy import *
 

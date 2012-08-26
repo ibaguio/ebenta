@@ -1,11 +1,15 @@
 {% macro ebentaSearch(user,action="/search",next="") %}
-  <div class="ebenta-search">
-     <div class="label-top"><label class="ebenta-label">eBenta Search</label></div>
-     <form action="{{ action }}" method="get">
-        <input type="text" name="q" class="search-bar" placeholder="enter title or author"><input type="submit" value="Search a book"  class="btn btn-primary"> {% if user: %} or <a href="/sell" class="link">Sell your books</a> {% endif %}
+  <div style="width:80%;margin:0 auto">
+    <legend>eBenta Search</legend>
+     <form  class="form-search" action="{{ action }}" method="get">
+        <div class="input-append">
+            <input type="text" id="q" name="q" class="span4 search-query" data-provide="typeahead" placeholder="enter title or author" autocomplete="off">
+            <button type="submit" value="Search" class="btn btn-success">Search</button>
+        </div>
         {% if next: %} <input type="hidden" name="next" value="{{next}}">{% endif %}
      </form>
   </div>
+  {% block script_src%}<script src="/static/js/custom/searchdata.js"></script>{%endblock%}
 {%- endmacro %}
 
 {% macro getRegistrationForm(val,err,errs,from="/") %}

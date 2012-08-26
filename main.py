@@ -14,6 +14,7 @@ from pagehandlers.BookInfoHandler import *
 from pagehandlers.AdminHandler import *
 from pagehandlers.ConsigneeHandler import *
 from pagehandlers.SellOrdersHandler import *
+from cron.UpdateBookList import *
 #version/upload number
 vs = 4
 
@@ -298,4 +299,5 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/consignee',ConsigneeHandler),
                                (r'/testimage',TestImage),
                                (r'/clear/datastore/?',ClearDatastore),
+                               (r'/update_list/?',UpdateBookList),
                               ],debug=True)

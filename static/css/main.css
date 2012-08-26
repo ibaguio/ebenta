@@ -73,16 +73,6 @@ ul{
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
 }
-.ebenta-search{
-  position:relative;
-  margin: 15px auto;
-  border: solid #777;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  width: 330px;
-  height:150px;
-  text-align: center;
-}
 .search-bar{
     margin:10px;
     width: 270px;
