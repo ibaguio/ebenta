@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 import logging
-import jinja2
 import math
-from math import ceil
 from pagehandlers.PageHandler import *
 from pagehandlers.BuyHandler import *
 from pagehandlers.SellHandler import *
@@ -16,8 +14,7 @@ from pagehandlers.ConsigneeHandler import *
 from pagehandlers.SellOrdersHandler import *
 from pagehandlers.SearchHandler import *
 from cron.UpdateBookList import *
-#version/upload number
-vs = 4
+from cron.ManageExpiry import *
 
 class AboutHandler(PageHandler):
     def get(self):
@@ -274,4 +271,5 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/testimage',TestImage),
                                (r'/clear/datastore/?',ClearDatastore),
                                (r'/update_list/?',UpdateBookList),
+                               (r'/_admin/update_expiry/?',UpdateExpiry),
                               ],debug=True)

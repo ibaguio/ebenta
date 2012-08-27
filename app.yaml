@@ -6,6 +6,10 @@ threadsafe: yes
 #default_expiration: "1h"
 
 handlers:
+- url: /_admin/.*
+  script: main.app
+  login: admin
+
 - url: /book/list.txt
   static_files: list.txt
   upload: list.txt

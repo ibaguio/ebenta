@@ -5,6 +5,9 @@ import datetime,logging
 from dbModels import *
 from privacy import *
 
+exp_count = 0
+not_exp_count = 0
+not_yet_marked_as_expire = 0
 names = ['Smih', 'Angelo', 'Jones', 'Boulstridge', 'Williams', 'Bungard', 'Brown', 'Bursnell', 'Taylor', 'Cabrera', 'Davies', 'Chaisty', 'Wilson', 'Clayworth', 'Evans', 'Denial', 'Thomas', 'Dissanayake', 'Johnson', 'Domville', 'Roberts', 'Dua', 'Walker', 'Edeson', 'Wright', 'Garrott', 'Robinson', 'Gaspar', 'Thompson', 'Gauge', 'White', 'Gelson', 'Hughes', 'Happer', 'Edwards', 'Hawa', 'Green', 'Helling', 'Hall', 'Hollingberry']
 
 surnames = ['Abayari', 'Abeya', 'Abiad', 'Abinsay', 'Abiog', 'Ablang', 'Ablasa', 'Ablog', 'Abog', 'Abuan', 'Abucajo', 'Abucay', 'Abueg', 'Abut', 'Abuyen', 'Bagoyo', 'Bagsi', 'Bagsit', 'Bagtas', 'Bagu', 'Bagui', 'Bahaghar', 'Bahand', 'Bahena', 'Baiding', 'Baisac', 'Baita', 'Baje', 'Bakaranis', 'Balab', 'Balabagan', 'Balabis', 'Balaga', 'Balagot', 'Balagtas', 'Balamut', 'Datumanong', 'Dauz', 'Dawa', 'Dawi', 'Dawis', 'Daya', 'Dayag', 'Dayanan', 'Dayanghirang', 'Dayao', 'Dayap', 'Dayo', 'Dayoan', 'Mappala', 'Maquindang', 'Maquito', 'Maraan', 'Marahan', 'Maralit', 'Maramba', 'Maranan', 'Maranon', 'Marasigan', 'Marayag', 'Marigomon', 'Marikit', 'Marucut', 'Masaganda', 'Masakayan', 'Masangga', 'Masangkay', 'Masibay']
@@ -45,13 +48,40 @@ def createTestAccounts():
         test.append(u)
     return test
 
+#generates a random expiry
+def getRandomExpiry():
+    global not_yet_marked_as_expire
+    a = [True,False]
+    add = a[random.randint(0,1)]
+    if add:
+        return datetime.datetime.now() + datetime.timedelta(days=5)    
+    else:
+        not_yet_marked_as_expire +=1
+        return datetime.datetime.now() - datetime.timedelta(days=5)
+
 def createTestSellOrder(users,max_=3):
     books = Library.all().fetch(20)
+    a = [True,False,False]
+    global exp_count, not_exp_count
     for book in books:
         for i in range(random.randint(1,max_)):
-            sale = SellBook(user=users[random.randint(0,len(users)-1)], rating=random.randint(1,5), price=random.randint(20,70)*10.0,parent=book)
-            sale.expire = sale.posted + datetime.timedelta(365/12)
+            
+            exp = a[random.randint(0,2)]
+            if exp: 
+                exp_count += 1
+                e = datetime.datetime.now() - datetime.timedelta(days=5)
+            if not exp: #not yet expired
+                not_exp_count+=1
+                e = getRandomExpiry()
+
+            sale = SellBook(user=users[random.randint(0,len(users)-1)],expired=exp,\
+                rating=random.randint(1,5), price=random.randint(20,70)*10.0,parent=book,expiry_date=e)
             sale.put()
+
+    logging.info("EXPIRED COUNT:"+str(exp_count))
+    logging.info("NOT EXPIRED COUNT:"+str(not_exp_count))
+    logging.info("NOT YET MARKED AS EXP:"+str(not_yet_marked_as_expire))
+
 
 #creates database of sample books
 def createBookDb():
@@ -89,17 +119,17 @@ def getAllUsers():
     return u
 
 def generateMoreSellOrder():
-    createTestSellOrder(getAllUsers(),10)
+    #createTestSellOrder(getAllUsers(),10)
+    pass
 
 def loadOtherBooks():
     f = open("database/books.json")
     books_json = json.loads(f.read())
-    logging.info(type(books_json))
+    #logging.info(type(books_json))
     for category in books_json:
-        logging.info(category)
+        #logging.info(category)
         for book in books_json[category]:
-
-            logging.info(book)
+            #logging.info(book)
             new = Library(title=book['title'],author=book['author'])
             try:
                 new.isbn = book['isbn']

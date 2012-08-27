@@ -183,7 +183,7 @@ class Library(db.Model):
             stats["totalSold"] = str(tsold) + " copies"
 
         #get the listed books
-        listed = SellBook.all().filter("expire >", datetime.datetime.now()).filter("transaction = ",None).ancestor(self)
+        listed = SellBook.all().filter("expired", False).filter("transaction =",None).ancestor(self)
         sum_ = 0.0
         count = 0
         books_listed = listed.fetch(50)
@@ -259,9 +259,11 @@ class SellBook(db.Model):
     price = db.FloatProperty(required = True)
     comment = db.StringProperty() #Remember 500char limit
     posted = db.DateTimeProperty(auto_now_add = True)
-    expire = db.DateTimeProperty()
+    expired = db.BooleanProperty(default=False)
+    expiry_date = db.DateTimeProperty(required=True)
     transaction = db.ReferenceProperty(Transaction, default=None)
 
+    #creates a json representation for the order instance
     def toJson(self, viewer):
         book = self.parent()
         d = {#"title": book.title,
@@ -283,10 +285,8 @@ class SellBook(db.Model):
         q = cls.all()
         q.ancestor(book)
         q.order(order)
-        #q.order("-expire")  #error w/o this
-        if filterExpire:
-            #q.filter("expire >",datetime.datetime.now())
-            pass
+        if filterExpire:    #if true, do not include in query expired listings
+            q.filter("expired",False)
         if count_only:
             return q.count()
         ret = q.fetch(limit=limit,offset=offset)
@@ -294,7 +294,18 @@ class SellBook(db.Model):
             return (ret, q.count())
         else:
             return ret
- 
+    
+    #sets the expiry date of the sellorder
+    def setExpire(self, days, extend=False):
+        if extend:
+            base_date = self.expire_date
+            self.expired = False
+        else:
+            base_date = self.posted
+        new_exp_date = base_date + datetime.timedelta(days=days)
+        self.expire_date = new_exp_date
+        self.put()
+
 #contains messages from 2 users
 class Conversation(db.Model):
     userA = db.ReferenceProperty(User,required=True,collection_name="conversation_a") #receiver
