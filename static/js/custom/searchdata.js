@@ -19,4 +19,25 @@ function getSearchData(){
     xmlhttp.send();
 }
 
-$(window).ready(getSearchData());
+function toggleSearch(num){
+    if ($("a#toggle-search").text()[0]==="A"){
+        $("div#search-basic").hide();
+        $("div#search-advanced").show(500);
+        $("a#toggle-search").text("Basic Search");
+    }else{
+        $("div#search-advanced").hide();
+        $("div#search-basic").show(500);
+        $("a#toggle-search").text("Advanced Search");
+    }
+}
+/* updates the subcategory for advanced search */
+function updateSub(){
+    var cat_index = $("select#category option:selected").text();
+    if (cat_index !== "") $("div#sub-category-div").show(500);
+}
+
+$(window).ready(function(){
+    //var subcat = DICT OF SUBCAT
+    //window.subCategory = JSON.parse()   
+    getSearchData();
+});

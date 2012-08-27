@@ -2,24 +2,36 @@ from pagehandlers.PageHandler import *
 
 class SearchHandler(PageHandler):
     def get(self):
-        next = self.request.get("next")
+        query = self.getQuery()
+        logging.info(str(type(query)))
+        if type(query) == unicode:
+            self.basicSearch(query)
+        elif type(query) == dict:
+            self.advanceSearch(query)
+        else:
+            self.response.status_int = 404
+
+    def basicSearch(self,query):
         user =  self.isLogged()
-        query = self.request.get("q")
         if query == "" or query == "enter title or author":
-            self.redirect("/")
-        
+            self.redirect(self.request.referer)
+            return
+
         book = self.getBookKey(query)
         #directly redirects to book info page if query matches entire book title
         if book:
             self.redirect("/book/info?book="+str(book.id()))
+            return
 
         results,time = searchBooks(query.lower())
         self.render('search_results.html',
                         results=results,
                         time=self.getTime(time),
                         query=query,
-                        resLen=len(results),
-                        next=next)
+                        resLen=len(results))
+
+    def advanceSearch(self,query):
+        pass
 
     def getTime(self,time):
         if time > 1:
@@ -33,6 +45,17 @@ class SearchHandler(PageHandler):
                     break
         return ret
 
-    #checks if the query matches a book
+    #checks if the query matches a book, returns the key only
     def getBookKey(self,query):
         return Library.all().filter("title",query).get(keys_only=True)
+
+    def getQuery(self):
+        qtype = self.request.get("query-type")
+        if qtype != "advanced":
+            return self.request.get("q")
+        else:
+            return {"category":self.request.get("category"),
+                    "sub-category":self.request.get("sub-category"),
+                    "title":self.request.get("title"),
+                    "author":self.request.get("author"),
+                    "isbn":self.request.get("isbn")}
