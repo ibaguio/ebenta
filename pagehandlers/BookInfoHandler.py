@@ -11,7 +11,7 @@ class BookInfoHandler(PageHandler):
         	self.redirect("/book/error")
         	return
         if book:
-            stats = self.getBookStats(book)
+            stats = book.getStats()
             self.render("book.html",book=book, stats=stats)
             return
         self.redirect("/book/error")
@@ -91,37 +91,3 @@ class BookInfoHandler(PageHandler):
 
     def getPage(self,offset,limit):
         return (offset/limit) +1
-
-    #returns a dict containing the stats of the book
-    def getBookStats(self,book):
-        stats = {}
-        stats["newPrice"] = book.brandNewPrice
-        if stats["newPrice"] <= 0:
-            stats["newPrice"] = "No Data"
-
-        tsold = Transaction.all().ancestor(book).count()
-        if tsold == 0:
-            stats["totalSold"] = "None yet"
-        elif tsold == 1:
-            stats["totalSold"] = "1 copy"
-        elif tsold > 1:
-            stats["totalSold"] = str(Transaction.all().ancestor(book).count()) + " copies"
-
-        #get the listed books
-        listed = SellBook.all().filter("expire >", datetime.now()).filter("transaction = ",None).ancestor(book)
-        sum_ = 0.0
-        count = 0
-        books_listed = listed.fetch(50)
-        #get the average price for the last 50 listed books
-        if listed.count() > 0:
-            for book_posted in books_listed:
-                count+=1
-                sum_ += book_posted.price
-            ave = sum_/count
-            stats["avePrice"] = str(round(ave,2))
-        else:
-            stats["avePrice"] = "No Data"
-
-        
-        stats["listed"] = listed.count()
-        return stats

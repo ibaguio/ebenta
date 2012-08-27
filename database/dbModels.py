@@ -167,6 +167,39 @@ class Library(db.Model):
             return ret, q.count()
         return ret
 
+    #returns a dict containing the stats of the book
+    def getStats(self):
+        stats = {}
+        stats["newPrice"] = self.brandNewPrice
+        if stats["newPrice"] <= 0:
+            stats["newPrice"] = "No Data"
+
+        tsold = Transaction.all().ancestor(self).count()
+        if tsold == 0:
+            stats["totalSold"] = "None yet"
+        elif tsold == 1:
+            stats["totalSold"] = "1 copy"
+        elif tsold > 1:
+            stats["totalSold"] = str(tsold) + " copies"
+
+        #get the listed books
+        listed = SellBook.all().filter("expire >", datetime.datetime.now()).filter("transaction = ",None).ancestor(self)
+        sum_ = 0.0
+        count = 0
+        books_listed = listed.fetch(50)
+        #get the average price for the last 50 listed books
+        if listed.count() > 0:
+            for book_posted in books_listed:
+                count+=1
+                sum_ += book_posted.price
+            ave = sum_/count
+            stats["avePrice"] = str(round(ave,2))
+        else:
+            stats["avePrice"] = "No Data"
+
+        stats["listed"] = listed.count()
+        return stats
+
 class Feedback(db.Model):
     comment = db.StringProperty(required=True)
     rating = db.StringProperty(required=True,choices=["positive","neutral","negative"])

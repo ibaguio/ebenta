@@ -10,7 +10,6 @@ import re, time
 def getBook(bid):
     return Library.get_by_id(int(bid))
 
-
 #search books whose keywords match with the query    
 def searchBooks(query):
     start = time.time()
@@ -76,4 +75,3 @@ def mergeSort(toSort):
 		result.extend(mergeSort(right))
 
 	return result
-

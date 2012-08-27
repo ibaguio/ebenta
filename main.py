@@ -14,6 +14,7 @@ from pagehandlers.BookInfoHandler import *
 from pagehandlers.AdminHandler import *
 from pagehandlers.ConsigneeHandler import *
 from pagehandlers.SellOrdersHandler import *
+from pagehandlers.SearchHandler import *
 from cron.UpdateBookList import *
 #version/upload number
 vs = 4
@@ -137,33 +138,6 @@ class CommentHandler(PageHandler):
             com.put()
             self.redirect('/home?comment=success')
             
-class SearchHandler(PageHandler):
-    def get(self):
-        next = self.request.get("next")
-        user =  self.isLogged()
-        query = self.request.get("q").lower()
-        if query == "" or query == "enter title or author":
-            self.redirect("/")
-        
-        results,time = searchBooks(query)
-        self.render('search_results.html',
-                        results=results,
-                        time=self.getTime(time),
-                        query=query,
-                        resLen=len(results),
-                        next=next)
-    def getTime(self,time):
-        if time > 1:
-            ret = "<b>" + str(time)[:4] + "</b> seconds"
-        else:
-            postfix = ["milli","nano"]
-            for i in range(len(postfix)):
-                ntime = time*1000
-                if ntime > 1:
-                    ret = "<b>" + str(ntime)[:6] + "</b> "+postfix[i]+" seconds"
-                    break
-        return ret
-
 class AddBookHandler(PageHandler):
     def get(self):
         user = self.isLogged()
