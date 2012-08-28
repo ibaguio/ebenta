@@ -6,6 +6,10 @@ threadsafe: yes
 #default_expiration: "1h"
 
 handlers:
+- url: /clear/datastore #secure clearing of datastore to admin only
+  script: main.app
+  login: admin
+
 - url: /_admin/.*
   script: main.app
   login: admin

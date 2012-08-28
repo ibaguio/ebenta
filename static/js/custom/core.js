@@ -40,6 +40,18 @@ function generateStars(rating){
         markup+= '<img class="rating-star14" src="/static/images/white_star.png">';
     return markup;
 }
+/**/
+function validateImage(input,success_callback,fail_callback,cancel_callback){
+    if (input.value==""){
+      cancel_callback();
+      return;
+    }else if (!/(\.(gif|jpg|jpeg|bmp|png))$/i.test(input.value)){
+       fail_callback();
+       return;
+    }
+    success_callback();
+}
+
 /* identical to pythons string.title() built-in function */
 String.prototype.toProperCase = function () {
     return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});

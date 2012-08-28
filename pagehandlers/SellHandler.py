@@ -60,8 +60,8 @@ class SellHandler(PageHandler):
             new_ad = SellBook(user = user,
                           price = float(price),
                           rating= rating,
-                          parent = book)
-            new_ad.expire = new_ad.posted + datetime.timedelta(365/12) #expiration 1 month from now
+                          parent = book,
+                          expiry_date = datetime.datetime.now() + datetime.timedelta(days=def_exp_days))
             if comments:
                 new_ad.comment=comments
             new_ad.put()
@@ -75,7 +75,7 @@ class SellHandler(PageHandler):
             img = self.request.get("img3")
             if img: images.append(img)
             
-            logging.info("len:"+str(len(images)))
+            logging.info("images len:"+str(len(images)))
             for image in images:
                 logging.info("image type:"+str(self.getImageFormat(image)))
                 new_image = Image(image=db.Blob(image),ref=new_ad)

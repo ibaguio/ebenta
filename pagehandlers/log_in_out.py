@@ -4,7 +4,7 @@ from pagehandlers.PageHandler import *
 class LoginHandler(PageHandler):
     def get(self):
         if self.getUser():
-            self.redirect("/")
+            self.redirect("/home")
             return
         self.render('login.html')
         
@@ -37,7 +37,7 @@ class LoginHandler(PageHandler):
         x = {'user': self.request.get("uname"),
             'pass': self.request.get("password"),
             'rem':  self.request.get("remember")}
-        logging.error(x)
+        #logging.info(x)
         return x
 
 class LogoutHandler(PageHandler):

@@ -37,7 +37,7 @@ class PrivacySetting(db.Model):
 
 class User(db.Model):
     username = db.StringProperty(required = True)
-    password = db.StringProperty(required = True)
+    password = db.StringProperty(required = True,indexed=False)
     firstName = db.StringProperty(required = True)
     lastName = db.StringProperty(required = True)
     contactNum = db.StringProperty()
@@ -46,7 +46,7 @@ class User(db.Model):
     joined = db.DateProperty(auto_now_add = True)
     college= db.StringProperty(default="")
     degree= db.StringProperty(default="")
-    privacy= db.ReferenceProperty(PrivacySetting,required=True)
+    privacy= db.ReferenceProperty(PrivacySetting,required=True,indexed=False)
     admin = db.BooleanProperty(default=False)
     consignee = db.BooleanProperty(default=False)
     score = db.IntegerProperty(default=0)
@@ -114,18 +114,22 @@ class User(db.Model):
 class Image(db.Model):
     ref = db.ReferenceProperty(collection_name="images")
     image = db.BlobProperty(required=True)
-    comment = db.StringProperty(default=None)
+    comment = db.StringProperty(default=None,indexed=False)
     posted = db.DateTimeProperty(auto_now_add=True)
+
+class Author(db.Model):
+    name = db.StringProperty(required=True)
 
 class Library(db.Model):
     """ The Library is a 'table' that stores all the books i call
     it Library because somehow it contains the (list of) books """
     title = db.StringProperty(required = True)
+    author_ = db.ReferenceProperty(Author,collection_name="books")
     author = db.StringProperty()
     isbn = db.StringProperty(default="")
     searchKeys = db.StringListProperty()
-    description = db.StringProperty(default="")
-    brandNewPrice = db.FloatProperty(default=-1.0);
+    description = db.StringProperty(default="",indexed=False)
+    brandNewPrice = db.FloatProperty(default=-1.0,indexed=False);
 
     def toJson(self,**kwargs):
         d ={"title":self.title,
@@ -257,7 +261,7 @@ class SellBook(db.Model):
     user = db.ReferenceProperty(User,required = True)
     rating = db.RatingProperty(required = True)
     price = db.FloatProperty(required = True)
-    comment = db.StringProperty() #Remember 500char limit
+    comment = db.StringProperty(multiline=True,indexed=False) #Remember 500char limit
     posted = db.DateTimeProperty(auto_now_add = True)
     expired = db.BooleanProperty(default=False)
     expiry_date = db.DateTimeProperty(required=True)

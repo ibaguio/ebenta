@@ -301,5 +301,12 @@ function populateModal(book){
 }
 /* adds the data for the books in window*/
 function addLoadedData(books){
+}
+function showAdminModal(){
+    $("div#admin-control").modal();
+}
 
+function adminAddImage(){
+    showAdminModal();
+    $("div#addImage").show();
 }

@@ -28,6 +28,7 @@
 {% endblock %}
 
 {% block script_src %}<script src="/static/js/custom/user_profile.js"></script>{% endblock%}
+{% block jscript%}$(window).ready(checkUrl());{% endblock%}
 
 {% macro showMyProfile(user) %}
     <div class="row">
@@ -382,17 +383,17 @@
         <ul class="nav nav-list">
             <li class="nav-header">User</li>
 
-            <li class="active" id="li_profile"><a href="javascript:void(0)" onclick="showProfile()"><i class="icon-user"></i> Profile</a></li>
-            <li class id="li_inbox"><a href="javascript:void(0)" onclick="showInbox()"><i class="icon-envelope"></i> Inbox</a></li>
-            <li class id="li_settings"><a href="javascript:void(0)" onclick="showSettings()"><i class="icon-cog"></i> Settings</a></li>
+            <li class="active" id="li_profile"><a href="#profile" onclick="showProfile()"><i class="icon-user"></i> Profile</a></li>
+            <li class id="li_inbox"><a href="#inbox" onclick="showInbox()"><i class="icon-envelope"></i> Inbox</a></li>
+            <li class id="li_settings"><a href="#settings" onclick="showSettings()"><i class="icon-cog"></i> Settings</a></li>
             <li class="nav-header">Book Orders</li>
-            <li class id="li_sell_order"><a href="javascript:void(0)" onclick="showSellOrder()"><i class="icon-tags"></i> Sell Orders</a></li>
-            <li class id="li_buy_order"><a href="javascript:void(0)" onclick="showBuyOrder()"><i class="icon-book"></i> Buy Orders</a></li>
+            <li class id="li_sell_order"><a href="#sell_orders" onclick="showSellOrder()"><i class="icon-tags"></i> Sell Orders</a></li>
+            <li class id="li_buy_order"><a href="#buy_orders" onclick="showBuyOrder()"><i class="icon-book"></i> Buy Orders</a></li>
             <li class="divider"></li>
-            <li class id="li_help"><a href="javascript:void(0)" onclick="showUserHelp()"><i class="icon-flag"></i> Help</a></li>
+            <li class id="li_help"><a href="#help" onclick="showUserHelp()"><i class="icon-flag"></i> Help</a></li>
             <ul class="hidden" style="margin-left:10px;" id="help-options">
-                <li id="li_help-sell"><a href="#selling" onclick="showHelp('selling')">Selling</a></li>
-                <li id="li_help-buy"><a href="#buying" onclick="showHelp('buying')">Buying</a></li>
+                <li id="li_help-sell"><a href="#help_selling" onclick="showHelp('selling')">Selling</a></li>
+                <li id="li_help-buy"><a href="#help_buying" onclick="showHelp('buying')">Buying</a></li>
                 <li><a href="javascript:void(0)"></a></li>
             </ul>
         </ul>

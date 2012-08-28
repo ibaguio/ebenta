@@ -13,6 +13,9 @@ import os
 import webapp2
 import jinja2
 
+#default days before post expires
+def_exp_days = 30
+
 # TEMPLATE
 template_dir = os.path.join(os.path.dirname("main.py"),'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape = True)
@@ -53,7 +56,6 @@ class PageHandler(webapp2.RequestHandler):
         for (cookie,value) in d.items():
             biscuit = cookie + "=" + value +";"+ path+expire
             self.response.headers.add_header("Set-Cookie", str(biscuit))
-        logging.error("bis: "+biscuit)
     
     #returns username if user is logged in
     #Note: does not verify if user is a valid user, or the verification cookie is valid

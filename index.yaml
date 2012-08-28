@@ -1,0 +1,7 @@
+indexes:
+- kind: SellBook
+  ancestor: yes
+  properties:
+  - name: expired
+  - name: posted
+    direction: desc

@@ -19,21 +19,23 @@ function getSearchData(){
     xmlhttp.send();
 }
 
-function toggleSearch(num){
+function toggleSearch(){
+    if (location.pathname=="/")
+        $("div#mini-about").hide();
     if ($("a#toggle-search").text()[0]==="A"){
         $("div#search-basic").hide();
-        $("div#search-advanced").show(500);
+        $("div#search-advanced").slideDown("slow");
         $("a#toggle-search").text("Basic Search");
     }else{
         $("div#search-advanced").hide();
-        $("div#search-basic").show(500);
+        $("div#search-basic").slideDown("slow");
         $("a#toggle-search").text("Advanced Search");
     }
 }
 /* updates the subcategory for advanced search */
 function updateSub(){
     var cat_index = $("select#category option:selected").text();
-    if (cat_index !== "") $("div#sub-category-div").show(500);
+    if (cat_index !== "") $("div#sub-category-div").slideDown(500);
 }
 
 $(window).ready(function(){

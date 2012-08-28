@@ -128,20 +128,23 @@ function openBookPage(book_id){
 /* functions for nav in browse page */
 function showNav(){//show nav for browsing
     document.getElementById("imgHide").className="hidden";
-    document.getElementById("browsed-div").className="hidden";
+    $("div#browsed-div").hide();
+    $("#results-nav").hide();
     document.getElementById("browsed-title").className="hidden";
-    $("#browseNav").show(300,function(){
-        document.getElementById("browsed-div").className="span8 well";
+    $("#browseNav").slideDown("fast",function(){
         document.getElementById("browsed-title").className="span9";
-    });
-    
+        document.getElementById("browsed-div").className="span8 well";
+        $("div#browsed-div").slideDown("normal");
+        $("#results-nav").show();
+    })        
     $("#results-nav").removeClass();
     $("#results-nav").addClass("span9 offset3");
+
 }
 function hideNav(){//hide nav for browsing
-    document.getElementById("imgHide").className="";
+    $("#browseNav").hide();
     document.getElementById("browsed-div").className="span11-5 well";
     document.getElementById("browsed-title").className="span12";
-    $("#browseNav").hide(300);
+    document.getElementById("imgHide").className="";
     $("#results-nav").removeClass();
 }

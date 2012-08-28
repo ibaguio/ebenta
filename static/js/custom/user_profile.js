@@ -306,3 +306,24 @@ function hidePassword(){
     document.getElementById("form-change-password").className = "hidden";
     document.getElementById("edit-password").className= " ";
 }
+/* checks the url to determine defauls div to show*/
+function checkUrl(){
+    var index = location.href.indexOf("#");
+    if (index === -1) return;   //default to profile
+    var targ = location.href.substr(index,15);
+    if (targ==="#profile"){
+        showProfile();
+    }else if(targ==="#inbox"){
+        showInbox();
+    }else if(targ==="#settings"){
+        showSettings();
+    }else if(targ==="#sell_orders"){
+        showSellOrder();
+    }else if(targ==="#buy_order"){
+        showBuyOrder();
+    }else if(targ==="#help_selling"){
+        showHelp('selling');
+    }else if(targ==="#help_buying"){
+        showHelp('buying');
+    }
+}

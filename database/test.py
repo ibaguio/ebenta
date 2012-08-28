@@ -65,15 +65,15 @@ def createTestSellOrder(users,max_=3):
     global exp_count, not_exp_count
     for book in books:
         for i in range(random.randint(1,max_)):
-            
-            exp = a[random.randint(0,2)]
-            if exp: 
-                exp_count += 1
-                e = datetime.datetime.now() - datetime.timedelta(days=5)
-            if not exp: #not yet expired
-                not_exp_count+=1
-                e = getRandomExpiry()
-
+            #exp = a[random.randint(0,2)]
+            #if exp: 
+            #    exp_count += 1
+            #    e = datetime.datetime.now() - datetime.timedelta(days=5)
+            #if not exp: #not yet expired
+            #    not_exp_count+=1
+            #    e = getRandomExpiry()
+            e = datetime.datetime.now() + datetime.timedelta(days=2)
+            exp = False
             sale = SellBook(user=users[random.randint(0,len(users)-1)],expired=exp,\
                 rating=random.randint(1,5), price=random.randint(20,70)*10.0,parent=book,expiry_date=e)
             sale.put()
@@ -119,8 +119,7 @@ def getAllUsers():
     return u
 
 def generateMoreSellOrder():
-    #createTestSellOrder(getAllUsers(),10)
-    pass
+    createTestSellOrder(getAllUsers(),7)
 
 def loadOtherBooks():
     f = open("database/books.json")

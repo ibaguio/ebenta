@@ -27,7 +27,7 @@
     <div {% if step== 4 %} class="alert alert-success" {% endif %}>
     Step 4: Wait
         <ul>
-            <li>Depending on your <a href="/user/settings" style="text-decoration:none;">privacy settings</a> just wait for a <em>buyer</em> or an <em>admin</em> to contact you.</li>
+            <li>Depending on your <a href="/user#settings" style="text-decoration:none;">privacy settings</a> just wait for a <em>buyer</em> or an <em>admin</em> to contact you.</li>
         </ul>
     </div>
 {%- endmacro %}
@@ -82,30 +82,30 @@
         <tr><td>Comments</td><td><textarea style="height:40px;width:230px;" onfocus="blank(this)" name="comment"></textarea></td></tr>
         <tr><td>Image</td>
             <td>
-                <span id="simg1">
-                    <input type="file" name="img1" onchange="showAddImg(2)"/>
-                    <a href="#" onclick="removeImage(1)">
+                <div id="simg1" class="control-group">
+                    <input type="file" id="img1" name="img1" onchange="update(this)"/>
+                    <a href="javascript:void(0)" onclick="removeImage(1)">
                         <i class="icon-remove-sign"></i>
                     </a>
-                </span>
-                <span id="simg2" style="display:none">
-                    <input type="file" name="img2" onchange="showAddImg(3)"/>
-                    <a href="#" onclick="removeImage(2)">
+                </div>
+                <div class="control-group" id="simg2" style="display:none">
+                    <input type="file" id="img2" name="img2" onchange="update(this)"/>
+                    <a href="javascript:void(0)" onclick="removeImage(2)">
                         <i class="icon-remove-sign"></i>
                     </a>
-                </span>
-                <span id="simg3" style="display:none">
-                    <input type="file" name="img3"/>
-                    <a href="#" onclick="removeImage(3)">
+                </div>
+                <div class="control-group" id="simg3" style="display:none">
+                    <input type="file" id="img3" name="img1" onchange="update(this)"/>
+                    <a href="javascript:void(0)" onclick="removeImage(3)">
                         <i class="icon-remove-sign"></i>
                     </a>
-                </span>
+                </div>
             </td></tr>
     </table>
     <center>
         {% if errors: %}
             {% for err in errors: %}<label class="error">{{err}}</label><br/>{% endfor %}</br>{% endif %}
-        <tr><td></td><td><input type="submit" value="Post Sell Order" class="btn btn-success"></td></tr>
+        <tr><td></td><td><button type="submit" id="submit-order" class="btn btn-success">Post Sell Order</button></td></tr>
     </center>
     <input type="hidden" name="bid" value="{{book[0].key().id()}}">
     <input type="hidden" id="condition" name="rating" value="{% if rating: %}{{ rating }}{% else: %}0{% endif %}">
@@ -116,9 +116,9 @@
 {% macro showStep4(book) %}
 <h3>Post Success!</h3>
 <div id="sell-success">
-    You have successfully posted a sell order on your copy of <em><b>{{ book.title }}</b></em>. Depending on your <a href="/user" class="link">privacy settings</a> an admin, user, or guest may contact you.
+    You have successfully posted a sell order on your copy of <em><b>{{ book.title }}</b></em>. Depending on your <a href="/user#settings">privacy settings</a> an admin, user, or guest may contact you.
     <br/><br/>By default, only an admin can contact you if someone is interested to purchase your book. It may take a while, but we will contact you.    
-    <br/><br/><b>Make sure</b> the contact number on your <a href="/user/settings" class="link">profile</a> is valid. For now, this is the only way admins can contact you. (Dont worry, we would not disclose your personal details to anyone without your consent)</li>
+    <br/><br/><b>Make sure</b> the contact number on your <a href="/user">profile</a> is valid. For now, this is the only way admins can contact you. (Dont worry, we would not disclose your personal details to anyone without your consent)</li>
 </div>
 
 {% endmacro %}
