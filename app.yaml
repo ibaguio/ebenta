@@ -3,7 +3,7 @@ version: 2
 runtime: python27
 api_version: 1
 threadsafe: yes
-#default_expiration: "1h"
+default_expiration: 10d
 
 handlers:
 - url: /clear/datastore #secure clearing of datastore to admin only

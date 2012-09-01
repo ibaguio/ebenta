@@ -77,8 +77,9 @@ class SellHandler(PageHandler):
             
             logging.info("images len:"+str(len(images)))
             for image in images:
-                logging.info("image type:"+str(self.getImageFormat(image)))
-                new_image = Image(image=db.Blob(image),ref=new_ad)
+                ftype = self.getImageFormat(image)
+                logging.info("image type:"+str())
+                new_image = Image(image=db.Blob(image),ref=new_ad,ftype=ftype)
                 new_image.put()
             
             self.redirect('/sell/step4?book='+str(bid))

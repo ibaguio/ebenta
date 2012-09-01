@@ -4,4 +4,44 @@ indexes:
   properties:
   - name: expired
   - name: posted
+
+- kind: SellBook
+  ancestor: yes
+  properties:
+  - name: expired
+  - name: posted
+    direction: desc
+
+- kind: SellBook
+  ancestor: yes
+  properties:
+  - name: expired
+  - name: rating
+
+- kind: SellBook
+  ancestor: yes
+  properties:
+  - name: expired
+  - name: rating
+    direction: desc
+
+- kind: SellBook
+  ancestor: yes
+  properties:
+  - name: expired
+  - name: price
+
+- kind: SellBook
+  ancestor: yes
+  properties:
+  - name: expired
+  - name: price
+    direction: desc
+
+- kind: BuyBook
+  ancestor: yes
+  properties:
+  - name: expire
+    direction: desc
+  - name: posted
     direction: desc

@@ -114,6 +114,7 @@ class User(db.Model):
 class Image(db.Model):
     ref = db.ReferenceProperty(collection_name="images")
     image = db.BlobProperty(required=True)
+    ftpye = db.StringProperty(required=True,indexed=False)
     comment = db.StringProperty(default=None,indexed=False)
     posted = db.DateTimeProperty(auto_now_add=True)
 

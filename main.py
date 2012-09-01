@@ -11,8 +11,8 @@ from pagehandlers.SendMessage import *
 from pagehandlers.BookInfoHandler import *
 from pagehandlers.AdminHandler import *
 from pagehandlers.ConsigneeHandler import *
-from pagehandlers.SellOrdersHandler import *
 from pagehandlers.SearchHandler import *
+from pagehandlers.ImageHandler import *
 from cron.UpdateBookList import *
 from cron.ManageExpiry import *
 
@@ -244,7 +244,6 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/sell/?',SellHandler),
                                (r'/sell/(step[1-4])/?',SellHandler),
                                (r'/sell/search/?',SearchHandler),
-                               (r'/sell/order/?',SellOrdersHandler),
                                (r'/buy/?',BuyHandler),
                                (r'/buy/(step[1-4])/?',BuyHandler),
                                (r'/buy/search/?',SearchHandler),
@@ -271,5 +270,6 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/testimage',TestImage),
                                (r'/clear/datastore/?',ClearDatastore),
                                (r'/update_list/?',UpdateBookList),
-                               (r'/_admin/update_expiry/?',UpdateExpiry),
+                               (r'/_admin/update_expiry/?',UpdateExpiry),#cron job
+                               (r'/image/(\d+)(\.jpg|\.png|\.gif)?/?',ImageServeHandler),
                               ],debug=True)

@@ -16,9 +16,38 @@ class BookInfoHandler(PageHandler):
             return
         self.redirect("/book/error")
 
+    def post(self):
+        req = self.request.get("req")
+        if req == "sellers":
+            self.getListings()
+        elif req == "images":
+            self.getImages()
+
+    #retuns array of urls for the images of this order
+    def getImages(self):
+        try:
+            order_id = int(self.request.get("oid"))
+            book_id = int(self.request.get("bid"))
+            book = Library.get_by_id(book_id)
+            sellorder = SellBook.get_by_id(order_id,parent=book)
+            if not sellorder: raise
+        except: #no book/order found
+            self.response.status_int = 400
+            return
+
+        images = []
+        for img in sellorder.images:
+            images.append(img.key().id())
+        logging.info("imgs:"+str(images))
+        if not images:
+            self.response.status_int = 400
+        else:
+            self.write(json.dumps(images))
+
+
     #handles ajax request to get listings
     #SellOrder
-    def post(self):
+    def getListings(self):
         sort = self.request.get("sort")
         order = self.request.get("order")
         book_id = self.request.get("bid")

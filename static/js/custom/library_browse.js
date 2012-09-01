@@ -4,16 +4,16 @@ function requestLibrary(page){
     var xmlhttp = ajaxRequest();
     xmlhttp.onreadystatechange=function(){
         if (xmlhttp.readyState === 2){
-            $("#loading").show();
+            $("i#loading").show();
             $("#load-error").hide();
         }if (xmlhttp.readyState === 4){
             if (xmlhttp.status === 200){
-                $("#loading").hide();
-                $("#load-error").hide();
                 var jdata=JSON.parse(xmlhttp.responseText);
                 populateResults(jdata);
                 window.pages = jdata.pages;
                 window.page = jdata.page;
+                $("#loading").hide();
+                $("#load-error").hide();
             }else{
                 $("#loading").hide();
                 $("#load-error").show();

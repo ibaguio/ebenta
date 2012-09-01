@@ -46,7 +46,7 @@ function requestSellers(sort_by,def){
             }
         }
     }
-    var params= "bid="+encodeURIComponent(bid);
+    var params= "req=sellers&bid="+encodeURIComponent(bid);
     params+= "&sort="+encodeURIComponent(sort_by);
     params+= "&order="+order;
     if (window.offset)
@@ -269,20 +269,19 @@ function viewDetails(sellid){
     for (var num in window.jdata.books){
         var b = JSON.parse(window.jdata.books[num]);
         if (b.sellid == sellid){
-            //theBook = b;
-            $("#loading-details").hide();
             populateModal(b);
             break;
         }
     }
+    loadImages(sellid);
 }
 
 function populateModal(book){
     seller = JSON.parse(book.user);
     
-    var html = '<div class="span5"><h3>User Info</h3><table class="table table-condensed">'+
+    var html = '<div class="span5" ><h3>User Info</h3><table class="table table-condensed" style="margin-top:10px">'+
         '<tr><td style="width:130px">Seller</td><td>'+seller.username+'</td></tr>'+
-        '<tr><td>Contact Num</td><td>';
+        '<tr><td>Contact Number</td><td>';
         if (seller.contactNum) html+= seller.contactNum;
         else html+= " Info Private";
         html+='</td></tr><tr><td>Email</td><td>';
@@ -290,22 +289,43 @@ function populateModal(book){
         else html+=
             " Info Private";
         html+='</td></tr><tr><td>Feedback Score</td><td>'+seller.score+'</td></tr>'+
-        '</table></div><div class="span5"><h3>Book Info</h3><table class="table table-condensed">'+
+        '</table></div><div class="span5" ><h3>Book Info</h3><table class="table table-condensed" style="margin-top:10px">'+
             '<tr><td style="width:130px">Rating</td><td>'+generateStars(book.rating)+'</td></tr>'+
             '<tr><td>Price</td><td>Php '+book.price+'</td></tr>'+
             '<tr><td></td><td></td></tr>'+
         '</table></div>';
-
     document.getElementById("order-details").innerHTML = html;
+}
+/* gets the images for the sell order */
+function loadImages(oid){
+    var xmlhttp = ajaxRequest();
+    var bid = parseURLParams()["book"];
+    xmlhttp.onreadystatechange = function(){
+        if (xmlhttp.readyState === 2){
+        }else if (xmlhttp.readyState === 4){
+            if (xmlhttp.status === 200)
+                populateImages(JSON.parse(xmlhttp.responseText));
+            $("#loading-details").hide();
+        }
+    }
+    var params= "req=images&bid="+encodeURIComponent(bid);
+    params+= "&oid="+encodeURIComponent(oid);
+    xmlhttp.open("POST","/book/info",true);
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.send(params);
+}
+function populateImages(images){
+    var markup='<div class="span5"><h3>Images</h3><center style="margin-top:10px">';
+    for (var i=0;i<images.length;i++){
+    var url = "/image/"+images[i].toString();
+        markup+= "<img src='"+url+".png' class='img-polaroid' style='max-width:95%;margin: 7px auto'><br/>";
+    }
+    $("div#images-div").html(markup+"</center></div>");
+}
 
-}
-/* adds the data for the books in window*/
-function addLoadedData(books){
-}
 function showAdminModal(){
     $("div#admin-control").modal();
 }
-
 function adminAddImage(){
     showAdminModal();
     $("div#addImage").show();
