@@ -9,11 +9,12 @@ function requestLibrary(page){
         }if (xmlhttp.readyState === 4){
             if (xmlhttp.status === 200){
                 var jdata=JSON.parse(xmlhttp.responseText);
-                populateResults(jdata);
                 window.pages = jdata.pages;
                 window.page = jdata.page;
-                $("#loading").hide();
-                $("#load-error").hide();
+                populateResults(jdata,function(){
+                    $("#loading").hide();
+                    $("#load-error").hide();
+                });
             }else{
                 $("#loading").hide();
                 $("#load-error").show();
@@ -27,8 +28,13 @@ function requestLibrary(page){
 }
 
 function noImage(){
-    return '<div class="result-img" alt="No image available" title="no image available"><div style="height:25px"></div>'+
+    return '<div class="result-img" title="no image available"><div style="height:25px"></div>'+
             '<label class="label label-success" style="text-align:center;">No Image<br/>Available</label></div>';
+}
+
+function getImage(img){
+    return '<div class="result-img"><div style="height:25px"></div>'+
+            '<img src="'+img+'"></div>';
 }
 
 function getDescription(desc){
@@ -48,7 +54,7 @@ function modAuthor(author){
     return author;
 }
 //populate results in browse
-function populateResults(jdata){
+function populateResults(jdata,callback){
     var i=0;
     var books = JSON.parse(jdata.books);
     var buySell = JSON.parse(jdata.buySell);
@@ -62,6 +68,8 @@ function populateResults(jdata){
         '<span class="browsed-img"><a href="book/info?book='+book.key+'" class="book-image">';
         if (book.image==null)
             markup += noImage();
+        else
+            markup += getImage(book.image);
         markup+= '</a></span><div class="browsed-info"><table>'+
             '<tr><td class="tdmarg"><img src="/static/images/title.png" title="Book Title" class="icon16px"></td>'+
             '<td><a href="javascript:void(0)" class="link" rel="popover" onclick="openBookPage('+book.key+
@@ -78,8 +86,9 @@ function populateResults(jdata){
     $(".link").popover();
     generateBrowsePaginationMarkup();
     var offset = ((jdata.page-1)*14)+1;
-    var disp = "Showing "+offset+"-"+jdata.items+" of "+jdata.total;
+    var disp = "Showing "+offset+"-"+(offset+jdata.items)+" of "+jdata.total;
     $("#display-info").text(disp);
+    callback();
 }
 function generateBrowsePaginationMarkup(){
     var i=0;

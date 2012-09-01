@@ -10,23 +10,6 @@ def key(book):
     return db.Key.from_path(book.title,"books")
 
 # DATABASE MODELS
-
-class Unique(db.Model):
-  @classmethod
-  def check(cls, scope, value):
-    def tx(scope, value):
-      key_name = "U%s:%s" % (scope, value,)
-      ue = Unique.get_by_key_name(key_name)
-      if ue:
-        raise UniqueConstraintViolation(scope, value)
-      ue = Unique(key_name=key_name)
-      ue.put()
-    db.run_in_transaction(tx, scope, value)
-class UniqueConstraintViolation(Exception):
-  def __init__(self, scope, value):
-    super(UniqueConstraintViolation, self).__init__("Value '%s' is not unique within scope '%s'." % (value, scope, ))
-
-
 class PrivacySetting(db.Model):
     """show details to:
         admin = admin ONLY
@@ -53,7 +36,6 @@ class User(db.Model):
 
     #0 - guest  1 - user  3 - admin (AND YES ITS 3)
     def toJson(self,_all=False,viewer=0):
-        logging.info("viewer:"+str(viewer))
         d ={"username": self.username,
             "image": self.getImage(),
             "score": self.score}
@@ -65,7 +47,6 @@ class User(db.Model):
         if (viewer == 0 and self.privacy.showContact == "guest")\
             or (viewer == 1 and self.privacy.showContact in ["user","guest"])\
             or viewer == 3:
-                logging.info("here")
                 d["contactNum"] = self.contactNum
                 d["email"] = self.email
         if (viewer == 0 and self.privacy.showCollege == "guest")\
@@ -114,7 +95,7 @@ class User(db.Model):
 class Image(db.Model):
     ref = db.ReferenceProperty(collection_name="images")
     image = db.BlobProperty(required=True)
-    ftpye = db.StringProperty(required=True,indexed=False)
+    ftype = db.StringProperty(required=True,indexed=False)
     comment = db.StringProperty(default=None,indexed=False)
     posted = db.DateTimeProperty(auto_now_add=True)
 
@@ -159,7 +140,9 @@ class Library(db.Model):
             self.searchKeys.append(k)
 
     def getImage(self):
-        return None
+        img = self.images.get()
+        if not img: return
+        return "/image/"+str(img.key().id())+'.'+str(img.ftype)
 
     @classmethod
     def getListings(cls,limit=15,offset=0,order="title",count_only=False,count=False):
@@ -281,7 +264,6 @@ class SellBook(db.Model):
              "comment":self.comment,
              "posted": self.posted.strftime("%B %d, %Y")}
         d["user"] = self.user.toJson(viewer=viewer)
-        logging.info(str(d))
         return json.dumps(d)
 
     #returns all of the sell listings for a given book

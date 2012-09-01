@@ -278,7 +278,6 @@ function viewDetails(sellid){
 
 function populateModal(book){
     seller = JSON.parse(book.user);
-    
     var html = '<div class="span5" ><h3>User Info</h3><table class="table table-condensed" style="margin-top:10px">'+
         '<tr><td style="width:130px">Seller</td><td>'+seller.username+'</td></tr>'+
         '<tr><td>Contact Number</td><td>';
@@ -326,7 +325,19 @@ function populateImages(images){
 function showAdminModal(){
     $("div#admin-control").modal();
 }
-function adminAddImage(){
-    showAdminModal();
-    $("div#addImage").show();
+function adminAddImage(num){
+    if (num===2){
+        validateImage($("#img-upload"),function(){
+            $('#upload-img').show()    
+        },function(){
+            $("#img-upload").val("");
+        });
+    }else{
+        showAdminModal();
+        $("div#addImage").show();
+    }
 }
+function adminEditInfo(){
+    $("[id^=xbook]").hide();
+    $("[id^=xinput]").show();
+} 

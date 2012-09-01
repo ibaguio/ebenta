@@ -22,9 +22,8 @@ class LoginHandler(PageHandler):
                 #login the user
                 cookie = generateCookie(val.get('user'))    #dictionary
                 self.setCookies(cookie,expire = expire)
-                ref = self.request.referer
-                if ref:
-                    self.redirect(ref)
+                if self.request.referer:
+                    self.redirectBack()
                 else:
                     self.redirect("/home")
                 return

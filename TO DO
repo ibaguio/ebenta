@@ -146,7 +146,6 @@ ADMIN:
         * Add/change book info/stats
         * Remove book
         * Add new book copy (from consignee)
-        *
     
 Consignee:
     View Sold books
@@ -155,6 +154,22 @@ Consignee:
 How to Buy
     * Use Modals
 
+BOOK Categories:
+    Textbooks
+        Mathematics 
+        Engineering
+        English
+        Filipino
+        Science
+        History
+        Economics
+        Finance
+
+    Novels
+        SciFi/Fiction
+        Romance
+        Mystery
+        Historical
 
 <script src="/static/js/bootstrap/transition.js"></script>
     <script src="/static/js/bootstrap/alert.js"></script>

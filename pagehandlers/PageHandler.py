@@ -68,15 +68,11 @@ class PageHandler(webapp2.RequestHandler):
             return user
         self.logout()   #invalid cookie, remove cookie
     
-    #returns the db.Model of the current user 
+    #returns the db.Model of the current user
     def getUser(self):
         uname = self.getCookie('user')
         if uname:
             return User.all().filter('username',uname).get()
 
-    def newImage(self,blob,ref=None):
-        if reference:
-            img = Image(image=blob,ref=ref)
-        else:
-            img = Image(image=blob)
-        return img
+    def redirectBack(self):
+        self.redirect(self.request.referer)

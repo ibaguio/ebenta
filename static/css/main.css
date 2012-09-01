@@ -135,6 +135,10 @@ ul{
   height: 100px;
   width:75px;
 }
+.info-img{
+  height: 150px;
+  width:125px;
+}
 .result-info{
   width: 380px;
   position: absolute;

@@ -41,11 +41,14 @@ function generateStars(rating){
     return markup;
 }
 /**/
-function validateImage(input,success_callback,fail_callback,cancel_callback){
-    if (input.value==""){
+function validateImage(input_img,success_callback,fail_callback,cancel_callback){
+    var fname = input_img.value;
+    if (!fname)
+      fname = input_img.val();
+    if (fname===""){
       cancel_callback();
       return;
-    }else if (!/(\.(gif|jpg|jpeg|bmp|png))$/i.test(input.value)){
+    }else if (!/(\.(gif|jpe?g|jpeg|bmp|png))$/i.test(fname)){
        fail_callback();
        return;
     }

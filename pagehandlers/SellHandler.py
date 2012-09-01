@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from pagehandlers.PageHandler import *
+from utils.image import *
 import datetime
 
 #similar proccess with BuyHandler, check BuyHandler docu #tamad
@@ -77,16 +78,9 @@ class SellHandler(PageHandler):
             
             logging.info("images len:"+str(len(images)))
             for image in images:
-                ftype = self.getImageFormat(image)
-                logging.info("image type:"+str())
+                ftype = getImageFormat(image)
+                logging.info("image type:"+str(ftype))
                 new_image = Image(image=db.Blob(image),ref=new_ad,ftype=ftype)
                 new_image.put()
             
             self.redirect('/sell/step4?book='+str(bid))
-
-    #returns the image format
-    def getImageFormat(self, image):
-        if image[1:4] == 'PNG': return 'image/png'
-        if image[0:3] == 'GIF': return 'image/gif'
-        if image[6:10] == 'JFIF': return 'image/jpeg'
-        return None

@@ -38,7 +38,6 @@ class BookInfoHandler(PageHandler):
         images = []
         for img in sellorder.images:
             images.append(img.key().id())
-        logging.info("imgs:"+str(images))
         if not images:
             self.response.status_int = 400
         else:
@@ -93,7 +92,6 @@ class BookInfoHandler(PageHandler):
 
         if total_count == 0:    #tells the client that there is now listings for this book
             self.response.status_int = 401  #change this to something reasonable in http
-            logging.info("No sellers for book")
             return
 
         listings_json = []

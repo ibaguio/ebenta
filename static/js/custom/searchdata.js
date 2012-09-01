@@ -35,11 +35,42 @@ function toggleSearch(){
 /* updates the subcategory for advanced search */
 function updateSub(){
     var cat_index = $("select#category option:selected").text();
-    if (cat_index !== "") $("div#sub-category-div").slideDown(500);
+    var newOptions;
+    if (cat_index === "Textbook"){
+        $("div#sub-category-div").slideDown(500);
+        $("#sub-category option").remove();
+         newOptions = {
+            '':'',
+            'math' : 'Mathematics',
+            'engg' : 'Engineering',
+            'science' : 'Science',
+            'history' : 'History',
+            'english' : 'English',
+            'filipino': 'Filipino',
+            //'law' : 'Law',
+        };
+    }else if (cat_index === "Readings"){
+        $("div#sub-category-div").slideUp(500);
+        $("#sub-category option").remove();
+    }
+    populateOptions(newOptions);
+}
+
+function populateOptions(newOptions){
+    var select = $('#sub-category');
+        if(select.prop) 
+            var options = select.prop('options');
+        else 
+            var options = select.attr('options');
+        
+        $.each(newOptions, function(val, text) {
+            options[options.length] = new Option(text, val);
+        });
+        select.val('');
 }
 
 $(window).ready(function(){
     //var subcat = DICT OF SUBCAT
-    //window.subCategory = JSON.parse()   
+    //window.subCategory = JSON.parse()
     getSearchData();
 });
