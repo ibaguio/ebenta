@@ -52,6 +52,9 @@ function updateSub(){
     }else if (cat_index === "Readings"){
         $("div#sub-category-div").slideUp(500);
         $("#sub-category option").remove();
+    }else{
+        $("div#sub-category-div").slideUp(500);
+        $("#sub-category option").remove();
     }
     populateOptions(newOptions);
 }

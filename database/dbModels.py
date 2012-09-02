@@ -201,7 +201,16 @@ class Transaction(db.Model):
     fback_seller = db.ReferenceProperty(Feedback,collection_name="seller_feedback")
     #feedback to buyer: i.e seller's rating of buyer
     fback_buyer = db.ReferenceProperty(Feedback,collection_name="buyer_feedback")
-   
+
+class ConsignedBook(db.Model):
+    consignee = db.ReferenceProperty(User,required=True,collection_name="consigned_books")
+    added_by = db.ReferenceProperty(User,required=True,collection_name="consigned_books_added")
+    ask_price = db.FloatProperty(required=True) #amount that the consignee gets when the book is sold
+    price = db.FloatProperty()
+    rating = db.RatingProperty(required=True)
+    expire = db.BooleanProperty(default=False)
+    posted = db.DateTimeProperty(auto_now_add=True)
+
 #ads for buying
 class BuyBook(db.Model):
     user = db.ReferenceProperty(User,required = True)

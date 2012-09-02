@@ -92,7 +92,7 @@ function populateUsers(jdata){
 
 /* show the book stats*/
 function getStats(){
-    $("#book-stats").show(500,function(){
+    $("#book-stats").slideDown(500,function(){
         $("#icon-show-stats").removeClass();
         $("#icon-show-stats").addClass("icon-ok");
     });

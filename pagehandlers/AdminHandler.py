@@ -4,7 +4,8 @@ from utils.image import *
 
 class AdminHandler(PageHandler):
     def get(self):
-        if not self.getUser().admin:
+        user = self.getUser()
+        if not user.admin:
             self.redirect("/")
             return
         self.render("admin.html",user=user,admin_active="active")
@@ -16,6 +17,8 @@ class AdminHandler(PageHandler):
             self.imgUpdate()
         elif self.request.get("update-info"):
             self.infoUpdate()
+        elif self.request.get("add-consignee"):
+            self.addConsignee()
         self.redirectBack()
 
     def imgUpdate(self):
@@ -56,3 +59,37 @@ class AdminHandler(PageHandler):
                 book.put()
         except:
             pass
+
+    def addConsignee(self):
+        try:
+            uid = int(self.request.get("uid"))#uid of consignee
+            consignee = User.get_by_id(uid)
+            added_by = self.getUser()
+            if not consignee.consignee or not added_by.admin: raise
+
+            bid = int(self.request.get("bid"))
+            ask_price = float(self.request.get("ask-price"))
+            price = float(self.request.get("price"))
+            rating = int(self.request.get("rating"))
+
+            new_consigned_book = ConsignedBook(consignee=consignee,added_by=added_by,ask_price=ask_price,rating=rating)
+            new_consigned_book.put()
+
+        except:
+            pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

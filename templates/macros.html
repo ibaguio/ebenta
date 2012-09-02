@@ -12,7 +12,7 @@
             <div class="control-group" style="margin-left:-50px">
                 <label class="control-label" for="category">Category</label>
                 <div class="controls">
-                    <select class="span2" id="category" onchange="updateSub()">
+                    <select class="span2" id="category" name="cat" onchange="updateSub()">
                         <option></option>
                         <option>Textbook</option>
                         <option>Readings</option>
@@ -22,7 +22,7 @@
             <div class="control-group" style="margin-left:-50px;display:none" id="sub-category-div">
                 <label class="control-label" for="sub-category">Sub Category</label>
                 <div class="controls">
-                    <select class="span2" id="sub-category">
+                    <select class="span2" id="sub-category" name="sub-cat">
                         <option></option>
                     </select>
                 </div>
@@ -30,19 +30,19 @@
             <div class="control-group" style="margin-left:-50px">
                 <label class="control-label" for="title">Title</label>
                 <div class="controls">
-                    <input type="text" id="title" class="input-large" placeholder="Title">
+                    <input type="text" id="title" name="title" class="input-large" placeholder="Title">
                 </div>
             </div>
             <div class="control-group" style="margin-left:-50px">
                 <label class="control-label" for="author">Author</label>
                 <div class="controls">
-                    <input type="text" id="author" class="input-large" placeholder="Author">
+                    <input type="text" id="author" class="input-large" placeholder="Author" name="author">
                 </div>
             </div>
             <div class="control-group" style="margin-left:-50px">
                 <label class="control-label" for="isbn">ISBN</label>
                 <div class="controls">
-                    <input type="text" id="isbn" class="input-large" placeholder="ISBN">
+                    <input type="text" id="isbn" class="input-large" placeholder="ISBN" name="isbn">
                 </div>
             </div>
             <button type="submit" class="btn btn-success pull-right" style="margin-right:60px">Search</button>

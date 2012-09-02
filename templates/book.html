@@ -117,9 +117,11 @@
                 <li ><a href="javascript:void(0)" id="" onclick="">
                     <i class="icon-plus-sign" ></i>Add Consignee</a></li>
                 <li ><a href="javascript:void(0)" id="" onclick="adminAddImage()">
-                    <i class="icon-picture" ></i>Add Image</a></li>                    
+                    <i class="icon-picture" ></i>Add Image</a></li>
                 <li ><a href="javascript:void(0)" id="" onclick="">
-                    <i class="icon-time" ></i>View History</a></li>                
+                    <i class="icon-time" ></i>View History</a></li>
+                <li ><a href="javascript:void(0)" id="" onclick="">
+                    <i class="icon-remove-sign" ></i>Remove</a></li>
             </ul>
         </div>
         {% endif %}
@@ -131,7 +133,8 @@
             <h3>How to Buy</h3>
         </div>
         <div class="modal-body">
-            <p>One fine body…</p>
+            
+            
         </div>
         <div class="modal-footer">
             <a href="#" class="btn" data-dismiss="modal">Close</a>
@@ -169,6 +172,42 @@
                     <br/><input type="submit" id="upload-img" value="Upload Image" name="upload-img" class="btn btn-success" style="display:none">
                     <input type="hidden" name="bid" value="{{book.key().id()}}">
                 </form>
+            </div>
+            <div id="addConsignee">
+                <h3>Add Consignee</h3>
+
+                <div class="span5">
+                Search User
+                <form action="/" method="post" class="form-inline">
+                    <div class="row">
+                    <div class="span"><input type="text" name="user-query" placeholder="Username, Name, or Email"></div>
+                    <div class="btn-group span">
+                        <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">Search
+                            <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Username</a></li>
+                        <li><a href="#">Name</a></li>
+                        <li><a href="#">Email</a></li>
+                    </ul>
+                    </div>  
+                    </div>
+                </form>
+                </div>
+                <div class="span5">
+                <form action="/admin" method="post">
+                    <input type="text" placeholder="Username" class="input-medium" id="dis-uname" disabled>
+                    <div class="input-prepend">
+                        <span class="add-on">Php</span><input type="text" name="ask-price" placeholder="Ask Price" class="input-mini"> 
+                    </div>
+                    <div class="input-prepend">
+                        <span class="add-on">Php</span><input type="text" name="price" placeholder="Sell Price" class="input-mini"> 
+                    </div>
+                    Rating
+                    <br/><input type="submit" id="add-consignee" value="Add Consigned Copy" name="upload-img" class="btn btn-success">
+                    <input type="hidden" name="uid">
+                    <input type="hidden" name="bid" value="{{book.key().id()}}">
+                </form>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -240,21 +279,4 @@
     <input type="hidden" name="bid" value="{{book.key().id()}}">
     <input id="xinput-submit" type="submit" name="update-info" value="Update Info" class="btn btn-success pull-right" style="display:none">
     </form>
-{% endmacro %}
-
-{% macro nothin() %}
-{% for item in for_sale%}
-                <div id="item-info" class="row span5" style="position:relative;padding:14px 0px">
-                    <span class="thumbnail" style="margin:0 15px;width:105px;">
-                        <a class="thumbnail" href="/user?usr={{item.user.username}}"><img src="{{item.user.getImage()}}" class="img100"></a>
-                    </span>                    
-                    <table class="table table-condensed" style="position:absolute;top:15px;left:140px;">
-                        <tr><td>Seller</td><td><a href="/user?usr={{item.user.username}}">{{item.user.username}}</a></td></tr>
-                        <tr><td>Book Rating</td><td><a rel="popover" data-content="{{getDesc(item.rating)}}" data-original-title="{{getDescTitle(item.rating)}}">{%for i in range(item.rating)%}<img class="rating-star14" src="/static/images/gold_star.png">{%endfor%}{%for i in range(item.rating,5)%}<img class="rating-star14" src="/static/images/white_star.png">{%endfor%}</a></td></tr>
-                        <tr><td>Price</td><td>Php {{item.price}}</td></tr>
-                        {% if item.comment %}<tr><td>Comments</td><td>{{item.comment}}</td></tr>{%endif%}
-                        <tr><td>Date Posted</td><td>{{item.posted.strftime("%B %d, %Y")}}
-                    </table>
-                </div>
-            {% endfor %}
 {% endmacro %}
