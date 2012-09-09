@@ -106,6 +106,8 @@
         <label><input type="submit" value="Register" class="btn btn-success" tabindex="8"></label>
         <input type="hidden" name="from" value="{{from}}">
     </form>
+    <a href="/login/google" class="zocial google">Sign up with Google</a>
+    <a href="/login/facebook" class="zocial facebook">Sign up with Facebook</a>
     </div>
     <script type="text/javascript">
         $(document).ready(function(){$("a.pops").popover();});
@@ -121,16 +123,30 @@
 
 {% macro top_login() %}
     <div class="nav pull-right">
-    <ul class="nav"><li class="dropdown">
+    <ul class="nav">
+    <li>
+        <a href="/register">Sign up</a>
+    </li>
+    <li class="dropdown">
     <a id="login-form" class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">Login<b class="caret"></b></a>
-    <div class="dropdown-menu" style="width:165px;padding:15px;">
+    <div class="dropdown-menu" style="width:180px;padding:25px;border:solid">
+        <div>
         <h3>ebenta Login</h3>
         <form action="/login" method="post">
-            <input name="uname" style="margin-bottom: 15px;width:150px;" type="text"/ placeholder="Username">
-            <input name="password" style="margin-bottom: 15px;width:150px;" type="password"/ placeholder="Password">
+            <input name="uname" style="margin-bottom:15px;width:95%;" type="text"/ placeholder="Username">
+            <input name="password" style="margin-bottom: 15px;width:95%;" type="password"/ placeholder="Password">
             <label class="string optional" for="remember"><input name="remember" style="float: left; margin-right: 10px;" type="checkbox" value="1" /> Remember me</label>
-            <input class="btn btn-success" style="clear:left;width:150px;height:32px;font-size:13px;" type="submit" value="Login" />
+            <center>
+            <input class="btn btn-success" style="margin:0 auto;clear:left;width:150px;height:32px;font-size:13px;" type="submit" value="ebenta Login" />
+            </center>
         </form>
+        </div>
+        <div id="oauth-login">
+            <center>
+            <a href="/login/google" class="zocial google" style="font-size: 12.5px;padding:2px;margin-bottom:10px">Log in with Google</a>
+            <a href="/login/facebook" class="zocial facebook" style="font-size: 12px;padding:2px">Log in with Facebook</a>
+            </center>
+        </div>
     </div>
     </li></ul>
     </div>

@@ -236,11 +236,18 @@ class ClearDatastore(PageHandler):
 
         self.write("Datastore Cleared Boss")
 
+class NewHomePage(PageHandler):
+    def get(self):
+        self.render("new_home.html")
+
 app = webapp2.WSGIApplication([(r'/', HomePage),
+                               (r'/new', NewHomePage),
                                (r'/register/?',RegisterHandler),
                                (r'/home/?',UserHome),
                                (r'/logout/?',LogoutHandler),
                                (r'/login/?',LoginHandler),
+                               (r'/login/google?',LoginGoogleHandler),
+                               (r'/login/facebook?',LoginFacebookHandler),
                                (r'/sell/?',SellHandler),
                                (r'/sell/(step[1-4])/?',SellHandler),
                                (r'/sell/search/?',SearchHandler),

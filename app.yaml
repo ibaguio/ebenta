@@ -14,6 +14,9 @@ handlers:
   script: main.app
   login: admin
 
+- url: /css/zocial/*
+  static_dir: /static/css/zocial
+
 - url: /book/list.txt
   static_files: list.txt
   upload: list.txt

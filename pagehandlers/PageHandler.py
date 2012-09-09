@@ -7,6 +7,7 @@ from database.dbModels import *
 from database.test import *
 
 from google.appengine.ext import db
+from google.appengine.api import users
 
 import json
 import os

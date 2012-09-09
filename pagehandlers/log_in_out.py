@@ -43,3 +43,22 @@ class LogoutHandler(PageHandler):
     def get(self):
         self.logout()
         self.redirect("/")
+
+class LoginGoogleHandler(PageHandler):
+    def get(self):
+        ver = self.request.get("verify")
+        if not ver:
+            self.redirect(users.create_login_url("/login/google?verify=True"))
+            return
+        else:
+            user = users.get_current_user()
+            if not user:
+                self.redirect(users.create_login_url("/login/google?verify=True"))
+                return
+            else:
+                self.write("Username: "+str(user.user_id())+"<br/>Email "+str(user.email())+"<br/>Name: "+str(user.nickname())+"<br/>Admin?"+str(user.is_current_user_admin()))
+                #new_user = User(username=user.user_id(),email=user.email(),)
+
+class LoginFacebookHandler(PageHandler):
+    def get(self):
+        self.write("Feature to be added")
