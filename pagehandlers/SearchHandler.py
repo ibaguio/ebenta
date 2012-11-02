@@ -3,6 +3,8 @@ from pagehandlers.PageHandler import *
 class SearchHandler(PageHandler):
     def get(self):
         query = self.getQuery()
+        if not query:
+            self.render("search.html")
         if type(query) == unicode:
             self.basicSearch(query)
         elif type(query) == dict:

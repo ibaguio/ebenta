@@ -168,15 +168,21 @@ class AddBookHandler(PageHandler):
 
 class RequestBookHandler(PageHandler):
     def get(self):
+        if not self.isLogged():
+            self.render("loggedout.html")
+            return
         bid = self.request.get("book")
         try:
             book = Library.get_by_id(int(bid))
             if not book: raise
         except:
-            self.redirect("/book/error")
+            self.render("book_request.html")
             return
-        self.render("book_request.html",book=book)
+        self.render("book_request.html",book=book,data_date=self.getDataDate(),today=datetime.datetime.today())
 
+    def getDataDate(self):
+        date_now = datetime.date.today() + datetime.timedelta(days=7)
+        return str(date_now.strftime("%d/%m/%Y"))
 
 class BookError(PageHandler):
     def get(self):
@@ -241,25 +247,24 @@ class NewHomePage(PageHandler):
         self.render("new_home.html")
 
 app = webapp2.WSGIApplication([(r'/', HomePage),
-                               (r'/new', NewHomePage),
                                (r'/register/?',RegisterHandler),
                                (r'/home/?',UserHome),
                                (r'/logout/?',LogoutHandler),
                                (r'/login/?',LoginHandler),
-                               (r'/login/google?',LoginGoogleHandler),
-                               (r'/login/facebook?',LoginFacebookHandler),
+                               #(r'/oauth',TestLoginHandler),
+                               #(r'/oauth/ok',TestGetCredentials),
                                (r'/sell/?',SellHandler),
                                (r'/sell/(step[1-4])/?',SellHandler),
                                (r'/sell/search/?',SearchHandler),
-                               (r'/buy/?',BuyHandler),
-                               (r'/buy/(step[1-4])/?',BuyHandler),
-                               (r'/buy/search/?',SearchHandler),
+                               #(r'/buy/?',BuyHandler),
+                               #(r'/buy/(step[1-4])/?',BuyHandler),
+                               #(r'/buy/search/?',SearchHandler),
                                (r'/suggest/?',CommentHandler),
                                (r'/search/?',SearchHandler),
                                (r'/testdb/(\d+)/?',TestDb),
                                (r'/user/update/?',UserSettings),
-                               (r'/user/sendmessage/?',SendMessage),
-                               (r'/user/inbox/?',SendMessage),
+                               #(r'/user/sendmessage/?',SendMessage),
+                               #(r'/user/inbox/?',SendMessage),
                                (r'/user/orders/?',UserOrder),
                                (r'/user/?',UserProfile),
                                (r'/book/info/?',BookInfoHandler),

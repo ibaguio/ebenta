@@ -1,4 +1,6 @@
-
+body{
+  background-color: #d0d0d0;
+}
 
 @media 
 input[type=text]{

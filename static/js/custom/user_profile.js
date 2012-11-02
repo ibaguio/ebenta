@@ -100,24 +100,22 @@ function hideAll(){//hide all divs in profile
 }
 /*functions to change user information*/
 function changeName(){
-    var n = "name";
-    changeGeneral(n);
+    changeGeneral("name");
 }
 function changeEmail(){
-    var n = "email";
-    changeGeneral(n);
+    changeGeneral("email");
 }
 function changeNum(){
-    var n = "num";
-    changeGeneral(n);
+    changeGeneral("name");
 }
 function changeCollege(){
-    var n = "college";
-    changeGeneral(n);
+    changeGeneral("college");
 }
 function changeDegree(){
-    var n = "degree";
-    changeGeneral(n);
+    changeGeneral("degree");
+}
+function changeDormitory(){
+    changeGeneral("dormitory");
 }
 function changeGeneral(n){
     document.getElementById("form-"+n).className="";
@@ -232,7 +230,7 @@ function updateProfile(){
             if (xmlhttp.status === 200){
                 document.getElementById("settings-updated").className = "alert alert-success";//show ok updated
                 document.getElementById("req-ok").innerText = "Profile successfully updated!";
-                hideProfile('name');hideProfile('num');hideProfile('email');hideProfile('college');hideProfile('degree');
+                hideProfile('name');hideProfile('num');hideProfile('email');hideProfile('college');hideProfile('degree');hideProfile('dormitory');
                 document.getElementById("update-profile-submit").className = "hidden";
             }else if (xmlhttp.status === 400){
                 document.getElementById("settings-not-updated").className = "alert alert-error";
@@ -246,6 +244,7 @@ function updateProfile(){
     var email="email="+encodeURIComponent(document.getElementById("input-email").value);
     var college="college="+encodeURIComponent(document.getElementById("input-college").value);
     var degree="degree="+encodeURIComponent(document.getElementById("input-degree").value);
+    var dormitory="dormitory="+encodeURIComponent($("#form-dormitory option:selected").val())
     var params="";
     if (document.getElementById("change-name").value === "True")
         params+=first+"&"+last+"&";
@@ -257,6 +256,8 @@ function updateProfile(){
         params+=college+"&";
     if (document.getElementById("change-degree").value === "True")
         params+=degree+"&";
+    if (document.getElementById("change-dormitory").value === "True")
+        params+=dormitory+"&";
     params+="submit=profile";//tells the server that this is an update to profile info
     xmlhttp.open("POST","/user/update",true);
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
@@ -305,25 +306,4 @@ function hidePassword(){
     document.getElementById("new2").value = "";
     document.getElementById("form-change-password").className = "hidden";
     document.getElementById("edit-password").className= " ";
-}
-/* checks the url to determine defauls div to show*/
-function checkUrl(){
-    var index = location.href.indexOf("#");
-    if (index === -1) return;   //default to profile
-    var targ = location.href.substr(index,15);
-    if (targ==="#profile"){
-        showProfile();
-    }else if(targ==="#inbox"){
-        showInbox();
-    }else if(targ==="#settings"){
-        showSettings();
-    }else if(targ==="#sell_orders"){
-        showSellOrder();
-    }else if(targ==="#buy_order"){
-        showBuyOrder();
-    }else if(targ==="#help_selling"){
-        showHelp('selling');
-    }else if(targ==="#help_buying"){
-        showHelp('buying');
-    }
 }

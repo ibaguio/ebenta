@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% import "macros.html" as macro %}
+
+{% block login %}
+    {% if username: %}
+        {{ macro.top_welcome(username) }}
+    {% else: %}
+        {{ macro.top_login() }}
+    {% endif %}
+{% endblock %}
+
+{%block other_css%}
+<style media="screen" type="text/css">
+
+#search-div {
+    position: absolute;
+    height: 200px;
+    width: 600px;
+    margin: -200px 0 0 -300px;
+    top: 55%;
+    left: 50%;
+}
+</style>
+{%endblock%}
+{% block content %}
+    <div id="search-div" >
+        {{macro.ebentaSearch()}}
+    </div>
+{% endblock %}

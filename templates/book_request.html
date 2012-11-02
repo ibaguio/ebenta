@@ -1,0 +1,84 @@
+{% extends "home_base.html"%}
+{% import "macros.html" as macro %}
+
+{% block login %}
+    {% if user: %}
+        {{ macro.top_welcome(user) }}
+    {% else: %}
+        {{ macro.top_login() }}
+    {% endif %}
+{% endblock %}
+{% block other_css %}<link type="text/css" rel="stylesheet" href="/static/css/datepicker.css" />{% endblock %}
+{% block script_src%}<script src="/static/js/bootstrap/datepicker.js"></script>{%endblock%}
+{% block jscript%}
+    $(function(){
+        var today = new Date();
+        var numberOfDaysToAdd = 6;
+        today.setDate(today.getDate() + numberOfDaysToAdd); 
+        var dd = today.getDate();
+        var mm = today.getMonth()+1;
+        var yy = today.getFullYear();
+        if (dd<10){dd="0"+dd}
+        if (mm<10){mm="0"+mm}
+        today = dd+"/"+mm+"/"+yy;
+
+        $("#date-picker").val(today);
+        $("#date-picker").datepicker().on('changeDate', function(ev){
+        if (ev.date.valueOf() < today){
+            $("#invalid-date").text("Invalid Date");
+            $("#invalid-date").show();
+        }else if (ev.date.valueOf() == today.valueOf()){
+            $("#invalid-date").text("Today?");
+            $("#invalid-date").show();
+        }else{
+            $("#invalid-date").hide();
+        }
+        });
+    })
+{% endblock %}
+{% block left_content%}
+    <div id="book-request-form" class="span5" style="margin-left:50px">
+        <legend>Book Request</legend>
+        <form action="" method="post" class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="title"> Title </label>
+                <div class="controls"><input type="text" class="input-medium" placeholder="Title" id="title" value={%if book%}"{{book.title}}" disabled{%else%}""{%endif%}></div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="author"> Author </label>
+                <div class="controls"><input type="text" class="input-medium" id ="author" placeholder="Author (optional)" value={%if book%}"{{book.author}}" disabled{%else%}""{%endif%}></div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="isbn"> ISBN </label>
+                <div class="controls"><input type="text" class="input-medium" placeholder="ISBN (optional)" id="isbn" value={%if book%}"{{book.isbn}}" disabled{%else%}""{%endif%}></div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="isbn"> Date Needed</label>
+                <div class="controls">
+                        <input class="input-medium datepicker" type="text" id="date-picker" 
+                         data-date-format="dd/mm/yyyy" value="{{data_date}}">
+                    <span id="invalid-date" class="label label-warning" style="display:none">Invalid Date</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="isbn"> Special Requests</label>
+                <div class="controls">
+                    <textarea class="input-medium" style="height:70px;max-width:200px"></textarea>
+                </div>
+            </div>
+            {%if book%}<input type="hidden" name="bid" value="book.key().id()">{%endif%}
+            <center>
+                <div class="control-group"><div class="controls">
+                    <input type="submit" class="btn btn-success" value="Request Book"></div>
+                </div>
+            </center>
+        </form>
+    </div>
+{% endblock %}
+
+{% block right_content%}
+    <div id="book-request-info" style="border:solid" class="span4">
+        <h3>Requesting for a Book</h3>
+        
+    </div>
+{% endblock %}

@@ -20,7 +20,6 @@ def valid_name(name):
     return name and NAME_RE.match(name)
 
 def valid_password(password):
-    logging.error("password:"+password+"x:"+str(PASS_RE.match(password)))
     return password and PASS_RE.match(password)
 
 def valid_contactNum(num):

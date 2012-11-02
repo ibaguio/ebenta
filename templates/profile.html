@@ -96,6 +96,27 @@
                         <td><a href="javascript:void(0)" onclick="changeDegree()" id="href-degree"><label><i class="icon-wrench"></i>
                             <span id="edit-degree"> edit</span></label></a>
                         </td></tr>
+                    <tr><td>Dormitory</td>
+                        <td><div id="form-dormitory" class="hidden">
+                                <select name="dormitory" class="input-medium" id="input-dormitory" onchange="change('dormitory')">
+                                    <option value="None"{%if user.dormitory=="None"%}selected{%endif%}>None</option>
+                                    <option value="Centennial"{%if user.dormitory=="Centennial"%}selected{%endif%}>Centennial</option>
+                                    <option value="International Center"{%if user.dormitory=="International Center"%}selected{%endif%}>International Center</option>
+                                    <option value="Ilang-ilang"{%if user.dormitory=="Ilang-ilang"%}selected{%endif%}>Ilang-ilang</option>
+                                    <option value="Ipil"{%if user.dormitory=="Ipil"%}selected{%endif%}>Ipil</option>
+                                    <option value="Kalayaan"{%if user.dormitory=="Kalayaan"%}selected{%endif%}>Kalayaan</option>
+                                    <option value="Kamagong"{%if user.dormitory=="Kamagong"%}selected{%endif%}>Kamagong</option>
+                                    <option value="Kamia"{%if user.dormitory=="Kamia"%}selected{%endif%}>Kamia</option>
+                                    <option value="Molave"{%if user.dormitory=="Molave"%}selected{%endif%}>Molave</option>
+                                    <option value="Sampaguita"{%if user.dormitory=="Sampaguita"%}selected{%endif%}>Sampaguita</option>
+                                    <option value="Sanggumay"{%if user.dormitory=="Sanggumay"%}selected{%endif%}>Sanggumay</option>
+                                    <option value="Yakal"{%if user.dormitory=="Yakal"%}selected{%endif%}>Yakal</option> 
+                                </select>
+                            </div>
+                            <span id="user-dormitory">{{user.dormitory}}</span></td>
+                        <td><a href="javascript:void(0)" onclick="changeDormitory()" id="href-dormitory"><label><i class="icon-wrench"></i>
+                            <span id="edit-dormitory"> edit</span></label></a>
+                        </td></tr>
                     <tr><td style="width:125px">Member Since</td>
                         <td>{{user.joined}}</td><td></tr>
                     </table>
@@ -105,6 +126,7 @@
                     <input type="hidden" id="change-email" value="False">
                     <input type="hidden" id="change-college" value="False">
                     <input type="hidden" id="change-degree" value="False">
+                    <input type="hidden" id="change-dormitory" value="False">
                     </form>
                 </div>
             </div>
@@ -178,37 +200,37 @@
                     <div class="alert alert-info" style="text-align:justify;width:420px;margin-left:30px;margin-top:10px">Consigning is placing any material in the hand of another, but retaining ownership until the goods are sold or person is transferred.</div>
                 <div style="margin-left:35px;margin-right:20px">
                 <b>How does this work?</b>
-                    <p align="justify">Basically you let <font style="color:green">eBenta</font> sell your books for and in behalf of you. This is a good option for students who have no time, or students who doesn't want to get involved in any selling activity.</p>
+                    <p align="justify">Basically you let <font style="color:green">ebenta</font> sell your books for and in behalf of you. This is a good option for students who have no time, or students who doesn't want to get involved in any selling activity.</p>
                 <b>What do I do?</b>
-                    <p align="justify">First you need to send a <a href="/consign" target="blank">consign request</a> to <font style="color:green">eBenta</font> (this is a one time thing). We need to validate your identity and upgrade your account to a consignee. When this easy process is done, you may simply give us your item/s, and the right to sell it. We then find a decent buyer, sell the item in your behalf, and give you your profits.</p>
+                    <p align="justify">First you need to send a <a href="/consign" target="blank">consign request</a> to <font style="color:green">ebenta</font> (this is a one time thing). We need to validate your identity and upgrade your account to a consignee. When this easy process is done, you may simply give us your item/s, and the right to sell it. We then find a decent buyer, sell the item in your behalf, and give you your profits.</p>
                 <b>What you should consider.</b>
                     <p align="justify">Depending on the item you are selling, it may take some time before the item gets sold. If such case that you might want to withdraw your item from us, please give us <em>atleast</em> two days to return your item to you.</p>
                 <b>Learn more...</b>
-                    <p>To know more details on consigning your books to <font style="color:green">eBenta</font>, <a href="/help/consign">click here</a></p>
+                    <p>To know more details on consigning your books to <font style="color:green">ebenta</font>, <a href="/help/consign">click here</a></p>
                 </div>
-                <h4>Post a Sell Order</h4>
+                {# depreciated post sell order, everything will be consigned<h4>Post a Sell Order</h4>
                     <div class="alert alert-info" style="text-align:justify;width:420px;margin-left:30px;margin-top:10px">Another option for sellers to sell their items is by posting a Sell Order in ebenta classified. Potential buyers can search and view post, and eventually purchase items that are for sale.</div>
                 <div style="margin-left:35px;margin-right:20px">
                 <b>What do I do?</b>
-                    <p align="justify">You simply start by searching your book in <font style="color:green">eBenta</font> Library (book database), then <a href="/sell">post a sell order</a> on that book. Once your sell order has been posted, this will be visible in <font style="color:green">eBenta</font> for 7 days. This means that other users or guests can view your posting thru the browse or search functions.
+                    <p align="justify">You simply start by searching your book in <font style="color:green">ebenta</font> Library (book database), then <a href="/sell">post a sell order</a> on that book. Once your sell order has been posted, this will be visible in <font style="color:green">ebenta</font> for 7 days. This means that other users or guests can view your posting thru the browse or search functions.
                     <span style="font-size:11px;"><br/>Note: since we are still starting out, all sell and buy orders would be visible for 1 Month.</span></p>
                 <b>What you should consider.</b>
                     First your should remember that
                 <b>Privacy Settings</b>
-                    <p align="justify">User's default privacy settings is set to 'Admin Only', this means contact information of the user is ONLY visible to <font style="color:green">eBenta</font> admins. If this is the case, potential buyers could not directly contact you regarding your sell order. They could however send you a private message thru ebenta, which is really not the fastest way to communicate. Hence we suggest that you update your privacy settings in your profile.</p>
+                    <p align="justify">User's default privacy settings is set to 'Admin Only', this means contact information of the user is ONLY visible to <font style="color:green">ebenta</font> admins. If this is the case, potential buyers could not directly contact you regarding your sell order. They could however send you a private message thru ebenta, which is really not the fastest way to communicate. Hence we suggest that you update your privacy settings in your profile.</p>
                 <b>Learn more...</b>
-                    <p>To know more details on Posting a Sell Order in <font style="color:green">eBenta</font>, <a href="/help/sell_order">click here</a></p>
-                </div>
+                    <p>To know more details on Posting a Sell Order in <font style="color:green">ebenta</font>, <a href="/help/sell_order">click here</a></p>
+                </div>#}
                 </div>
                 <div id="buying-help" class="hidden">
-                    <h3>Buying Books in eBenta</h3>
+                    <h3>Buying Books in ebenta</h3>
                         <p>Buying books in ebenta is designed to be simple and hassle free. Below are the easy steps to purchase a used book.</p>
                     <div style="margin-left:35px;margin-right:20px">
                     <h4>Step One. <small>Search</small></h4>
-                        <p align="justify">Look for the book that you would like to purchase using our <a href="/search">search</a> or <a href="/browse">browse</a> features. Once you find the book you are looking for, check if <font style="color:green">ebenta</font> has stocks on that book or if there are Sell Orders posted by other users. If the book you are looking for is NOT in <font style="color:green">ebenta</font> Library, or there are no stocks for that book, you might have to post a <a href="/buy">Buy Order</a>.</p>
+                        <p align="justify">Look for the book that you would like to purchase using our <a href="/search">search</a> or <a href="/browse">browse</a> features. Once you find the book you are looking for, check if <font style="color:green">ebenta</font> has stocks on that book or if there are Sell Orders posted by other users. If the book you are looking for is NOT in <font style="color:green">ebenta</font> Library, or there are no stocks for that book, you might have to <a href="/book/request">request for the book</a>.</p>
 
                     <h4>Step Two. <small>Communicate</small></h4>
-                        <p align="justify">Now that you have found a specific stock or sell order on the book you are interested in, it's time to <a href="/contact">contact</a> <font style="color:green">ebenta</font> or the seller. Simply send a message thru SMS, email, or <font style="color:green">ebenta</font> messaging to us or the seller, stating that you are interested in purchasing the item. 
+                        <p align="justify">Now that you have found a specific stock or sell order on the book you are interested in, it's time to <a href="/contact">contact</a> <font style="color:green">ebenta</font>     or the seller. Simply send a message thru SMS, email, or <font style="color:green">ebenta</font> messaging to us or the seller, stating that you are interested in purchasing the item. 
 
                         Wait for a response, communicate, then agree on the terms of the transaction (i.e mode of payment, meetup location, etc.).</p>
 
@@ -235,8 +257,8 @@
             <li class="nav-header">User</li>
             <li class="active" id="li_profile"><a href="javascript:void(0)" onclick="showProfile()"><i class="icon-user"></i>Profile</a></li>
             <li class="nav-header"><font color="#468847">{{user.username}}</font>'s Book Orders</li>
-            <li class id="li_sell_order"><a href="javascript:void(0)" onclick="showSellOrder()"><i class="icon-tags"></i>Sell Orders</a></li>
-            <li class id="li_buy_order"><a href="javascript:void(0)" onclick="showBuyOrder()"><i class="icon-book"></i>Buy Orders</a></li>
+            <li class id="li_sell_order"><a href="javascript:void(0)" onclick="showSellOrder()"><i class="icon-tags"></i>Consigned Books</a></li>
+            <li class id="li_buy_order"><a href="javascript:void(0)" onclick="showBuyOrder()"><i class="icon-book"></i>Requested Books</a></li>
             <li class="divider"></li>
             <li class id="li_send_message"><a href="javascript:void(0)" onclick="showSendMessage()"><i class="icon-envelope"></i>Send Message</a></li>
         </ul>
@@ -312,8 +334,8 @@
             <li class="nav-header">User</li>
             <li class="active" id="li_profile"><a href="javascript:void(0)" onclick="showProfile()"><i class="icon-user"></i>Profile</a></li>
             <li class="nav-header"><font color="#468847">{{showUserIcon(user)}} {{user.username}}</font>'s Book Orders</li>
-            <li class id="li_sell_order"><a href="javascript:void(0)" onclick="showSellOrder()"><i class="icon-tags"></i>Sell Orders</a></li>
-            <li class id="li_buy_order"><a href="javascript:void(0)" onclick="showBuyOrder()"><i class="icon-book"></i>Buy Orders</a></li>
+            <li class id="li_sell_order"><a href="javascript:void(0)" onclick="showSellOrder()"><i class="icon-tags"></i>Consinged Books</a></li>
+            <li class id="li_buy_order"><a href="javascript:void(0)" onclick="showBuyOrder()"><i class="icon-book"></i>Requested Books</a></li>
             <li class="divider"></li>
             <li class id="li_send_message"><a href="javascript:void(0)" onclick="showSendMessage()"><i class="icon-envelope"></i>Send Message</a></li>
         </ul>
@@ -387,8 +409,8 @@
             <li class id="li_inbox"><a href="#inbox" onclick="showInbox()"><i class="icon-envelope"></i> Inbox</a></li>
             <li class id="li_settings"><a href="#settings" onclick="showSettings()"><i class="icon-cog"></i> Settings</a></li>
             <li class="nav-header">Book Orders</li>
-            <li class id="li_sell_order"><a href="#sell_orders" onclick="showSellOrder()"><i class="icon-tags"></i> Sell Orders</a></li>
-            <li class id="li_buy_order"><a href="#buy_orders" onclick="showBuyOrder()"><i class="icon-book"></i> Buy Orders</a></li>
+            <li class id="li_sell_order"><a href="#sell_orders" onclick="showSellOrder()"><i class="icon-tags"></i> Consinged</a></li>
+            <li class id="li_buy_order"><a href="#buy_orders" onclick="showBuyOrder()"><i class="icon-book"></i> Requested</a></li>
             <li class="divider"></li>
             <li class id="li_help"><a href="#help" onclick="showUserHelp()"><i class="icon-flag"></i> Help</a></li>
             <ul class="hidden" style="margin-left:10px;" id="help-options">

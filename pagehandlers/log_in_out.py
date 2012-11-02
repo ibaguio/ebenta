@@ -41,24 +41,64 @@ class LoginHandler(PageHandler):
 
 class LogoutHandler(PageHandler):
     def get(self):
+        if users.get_current_user():
+            self.redirect(users.create_logout_url("/"))
+            return
         self.logout()
         self.redirect("/")
 
-class LoginGoogleHandler(PageHandler):
+providers = {
+    'Google'   : 'https://www.google.com/accounts/o8/id',
+    'Yahoo'    : 'yahoo.com',
+    'MySpace'  : 'myspace.com',
+    'AOL'      : 'aol.com',
+    'MyOpenID' : 'myopenid.com',
+    'Twitter' : 'twitter.com'
+    # add more here
+}
+
+class TestLoginHandler(PageHandler):
     def get(self):
-        ver = self.request.get("verify")
+        user = users.get_current_user()
+        if user:  # signed in already
+            self.response.out.write('Hello <em>%s</em>! [<a href="%s">sign out</a>]' % (
+                user.nickname(), users.create_logout_url(self.request.uri)))
+        else:     # let user choose authenticator
+            self.response.out.write('Hello world! Sign in at: ')
+            for name, uri in providers.items():
+                self.response.out.write('[<a href="%s">%s</a>]' % (
+                    users.create_login_url(federated_identity=uri), name))
+
+class TestGetCredentials(PageHandler):
+    def get(self):
+        user = users.get_current_user()
+        self.write("Username: "+str(user.user_id())+"<br/>Email "+str(user.email())+"<br/>Name: "+str(user.nickname()))
+
+        
+'''Login using google/yahoo/twitter
+class LoginFederatedHandler(PageHandler):
+    def get(self,provider):
+        provider=provider.title()
+        self.write(provider)
+        providers = {
+            'Google' : 'https://www.google.com/accounts/o8/id',
+            'Yahoo'  : 'yahoo.com',
+            'Twtter' : 'twitter.com'
+        }
+        ver = True#self.request.get("verify")
         if not ver:
-            self.redirect(users.create_login_url("/login/google?verify=True"))
+            #self.redirect(users.create_login_url("/login/google?verify=True"))
             return
         else:
             user = users.get_current_user()
             if not user:
-                self.redirect(users.create_login_url("/login/google?verify=True"))
+                self.write(providers[provider])
+                self.redirect(users.create_login_url(federated_identity=providers[provider]))
+                #self.redirect(users.create_login_url("/login/google?verify=True"))
                 return
             else:
-                self.write("Username: "+str(user.user_id())+"<br/>Email "+str(user.email())+"<br/>Name: "+str(user.nickname())+"<br/>Admin?"+str(user.is_current_user_admin()))
+                self.write('logged in')
+                pass
+                #self.write("Username: "+str(user.user_id())+"<br/>Email "+str(user.email())+"<br/>Name: "+str(user.nickname())+"<br/>Admin?"+str(user.is_current_user_admin()))
                 #new_user = User(username=user.user_id(),email=user.email(),)
-
-class LoginFacebookHandler(PageHandler):
-    def get(self):
-        self.write("Feature to be added")
+'''

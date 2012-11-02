@@ -4,20 +4,22 @@ import re,logging
 
 from google.appengine.ext import db
 from utils.crypto import *
+from utils import strings
 
 #parent definitions
 def key(book):
     return db.Key.from_path(book.title,"books")
 
 # DATABASE MODELS
+"""
 class PrivacySetting(db.Model):
-    """show details to:
-        admin = admin ONLY
-        users = admin and registered users
-        guest = everyone"""
+    #show details to:
+    #    admin = admin ONLY
+    #    users = admin and registered users
+    #    guest = everyone
     showContact = db.StringProperty(required = True,choices=set(['admin','user','guest']))
     showCollege = db.StringProperty(required = True,choices=set(['admin','user','guest']))
-
+"""
 class User(db.Model):
     username = db.StringProperty(required = True)
     password = db.StringProperty(required = True,indexed=False)
@@ -27,9 +29,11 @@ class User(db.Model):
     email = db.StringProperty()
     studentNum = db.StringProperty()
     joined = db.DateProperty(auto_now_add = True)
+    dormitory = db.StringProperty(required=True,\
+        choices=set(strings.dormitory),default="None")
     college= db.StringProperty(default="")
     degree= db.StringProperty(default="")
-    privacy= db.ReferenceProperty(PrivacySetting,required=True,indexed=False)
+    #privacy= db.ReferenceProperty(PrivacySetting,required=True,indexed=False)
     admin = db.BooleanProperty(default=False)
     consignee = db.BooleanProperty(default=False)
     score = db.IntegerProperty(default=0)

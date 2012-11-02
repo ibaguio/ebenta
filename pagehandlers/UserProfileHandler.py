@@ -3,13 +3,18 @@ from pagehandlers.PageHandler import *
 from database.privacy import *
 
 class UserProfile(PageHandler):
+    #only show profile if user is admin
     def get(self):
+        me = self.getUser()
+        if not me.admin:
+            self.redirect("/home#profile")
+
         usr = self.request.get("usr")  #gets the username of user from url
         try:
             uid = int(usr)
         except:
             uid = None
-        me = self.getUser()
+        
         if uid:        #show profile of given uid
             user = User.get_by_id(uid)
         elif usr:      #show profile of given user
@@ -54,7 +59,8 @@ class UserSettings(PageHandler):
                 'num':self.request.get("num"),
                 'email':self.request.get("email"),
                 'college':self.request.get("colelge"),
-                'degree':self.request.get("degree")}
+                'degree':self.request.get("degree"),
+                'dormitory':self.request.get("dormitory")}
         logging.error("info:"+str(info))
         error = []
         if info['first']:
@@ -75,6 +81,8 @@ class UserSettings(PageHandler):
             user.college = info['college']
         if info['degree']:
             user.degree = info['degree']
+        if info['dormitory'] and info['dormitory'] in strings.dormitory:
+            user.dormitory = info['dormitory']
 
         if len(error)>0:
             self.response.status_int = 400;
@@ -89,9 +97,9 @@ class UserSettings(PageHandler):
     def updatePrivacy(self,user):
         info = {'old':self.request.get("old"),
                 'new':self.request.get("new"),
-                'new2':self.request.get("new2"),
-                'priv_college':self.request.get("privacy-college"),
-                'priv_contact':self.request.get("privacy-contact")}
+                'new2':self.request.get("new2")}
+                #'priv_college':self.request.get("privacy-college"),
+                #'priv_contact':self.request.get("privacy-contact")}
         error = []
         logging.error("info:"+str(info))
         change = False  #marker for update db
@@ -106,16 +114,16 @@ class UserSettings(PageHandler):
                 else: error.append("Invalid Password Inner")
             else: error.append("Invalid Password Outer")
         logging.error("old:"+str(info["old"]))
-        if (info['priv_college'] and info['priv_contact']) not in ["admin","user","guest"]:
-            logging.error("Privacy not in list")
-            error.append("Privacy not in list")
-            return  #error
+        #if (info['priv_college'] and info['priv_contact']) not in ["admin","user","guest"]:
+        #    logging.error("Privacy not in list")
+        #    error.append("Privacy not in list")
+        #    return  #error
 
         #if a change in privacy has been done
-        if info['priv_college'] != user.privacy.showCollege or info['priv_contact'] != user.privacy.showContact:
-            privacy = getPrivacy(str(info['priv_contact']),str(info['priv_college']))
-            user.privacy = privacy
-            change = True
+        #if info['priv_college'] != user.privacy.showCollege or info['priv_contact'] != user.privacy.showContact:
+        #    privacy = getPrivacy(str(info['priv_contact']),str(info['priv_college']))
+        #    user.privacy = privacy
+        #    change = True
 
         if error:
             self.response.status_int = 401

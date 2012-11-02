@@ -5,7 +5,7 @@ from database.privacy import *
 class HomePage(PageHandler):
     def get(self):
         if not self.isLogged():
-            self.render_noUser("homepage.html",err={},val={})
+            self.render_noUser("new_home.html",err={},val={})
         else:   #user is logged in, redir to home
             self.redirect('/home')
     
@@ -14,9 +14,9 @@ class UserHome(PageHandler):
         user = self.isLogged()
         if user:
             if self.request.get("comment") == 'success':
-                self.render('user_home.html',username = user, comment=True)
+                self.render('user_home_new.html',username = user, comment=True)
             else:
-                self.render('user_home.html',username = user)
+                self.render('user_home_new.html',username = user)
         else:
             self.redirect("/")
 
@@ -63,7 +63,8 @@ class RegisterHandler(PageHandler):
         val = self.getRegister()
         err = []
         errs = []
-
+        dorms = ['None','Centennial','International Center','Ilang-ilang','Ipil',\
+            'Kalayaan','Kamagong','Kamia','Molave','Sampaguita','Sanggumay','Yakal']
         #check if username already in db
         if User.get_by_key_name(val.get('user')):
             err.append("Username already exists!")
@@ -89,6 +90,9 @@ class RegisterHandler(PageHandler):
         if not valid_email(val.get('email')):
             err.append("Invalid Email address")
             errs.append("email")
+        if val.get('dorm') not in dorms:
+            err.append("Invalid Dormitory")
+            errs.append("dorm")
         return err,errs,val
     
     #GETS data from register form    
@@ -100,4 +104,5 @@ class RegisterHandler(PageHandler):
                 'last': self.request.get("lastName"),
                 'con':  self.request.get("contactNo"),
                 'email': self.request.get("email"),
-                'from': self.request.get("from")}
+                'from': self.request.get("from"),
+                'dorm': self.request.get('dorm')}
