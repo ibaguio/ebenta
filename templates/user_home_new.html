@@ -4,7 +4,7 @@
 {% block login %}
     {{ macro.top_welcome(user) }}
 {% endblock%}
-{% block script_src %}<script src="/static/js/custom/home.js"></script>{% endblock%}
+{% block script_src %}{%if user.admin%}<script src="/static/js/custom/aids.js"></script>{%else%}<script src="/static/js/custom/home.js"></script>{%endif%}{%endblock%}
 {% block jscript%}$(window).ready(checkUrl());{% endblock%}
 {% block content%}
 <div class="row">
@@ -15,7 +15,26 @@
                 <label id="req-ok"></label>
             </div>
         <div id="home" class="row">
-
+            <center><img src="/static/images/transparent.png" style="width:85%;"></center>
+            <div id="home-blog" style=";margin-top:30px;" class="span7">
+                <legend>Updates</legend>
+                <div>
+                {%if not news or news.count() == 0%}
+                <h4>No Updates Available</h4>
+                {%endif%}
+                {%for article in news: %}
+                <div class="span6">
+                    <h3>{{article.title}}</h3>
+                    <div>
+                        {{article.content}}
+                    </div>
+                </div>
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div id="search" class="row" style="display:none">
+            {{macro.ebentaSearch()}}
         </div>
         <!--user's profile tab-->
         <div id="userprofile" class="row" style="display:none">
@@ -137,8 +156,7 @@
                         <img src="/static/images/loading.gif"> Loading</div>
                     <div id="consign-response" style="margin-top:20px;font-size:17px;display:none">
                     </div>
-                        <div id="sell-result">
-                        </div>
+                    <div id="consign-result"></div>
                 </div>
                 <input type="hidden" id="sell-loaded" value="false">
             </div>
@@ -149,11 +167,12 @@
                         <img src="/static/images/loading.gif"> Loading</div>
                     <div id="request-response" style="margin-top:20px;font-size:17px;display:none">
                     </div>
-                    <div id="buy-result"></div>
+                    <div id="request-result"></div>
                 </div>
                 <input type="hidden" id="buy-loaded" value="false">
             </div>
             <input type="hidden" id="user_username" value="{{user.username}}"/>
+            {%if user.admin%}{{adminDivs()}}{%endif%}
     </div>
 </div>
 {% endblock%}
@@ -163,7 +182,8 @@
         <ul class="nav nav-list">
             <li class="nav-header">Dashboard</li>
             <li class="active" id="li_home"><a href="#" onclick="showUserHome() "><i class="icon-home"></i> Home</a></li>
-            <li class="" id="li_userprofile"><a href="#profile" onclick="showProfile()"><i class="icon-user"></i> Profile</a></li>
+            <li class="" id="li_search"><a href="#query" onclick="showSearch() "><i class="icon-search"></i> Search</a></li>
+            <li class="" id="li_userprofile"><a href="#profile" onclick="showProfile()"><i class="icon-user"></i> Profile</a></li>{%if user.admin%}{{showAdminTab()}}{%endif%}
             <li class="" id="li_setting"><a href="#settings" onclick="showSettings()"><i class="icon-cog"></i> Settings</a></li>
             <li class="nav-header">Book Orders</li>
             <li class id="li_consign"><a href="#myconsign" onclick="showConsigned()"><i class="icon-tags"></i> Consinged</a></li>
@@ -178,4 +198,73 @@
         </ul>
     </div>
 {% endmacro %}
+{% macro showAdminTab()%}
+<li class="" id="li_aids">
+<a href="#admin" onclick="showAdmin()"><i class="icon-eye-open"></i> Admin</a></li>
+<ul id="ul-admin" class="nav nav-list">
+    <li><a href="#post" onclick="showNewBlog()">Blog Post</a></li>
+    <li><a href="#newitem" onclick="newItem()">New Item</a></li>
+    <li><a href="#update" onclick="updateRequest()">Update Request</a></li>
+    <li><a href="#view">View User Profile</a></li>
+</ul>
+
+{% endmacro %}
+{%macro adminDivs()%}
+<div id="admin-blog-post" style="display:none">
+    <form action="/admin/blogpost" method="post" class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="title">Title</label>
+            <div class="controls"><input type="text" id="title"></div>
+        </div>
+         <div class="control-group">
+            <label class="control-label" for="content">Content</label>
+            <div class="controls">
+                <textarea id="content" rows="7"></textarea>
+            </div>
+        </div>
+        <input type="submit" class="btn btn-success" value="Post" style="margin-left:330px">
+    </form>
+</div>
+<div id="admin-new-item" style="display:none">
+    <form action="/admin/newitem" method="post" class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="bid">Book ID</label>
+            <div class="controls">
+                <input type="text" id="bid" placeholder="Book ID">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="user">Consignee</label>
+            <div class="controls">
+                <input type="text" id="consignee" placeholder="Consignee's Username">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="rating">Rating</label>
+            <div class="controls">
+                <input type="text" id="rating" placeholder="Rating 1-5">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="ask_price">Ask Price</label>
+            <div class="controls">
+                <input type="text" id="ask_price" placeholder="Consignee's ask price">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="sell_price">Selling Price</label>
+            <div class="controls">
+                <input type="text" id="sell_price" placeholder="Price to be posted">
+            </div>
+        </div>
+        <input type="submit" class="btn btn-success" value="Add New Item" style="margin-left:275px">
+    </form>
+</div>
+<div id="admin-update-request">
+
+</div>
+<div id="admin-view-user">
+
+</div>
+{%endmacro%}
 {% macro showUserIcon(user) %}{% if user.admin: %}<img src="/static/images/admin1.png" class="admin-icon" title="Admin">{% elif user.consignee%}<img src="/static/images/handshake.ico" class="admin-icon" title="Consignee">{% endif %}{% endmacro %}

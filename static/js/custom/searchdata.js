@@ -20,10 +20,9 @@ function getSearchData(){
 }
 
 function toggleSearch(){
-    if (location.pathname=="/")
-        $("div#mini-about").hide();
     if ($("a#toggle-search").text()[0]==="A"){
         $("div#search-basic").hide();
+        //$("div#search-advanced").css("display","inline-block")
         $("div#search-advanced").slideDown("slow");
         $("a#toggle-search").text("Basic Search");
     }else{

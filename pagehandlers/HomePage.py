@@ -1,11 +1,12 @@
 from pagehandlers.PageHandler import *
-from database.privacy import *
+#from database.privacy import *
 
 # hompage for guest users
 class HomePage(PageHandler):
     def get(self):
+        news = BlogPost.all().order("-posted").fetch(5)
         if not self.isLogged():
-            self.render_noUser("new_home.html",err={},val={})
+            self.render_noUser("new_home.html",news=news)
         else:   #user is logged in, redir to home
             self.redirect('/home')
     
@@ -41,17 +42,17 @@ class RegisterHandler(PageHandler):
             return
             
         # get the default privacy setting            
-        privacy = PrivacySetting.get_by_key_name("default")
-        if not privacy:
-            privacy = createDefault()
+        #privacy = PrivacySetting.get_by_key_name("default")
+        #if not privacy:
+            #privacy = createDefault()
 
         new = User(key_name=val['user'].lower(),
                    username = val['user'].lower(),
                    password =  pwHash(val['user'],val['pass']),
                    firstName = val['first'],
                    lastName = val['last'],
-                   contactNum = val['con'],
-                   privacy = privacy)
+                   contactNum = val['con'])
+                   #privacy = privacy)
         new.put()
         #successfully register, auto login the user and redir to home
         cookie = generateCookie(val.get('user'))    #dictionary

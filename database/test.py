@@ -33,9 +33,9 @@ def getInfo():
 
 #creates random accounts    
 def createTestAccounts():
-    p = PrivacySetting.get_by_key_name("default")
-    if not p:
-        p = createDefault()
+    #p = PrivacySetting.get_by_key_name("default")
+    #if not p:
+    #    p = createDefault()
     test = []
     for i in range(4):
         user = getInfo()
@@ -43,7 +43,7 @@ def createTestAccounts():
         logging.error("uname:"+uname)
         u = User(key_name=uname,username=uname,password=user['pass'],\
             firstName=user['first'],lastName=user['last'],email=user['email'],contactNum=user['con'],\
-            admin=[True,False][random.randint(0,20)%2],privacy=p)
+            admin=[True,False][random.randint(0,20)%2])
         u.put()
         test.append(u)
     return test
@@ -93,10 +93,11 @@ def createBookDb():
         new.put()
     
 def createMyAccount():
-    privacy = PrivacySetting(key_name="default",showContact='admin',showCollege="admin")
-    privacy.put()
+    #privacy = PrivacySetting(key_name="default",showContact='admin',showCollege="admin")
+    #privacy.put()
     
-    user = User(key_name="ibaguio",username="ibaguio",password="674cd0edf70ba1a76ad023a05f8cbd0b009d92b6b3d223a485448fe1deac041bQxbPFN",firstName="ivan", lastName="baguio",email="baguio.ivan@yahoo.com",contactNum="09228448858", privacy=privacy, admin=True)
+    user = User(key_name="ibaguio",username="ibaguio",password="674cd0edf70ba1a76ad023a05f8cbd0b009d92b6b3d223a485448fe1deac041bQxbPFN",\
+        firstName="ivan", lastName="baguio",email="baguio.ivan@yahoo.com",contactNum="09228448858", admin=True)
     user.put()
     
 def createColleges():

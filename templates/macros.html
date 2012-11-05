@@ -1,14 +1,15 @@
 {% macro ebentaSearch(user,action="/search",next="") %}
-  <div style="width:90%;margin:0 auto">
-    <legend>ebenta Search<span class="pull-right"><a href="#" onclick="toggleSearch()" id="toggle-search" style="font-size:12px">Advanced Search</a></span></legend>
+  <div style="width:90%;margin:0 auto;">
+    <legend style="text-align:center"><a href="#" onclick="toggleSearch()" id="toggle-search" style="font-size:12px">Advanced Search</a></legend>
         <div id="search-basic">
             <form  class="form-search" action="{{ action }}" method="get">
             <input type="text" id="q" name="q" class="search-query" style="width:80%" data-provide="typeahead" placeholder="enter title or author" autocomplete="off">
             <button type="submit" class="btn btn-success">Search</button>
             </form>
         </div>
-        <div id="search-advanced" style="display:none">
-            <form class="form-horizontal" action="{{action}}" method="get">
+        <div id="search-advanced" style="display:none;">
+        <div style="margin:0 auto;width:340px">
+            <form class="form-horizontal" action="{{action}}" method="get" style="margin-left:-10px">
             <div class="control-group" style="margin-left:-50px">
                 <label class="control-label" for="category">Category</label>
                 <div class="controls">
@@ -39,19 +40,20 @@
                     <input type="text" id="author" class="input-large" placeholder="Author" name="author">
                 </div>
             </div>
-            <div class="control-group" style="margin-left:-50px">
+            <!--<div class="control-group" style="margin-left:-50px">
                 <label class="control-label" for="isbn">ISBN</label>
                 <div class="controls">
                     <input type="text" id="isbn" class="input-large" placeholder="ISBN" name="isbn">
                 </div>
-            </div>
-            <button type="submit" class="btn btn-success pull-right" style="margin-right:60px">Search</button>
+            </div>-->
+            <button type="submit" class="btn btn-success pull-right" style="margin-right:6%">Search</button>
             <input type="hidden" name="query-type" value="advanced">
             </form>
         </div>
+        </div>
   </div>
   {% block script_src%}<script src="/static/js/custom/searchdata.js"></script>{%endblock%}
-{%- endmacro %}
+{% endmacro %}
 
 {% macro getRegistrationForm(val,err,errs,from="/") %}
     <br/>

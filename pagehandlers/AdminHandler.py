@@ -68,28 +68,17 @@ class AdminHandler(PageHandler):
             if not consignee.consignee or not added_by.admin: raise
 
             bid = int(self.request.get("bid"))
+            book = Library.get_by_id(bid)
+            if not book:
+                logging.info("add consignee: book not found")
+                return
+
             ask_price = float(self.request.get("ask-price"))
             price = float(self.request.get("price"))
             rating = int(self.request.get("rating"))
 
-            new_consigned_book = ConsignedBook(consignee=consignee,added_by=added_by,ask_price=ask_price,rating=rating)
+            new_consigned_book = ConsignedBook(parent=book,consignee=consignee,added_by=added_by,ask_price=ask_price,rating=rating)
             new_consigned_book.put()
 
         except:
             pass
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

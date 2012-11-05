@@ -59,14 +59,14 @@ class PageHandler(webapp2.RequestHandler):
             self.response.headers.add_header("Set-Cookie", str(biscuit))
     
     #returns username if user is logged in
-    #Note: does not verify if user is a valid user, or the verification cookie is valid
     def isLogged(self):
         user = self.getCookie('user')
         ver = self.getCookie('ver')
         if not user or not ver:
             return
+        usr = User.get_by_key_name(user)
         if validCookie(ver,user):
-            return user
+            return usr
         self.logout()   #invalid cookie, remove cookie
     
     #returns the db.Model of the current user

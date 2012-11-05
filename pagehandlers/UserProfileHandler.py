@@ -36,6 +36,7 @@ class UserProfile(PageHandler):
             self.render_noUser('profile.html',fail=True,me=me)
 
 class UserSettings(PageHandler):
+    """ User's settings """
     def get(self):
         self.redirect("/user")
 
@@ -134,6 +135,7 @@ class UserSettings(PageHandler):
             logging.error("response sent")
 
 class UserOrder(PageHandler):
+    """ Posting of user order. deprecated v3"""
     def post(self):
         username = self.request.get("user")
         rtype = self.request.get("type")

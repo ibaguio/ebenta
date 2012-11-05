@@ -3,6 +3,7 @@ from pagehandlers.PageHandler import *
 from datetime import datetime
 
 class BookInfoHandler(PageHandler):
+    """Handler that generates the book's page"""
     def get(self):
         bid = self.request.get("book")
         try:
@@ -16,6 +17,8 @@ class BookInfoHandler(PageHandler):
             return
         self.redirect("/book/error")
 
+    #ajax post request handler that returns the listings
+    #or images
     def post(self):
         req = self.request.get("req")
         if req == "sellers":

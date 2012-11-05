@@ -3,6 +3,7 @@ import logging
 import math
 from pagehandlers.PageHandler import *
 from pagehandlers.BuyHandler import *
+from pagehandlers.UserBookOrders import *
 from pagehandlers.SellHandler import *
 from pagehandlers.log_in_out import *
 from pagehandlers.UserProfileHandler import *
@@ -265,7 +266,7 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/user/update/?',UserSettings),
                                #(r'/user/sendmessage/?',SendMessage),
                                #(r'/user/inbox/?',SendMessage),
-                               (r'/user/orders/?',UserOrder),
+                               (r'/user/orders/?',UserBookOrders),
                                (r'/user/?',UserProfile),
                                (r'/book/info/?',BookInfoHandler),
                                (r'/book/add/?',AddBookHandler),

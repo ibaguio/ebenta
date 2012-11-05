@@ -207,12 +207,53 @@ class Transaction(db.Model):
     fback_buyer = db.ReferenceProperty(Feedback,collection_name="buyer_feedback")
 
 class ConsignedBook(db.Model):
+    """ consignee - owner of book
+        added_by - admin who added the book
+        ask_price - amount that the consignee gets when the book is sold
+        price - price that the item is sold for
+        rating - item quality rating
+        expire - consignment expiry
+        posted - date posted """
     consignee = db.ReferenceProperty(User,required=True,collection_name="consigned_books")
     added_by = db.ReferenceProperty(User,required=True,collection_name="consigned_books_added")
-    ask_price = db.FloatProperty(required=True) #amount that the consignee gets when the book is sold
+    ask_price = db.FloatProperty(required=True)
     price = db.FloatProperty()
     rating = db.RatingProperty(required=True)
     expire = db.BooleanProperty(default=False)
+    posted = db.DateTimeProperty(auto_now_add=True)
+    completed = db.BooleanProperty(required=True,default=False)
+
+    def toJson(self):
+        book = self.parent()
+        d = {'title':book.title,
+             'author':book.author,
+             'bid':book.key().id,
+             'added_by':self.added_by,
+             'rating':self.rating,
+             'posted':self.posted,
+             'completed':self.completed}
+
+class RequestedBook(db.Model):
+    user = db.ReferenceProperty(User,required=True,collection_name="requested_books")
+    max_price = db.FloatProperty(required=True)
+    min_rating = db.RatingProperty(required=True)
+    posted = db.DateTimeProperty(auto_now_add=True)
+    completed = db.BooleanProperty(required=True,default=False)
+
+    def toJson(self):
+        book = self.parent()
+        d = {'title':book.title,
+             'author':book.author,
+             'bid':book.key().id,
+             'max_price':self.max_price,
+             'min_rating':self.min_rating,
+             'posted':self.posted,
+             'completed':self.completed}
+
+class BlogPost(db.Model):
+    title = db.StringProperty(required=True)
+    content = db.TextProperty(required=True)
+    added_by = db.ReferenceProperty(User,collection_name="blog_posts")
     posted = db.DateTimeProperty(auto_now_add=True)
 
 #ads for buying

@@ -5,15 +5,17 @@ function hideAll(){//hide all divs in profile
     $("div#setting").hide();
     $("div#consign").hide();
     $("div#request").hide();
+    $("div#admin-blog-post").hide();
+    $("div#admin-new-item").hide();
     $("li#li_home").attr("class","");
-    $("li#li_search").attr("class","");
-    $("li#li_aids").attr("class","");
+    $("li#li_search").attr("class",""); 
     $("li#li_setting").attr("class","");
     $("li#li_userprofile").attr("class","");
     $("li#li_consign").attr("class","");
     $("li#li_request").attr("class","");
     $("li#li_help-consign").attr("class","");
     $("li#li_help-buying").attr("class","");
+    $("#ul_admin").attr("class","hidden");
 }
 function showUserHome(){
     hideAll();
@@ -238,4 +240,18 @@ function hidePassword(){
     document.getElementById("new2").value = "";
     document.getElementById("form-change-password").className = "hidden";
     document.getElementById("edit-password").className= " ";
+}
+//admin functions
+function showAdmin(){
+    hideAll();
+    $("#ul_admin").attr("class","nav nav-list");
+}
+function showNewBlog(){
+    hideAll();
+    show("admin-blog-post");
+}
+
+function newItem(){
+    hideAll();
+    show("admin-new-item");
 }

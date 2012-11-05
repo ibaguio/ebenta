@@ -4,13 +4,20 @@
 {% block login %}
     {{ macro.top_login() }}
 {% endblock %}
+{% block script_src %}<script src="/static/js/custom/homepage.js"></script>
+{% endblock %}
 
 {% block content %}
 <center>
 <div id="top-banner" style="margin: auto 0">
-    <img class="" style="width:930px;height:280px;margin: 25px 0" src="/static/images/transparent.png">
+    <a href="/"><img class="" style="width:930px;height:280px;margin: 25px 0" src="/static/images/transparent.png" alt="ebenta logo"></a>
 </div>
-<div id="info" class="row" style="margin-top:30px">
+<div id="home-search" style="width:540px;display:none;text-align:left">
+    {{macro.ebentaSearch()}}
+</div>
+<div id="info" class="row" style="margin-top:30px;">
+    <div style="position:absolute;right:16%;margin-top:-25px">
+        <a href="#" onmouseover="homeShowSearch()">Looking for something? Search!</a></div>
     <div class="row span4" >
         <div class="span" id="info-icon">
             <i class="icon29-book-open"></i>
