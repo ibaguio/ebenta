@@ -6,20 +6,7 @@ from google.appengine.ext import db
 from utils.crypto import *
 from utils import strings
 
-#parent definitions
-def key(book):
-    return db.Key.from_path(book.title,"books")
-
 # DATABASE MODELS
-"""
-class PrivacySetting(db.Model):
-    #show details to:
-    #    admin = admin ONLY
-    #    users = admin and registered users
-    #    guest = everyone
-    showContact = db.StringProperty(required = True,choices=set(['admin','user','guest']))
-    showCollege = db.StringProperty(required = True,choices=set(['admin','user','guest']))
-"""
 class User(db.Model):
     username = db.StringProperty(required = True)
     password = db.StringProperty(required = True,indexed=False)
@@ -33,10 +20,9 @@ class User(db.Model):
         choices=set(strings.dormitory),default="None")
     college= db.StringProperty(default="")
     degree= db.StringProperty(default="")
-    #privacy= db.ReferenceProperty(PrivacySetting,required=True,indexed=False)
     admin = db.BooleanProperty(default=False)
-    score = db.IntegerProperty(default=0)
 
+    #0 - guest  1 - user  3 - admin (AND YES ITS 3)
     def toJson(self,_all=False,viewer=0):
         d ={"username": self.username,
             "image": self.getImage(),
@@ -47,8 +33,8 @@ class User(db.Model):
             "consignee":self.consignee,
             "contactNum":self.contactNum,
             "email":self.email,
-            "college"]:self.college,
-            "degree"]:self.degree}
+            "college":self.college,
+            "degree":self.degree}
         return json.dumps(d)
     
     def completeName(self):
@@ -75,15 +61,15 @@ class Library(db.Model):
     """ The Library is a 'table' that stores all the books i call
     it Library because somehow it contains the (list of) books """
     title = db.StringProperty(required = True)
-    author_ = db.ReferenceProperty(Author,collection_name="books")
+    #author_ = db.ReferenceProperty(Author,collection_name="books")
     author = db.StringProperty()
     isbn = db.StringProperty(default="")
     searchKeys = db.StringListProperty()
     description = db.StringProperty(default="",indexed=False)
     brandNewPrice = db.FloatProperty(default=-1.0,indexed=False);
 
-    #creates a JSON of a specific books title, author, key
-    #and other attributes specified in kwargs
+    #returns a json representation of a specific book
+    #title, author, key, + attributes specified in kwargs
     def toJson(self,**kwargs):
         d ={"title":self.title,
             "author":self.author,
@@ -105,8 +91,7 @@ class Library(db.Model):
             self.searchKeys = k
         except BaseException as e:
             pass
-    
-    #addes a search key for the book
+        
     def addSk(self, *keys):
         for k in keys:
             self.searchKeys.append(k)
@@ -142,7 +127,7 @@ class Library(db.Model):
         elif tsold > 1:
             stats["totalSold"] = str(tsold) + " copies"
 
-        #get the listed books
+        #get the listed consigned books
         listed = ConsignedBook.all().ancestor(self).filter("completed",False)
         sum_ = 0.0
         count = 0
@@ -165,21 +150,17 @@ class ConsignedBook(db.Model):
         added_by - admin who added the book
         ask_price - amount that the consignee gets when the book is sold
         price - price that the item is sold for
-        status - current status of the book in the market
-            tbd=to be delivered
         rating - item quality rating
         expire - consignment expiry
-        posted - date posted
-        parent - Library"""
+        posted - date posted """
     consignee = db.ReferenceProperty(User,required=True,collection_name="consigned_books")
     added_by = db.ReferenceProperty(User,required=True,collection_name="consigned_books_added")
+    status = db.StringProperty(default="posted",choices=set(["posted","processing","tbd","delivered","completed"]))
     ask_price = db.FloatProperty(required=True)
     price = db.FloatProperty()
-    status = db.StringProperty(choices=set(["posted","processing","tbd","completed"]),default="pending")
     rating = db.RatingProperty(required=True)
-    expire = db.BooleanProperty(default=False)
+    completed = db.BooleanProperty(default=False)
     posted = db.DateTimeProperty(auto_now_add=True)
-    completed = db.BooleanProperty(required=True,default=False)
 
     def toJson(self):
         book = self.parent()
@@ -193,9 +174,9 @@ class ConsignedBook(db.Model):
 
 class RequestedBook(db.Model):
     user = db.ReferenceProperty(User,required=True,collection_name="requested_books")
-    status = db.StringProperty(choices=set(["pending","processing","tbd","completed"]),default="pending")
     max_price = db.FloatProperty(required=True)
     min_rating = db.RatingProperty(required=True)
+    status = db.StringProperty(default="pending",choices=set(["pending","processing","tbd","delivered","completed"]))
     posted = db.DateTimeProperty(auto_now_add=True)
     completed = db.BooleanProperty(required=True,default=False)
 
@@ -215,6 +196,31 @@ class BlogPost(db.Model):
     added_by = db.ReferenceProperty(User,collection_name="blog_posts")
     posted = db.DateTimeProperty(auto_now_add=True)
 
+#contains messages from 2 users
+class Conversation(db.Model):
+    userA = db.ReferenceProperty(User,required=True,collection_name="conversation_a") #receiver
+    userB = db.ReferenceProperty(User,required=True,collection_name="conversation_b") #sender
+    updated = db.DateTimeProperty(auto_now_add=True)
+
+    def getMessages(self):
+        messages = self.messages.order("-posted")
+        return messages
+
+    def toJson(self):
+        data = {"usr1":userA.username,
+                "usr2":userB.username,
+                "updated":updated}
+        return json.dumps(data)
+
+#message from user to user
+class Message(db.Model):
+    title = db.StringProperty()
+    message = db.TextProperty(required=True)
+    read = db.BooleanProperty(required=True)
+    #the conversation where this message is linked to
+    conversation = db.ReferenceProperty(Conversation,collection_name="messages")
+    sender = db.ReferenceProperty(User)  #if the sender is logged in, reference him
+
 class Comment(db.Model):
     user = db.ReferenceProperty(User, required=True)
     comment = db.TextProperty(required=True)
@@ -227,20 +233,3 @@ class Colleges(db.Model):
 class DegreeCourse(db.Model):
     degree = db.StringProperty(required=True)
     college = db.ReferenceProperty(Colleges,required=True)
-
-'''if i return a non-tuple, (i.e q.fetch(...),q.count()) 
-python would match every item returned in fetch to count 
-(i.e item1,q.count, item2,q.count ...) which would return error'''
-
-#docs for all getListings 
-""" for BuyBook and SellBook
-    book                instance of book from Library
-    filterExpire        set yes to fetch only unexpired books
-    
-    for ALL (including Library)
-    limit               maximum number of objects to fetch
-    offset              offset to fetch, i.e how many objects to discard before
-                        returning the first object
-    order               the attribute to be sorted
-    count_only          set to true if only get the count of the query
-    count               set to true if also return the count of the query"""

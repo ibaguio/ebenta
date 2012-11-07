@@ -40,19 +40,14 @@ class RegisterHandler(PageHandler):
             else:
                 self.render("homepage.html",err=err,errs=errs,val=val)
             return
-            
-        # get the default privacy setting            
-        #privacy = PrivacySetting.get_by_key_name("default")
-        #if not privacy:
-            #privacy = createDefault()
 
         new = User(key_name=val['user'].lower(),
                    username = val['user'].lower(),
                    password =  pwHash(val['user'],val['pass']),
                    firstName = val['first'],
                    lastName = val['last'],
-                   contactNum = val['con'])
-                   #privacy = privacy)
+                   contactNum = val['con'],
+                   email=val['email'])
         new.put()
         #successfully register, auto login the user and redir to home
         cookie = generateCookie(val.get('user'))    #dictionary

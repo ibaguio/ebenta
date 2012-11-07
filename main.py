@@ -194,7 +194,6 @@ class TestDb(PageHandler):
         logging.info("pid="+str(pid))
         if pid == '0':
             generalTest()
-            generateMoreSellOrder()
             loadOtherBooks()
         elif pid == '1':
             logging.info("Creating initial dummy db")
