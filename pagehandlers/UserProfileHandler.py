@@ -6,9 +6,9 @@ class UserProfile(PageHandler):
     #only show profile if user is admin
     def get(self):
         me = self.getUser()
-        if not me.admin:
-            self.redirect("/home#profile")
-
+        #if not me.admin:
+        self.redirect("/home#profile")
+        return
         usr = self.request.get("usr")  #gets the username of user from url
         try:
             uid = int(usr)

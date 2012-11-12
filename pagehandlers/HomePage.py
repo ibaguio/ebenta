@@ -4,9 +4,8 @@ from pagehandlers.PageHandler import *
 # hompage for guest users
 class HomePage(PageHandler):
     def get(self):
-        news = BlogPost.all().order("-posted").fetch(5)
         if not self.isLogged():
-            self.render_noUser("new_home.html",news=news)
+            self.render_noUser("new_home.html")
         else:   #user is logged in, redir to home
             self.redirect('/home')
     
@@ -14,10 +13,8 @@ class UserHome(PageHandler):
     def get(self):
         user = self.isLogged()
         if user:
-            if self.request.get("comment") == 'success':
-                self.render('user_home_new.html',username = user, comment=True)
-            else:
-                self.render('user_home_new.html',username = user)
+            news = BlogPost.all().order("-posted").fetch(5)
+            self.render('user_home_new.html',username = user,news=news)
         else:
             self.redirect("/")
 

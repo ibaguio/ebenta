@@ -19,11 +19,11 @@
             <div id="home-blog" style=";margin-top:30px;" class="span7">
                 <legend>Updates</legend>
                 <div>
-                {%if not news or news.count() == 0%}
+                {%if not news%}
                 <h4>No Updates Available</h4>
                 {%endif%}
                 {%for article in news: %}
-                <div class="span6">
+                <div class="span6" style="margin-bottom:20px">
                     <h3>{{article.title}}</h3>
                     <div>
                         {{article.content}}
@@ -156,7 +156,7 @@
                         <img src="/static/images/loading.gif"> Loading</div>
                     <div id="consign-response" style="margin-top:20px;font-size:17px;display:none">
                     </div>
-                    <div id="consign-result"></div>
+                    <div id="consign-result" class="span5" style="margin-top:25px"></div>
                 </div>
                 <input type="hidden" id="sell-loaded" value="false">
             </div>
@@ -186,26 +186,27 @@
             <li class="" id="li_userprofile"><a href="#profile" onclick="showProfile()"><i class="icon-user"></i> Profile</a></li>{%if user.admin%}{{showAdminTab()}}{%endif%}
             <li class="" id="li_setting"><a href="#settings" onclick="showSettings()"><i class="icon-cog"></i> Settings</a></li>
             <li class="nav-header">Book Orders</li>
-            <li class id="li_consign"><a href="#myconsign" onclick="showConsigned()"><i class="icon-tags"></i> Consinged</a></li>
+            <li class id="li_consign"><a href="#myconsign" onclick="showConsigned()"><i class="icon-tags"></i> Consigned</a></li>
             <li class id="li_request"><a href="#myrequest" onclick="showRequested()"><i class="icon-book"></i> Requested</a></li>
-            <li class="divider"></li>
+            <!--<li class="divider"></li>
             <li class id="li_help"><a href="#help" onclick="showUserHelp()"><i class="icon-flag"></i> Help</a></li>
             <ul class="hidden" style="margin-left:10px;" id="help-options">
                 <li id="li_help-consign"><a href="#help_consign" onclick="showHelp('consign')">Selling</a></li>
                 <li id="li_help-buy"><a href="#help_buying" onclick="showHelp('buying')">Buying</a></li>
                 <li><a href="javascript:void(0)"></a></li>
-            </ul>
+            </ul>-->
         </ul>
     </div>
 {% endmacro %}
 {% macro showAdminTab()%}
 <li class="" id="li_aids">
 <a href="#admin" onclick="showAdmin()"><i class="icon-eye-open"></i> Admin</a></li>
-<ul id="ul-admin" class="nav nav-list">
+<ul id="uladmin" class="hidden">
     <li><a href="#post" onclick="showNewBlog()">Blog Post</a></li>
-    <li><a href="#newitem" onclick="newItem()">New Item</a></li>
-    <li><a href="#update" onclick="updateRequest()">Update Request</a></li>
-    <li><a href="#view">View User Profile</a></li>
+    <li><a href="#newitem" onclick="showNewItem()">New Item</a></li>
+    <li><a href="#addbook" onclick="showAddBook()">Add Book to Library</a></li>
+    <li><a href="#update" onclick="showUpdateRequest()">Update Request</a></li>
+    <li><a href="#view" onclick="showViewUser()">View User Profile</a></li>
 </ul>
 
 {% endmacro %}
@@ -214,12 +215,12 @@
     <form action="/admin/blogpost" method="post" class="form-horizontal">
         <div class="control-group">
             <label class="control-label" for="title">Title</label>
-            <div class="controls"><input type="text" id="title"></div>
+            <div class="controls"><input type="text" name="title"></div>
         </div>
          <div class="control-group">
             <label class="control-label" for="content">Content</label>
             <div class="controls">
-                <textarea id="content" rows="7"></textarea>
+                <textarea name="content" rows="7"></textarea>
             </div>
         </div>
         <input type="submit" class="btn btn-success" value="Post" style="margin-left:330px">
@@ -230,41 +231,103 @@
         <div class="control-group">
             <label class="control-label" for="bid">Book ID</label>
             <div class="controls">
-                <input type="text" id="bid" placeholder="Book ID">
+                <input type="text" name="bid" placeholder="Book ID">
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="user">Consignee</label>
             <div class="controls">
-                <input type="text" id="consignee" placeholder="Consignee's Username">
+                <input type="text" name="consignee" placeholder="Consignee's Username">
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="rating">Rating</label>
             <div class="controls">
-                <input type="text" id="rating" placeholder="Rating 1-5">
+                <input type="text" name="rating" placeholder="Rating 1-5">
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="ask_price">Ask Price</label>
             <div class="controls">
-                <input type="text" id="ask_price" placeholder="Consignee's ask price">
+                <input type="text" name="ask_price" placeholder="Consignee's ask price">
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="sell_price">Selling Price</label>
             <div class="controls">
-                <input type="text" id="sell_price" placeholder="Price to be posted">
+                <input type="text" name="sell_price" placeholder="Price to be posted">
             </div>
         </div>
         <input type="submit" class="btn btn-success" value="Add New Item" style="margin-left:275px">
     </form>
 </div>
-<div id="admin-update-request">
-
+<div id="admin-update-request" style="display:none">
+    <form action="/admin/update" method="post" class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="req_id">Request ID</label>
+            <div class="controls">
+                <input type="text" name="req_id" placeholder="Request ID">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="status">Status</label>
+            <div class="controls">
+                <select name="status">
+                    <option value="pending">Pending Action</option>
+                    <option value="processing">Processing Request</option>
+                    <option value="tbd">To be delivered</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+        </div>
+        <input type="submit" class="btn btn-success" value="Update" style="margin-left:275px">
+    </form>
 </div>
-<div id="admin-view-user">
-
+<div id="admin-add-book-lib" style="display:none">
+    <form action="/admin/addbook" method="post" class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="title">Title</label>
+            <div class="controls">
+                <input type="text" name="title" placeholder="Title">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="author">Author</label>
+            <div class="controls">
+                <input type="text" name="author" placeholder="Author">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="isbn">ISBN</label>
+            <div class="controls">
+                <input type="text" name="isbn" placeholder="ISBN(optional)">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="desc">Description</label>
+            <div class="controls">
+                <input type="text" name="desc" placeholder="Description(optional)">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="brandprice">Brand New Price</label>
+            <div class="controls">
+                <input type="text" name="brandprice" placeholder="Brand New Price">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="sk">Search Keys</label>
+            <div class="controls">
+                <input type="text" name="sk" placeholder="Search keys (space separated)">
+            </div>
+        </div>
+        <input type="hidden" name="addbook" value="ok">
+        <input type="submit" class="btn btn-success" value="Update" style="margin-left:320px">
+    </form>
+</div>
+<div id="admin-view-user" style="display:none">
+    Feature to be added.
 </div>
 {%endmacro%}
 {% macro showUserIcon(user) %}{% if user.admin: %}<img src="/static/images/admin1.png" class="admin-icon" title="Admin">{% elif user.consignee%}<img src="/static/images/handshake.ico" class="admin-icon" title="Consignee">{% endif %}{% endmacro %}

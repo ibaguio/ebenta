@@ -3941,6 +3941,12 @@ button.close {
   line-height: 14px;
 }
 
+.btn-mini-mini {
+  padding: 1px 3px;
+  font-size: 10px;
+  line-height: 10px;
+}
+
 .btn-primary,
 .btn-primary:hover,
 .btn-warning,

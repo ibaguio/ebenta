@@ -9,25 +9,29 @@
     {% endif %}
 {% endblock %}
 {% block other_css %}<link type="text/css" rel="stylesheet" href="/static/css/datepicker.css" />{% endblock %}
-{% block script_src%}<script src="/static/js/bootstrap/datepicker.js"></script>{%endblock%}
+{% block script_src%}<script src="/static/js/bootstrap/datepicker.js"></script>
+<script src="/static/js/custom/sell.js"></script>{%endblock%}
 {% block jscript%}
     $(function(){
-        var today = new Date();
+        var today = getDateToday();
+        var targ = new Date();
         var numberOfDaysToAdd = 6;
-        today.setDate(today.getDate() + numberOfDaysToAdd); 
-        var dd = today.getDate();
-        var mm = today.getMonth()+1;
-        var yy = today.getFullYear();
+        targ.setDate(targ.getDate() + numberOfDaysToAdd); 
+        var dd = targ.getDate();
+        var mm = targ.getMonth()+1;
+        var yy = targ.getFullYear();
         if (dd<10){dd="0"+dd}
         if (mm<10){mm="0"+mm}
-        today = dd+"/"+mm+"/"+yy;
+        targ = dd+"/"+mm+"/"+yy;
 
-        $("#date-picker").val(today);
+        $("#date-picker").val(targ);
         $("#date-picker").datepicker().on('changeDate', function(ev){
+        console.log(ev.date.valueOf());
+        console.log(today.valueOf());
         if (ev.date.valueOf() < today){
-            $("#invalid-date").text("Invalid Date");
+            $("#invalid-date").text("Invalid");
             $("#invalid-date").show();
-        }else if (ev.date.valueOf() == today.valueOf()){
+        }else if (ev.date.valueOf() === today.valueOf()){
             $("#invalid-date").text("Today?");
             $("#invalid-date").show();
         }else{
@@ -38,35 +42,60 @@
 {% endblock %}
 {% block left_content%}
     <div id="book-request-form" class="span5" style="margin-left:50px">
-        <legend>Book Request</legend>
+        <legend>Book Request Form</legend>
         <form action="" method="post" class="form-horizontal">
             <div class="control-group">
                 <label class="control-label" for="title"> Title </label>
-                <div class="controls"><input type="text" class="input-medium" placeholder="Title" id="title" value={%if book%}"{{book.title}}" disabled{%else%}""{%endif%}></div>
+                <div class="controls"><input type="text" class="input-medium" placeholder="Title" name="title" value={%if book%}"{{book.title}}" disabled{%else%}""{%endif%}></div>
             </div>
             <div class="control-group">
                 <label class="control-label" for="author"> Author </label>
-                <div class="controls"><input type="text" class="input-medium" id ="author" placeholder="Author (optional)" value={%if book%}"{{book.author}}" disabled{%else%}""{%endif%}></div>
+                <div class="controls"><input type="text" class="input-medium" name="author" placeholder="Author (optional)" value={%if book%}"{{book.author}}" disabled{%else%}""{%endif%}></div>
             </div>
             <div class="control-group">
                 <label class="control-label" for="isbn"> ISBN </label>
-                <div class="controls"><input type="text" class="input-medium" placeholder="ISBN (optional)" id="isbn" value={%if book%}"{{book.isbn}}" disabled{%else%}""{%endif%}></div>
+                <div class="controls"><input type="text" class="input-medium" placeholder="ISBN (optional)" name="isbn" value={%if book%}"{{book.isbn}}" disabled{%else%}""{%endif%}></div>
             </div>
             <div class="control-group">
                 <label class="control-label" for="isbn"> Date Needed</label>
                 <div class="controls">
                         <input class="input-medium datepicker" type="text" id="date-picker" 
-                         data-date-format="dd/mm/yyyy" value="{{data_date}}">
+                         name="needed" data-date-format="dd/mm/yyyy" value="{{data_date}}">
                     <span id="invalid-date" class="label label-warning" style="display:none">Invalid Date</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="isbn"></label>
+                <div class="controls">
+                    <label class="radio inline"><input type="radio" name="copy_kind" value="brandnew" onclick="$('#used-info').slideUp(400)" checked>Brand new</label>
+                    <label class="radio inline"><input type="radio" name="copy_kind" value="used" onclick="$('#used-info').slideDown(400)"> Used</label>
+                </div>
+            </div>
+            <div style="display:none" id="used-info">
+                <div class="control-group">
+                    <label class="control-label" for="isbn"> Maximum Price</label>
+                    <div class="controls">
+                        <div class="input-prepend">
+                            <span class="add-on">Php</span>
+                            <input type="text" name="maxprice" placeholder="Maximum Price" style="width:118px;margin-left:-5px">
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="isbn"> Minimum Rating</label>
+                    <div class="controls">
+                        {{macro.showRating()}}
+                    </div>
                 </div>
             </div>
             <div class="control-group">
                 <label class="control-label" for="isbn"> Special Requests</label>
                 <div class="controls">
-                    <textarea class="input-medium" style="height:70px;max-width:200px"></textarea>
+                    <textarea name="requests" class="input-medium" style="height:70px;max-width:200px"></textarea>
                 </div>
             </div>
             {%if book%}<input type="hidden" name="bid" value="book.key().id()">{%endif%}
+            <input type="hidden" name="condition" id="condition">
             <center>
                 <div class="control-group"><div class="controls">
                     <input type="submit" class="btn btn-success" value="Request Book"></div>

@@ -52,14 +52,14 @@ function loadConsigned(){
         if (xmlhttp.readyState===2){    
             $("#consign-loading").show();
         }else if(xmlhttp.readyState===4){
+            $("#consign-loading").hide();
             if (xmlhttp.status===200){
-                //populate data
+                var data = JSON.parse(xmlhttp.responseText);
+                populateConsigned(data);
             }else if (xmlhttp.status === 400){//no data
-                $("#consign-loading").hide();
-                $("#consign-response").html("You have no consigned items. Click here to <a href=''>learn more about consigning </a>");
+                $("#consign-response").html("You have no consigned items")//. Click here to <a href=''>learn more about consigning </a>");
                 $("#consign-response").show();
             }else{
-                $("#consign-loading").hide();
                 $("#consign-response").text("Failed to fetch data. Please try again in a while.");
                 $("#consign-response").show();
             }
@@ -69,6 +69,27 @@ function loadConsigned(){
     xmlhttp.open("POST","/user/orders",true);
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
     xmlhttp.send(params);
+}
+function populateConsigned(data){
+    var markup = "";
+    window.test2 = data;
+    for (var raw in data){
+        var cbook = data[raw];
+        markup += '<div><table class="table table-condensed table-bordered">'+
+            '<tr><td>Title</td><td>'+cbook.title+'</td></tr>'+
+            '<tr><td>Author</td><td>'+cbook.author+'</td></tr>'+
+            '<tbody id="body-'+raw+'" class="hidden">'+
+            '<tr><td>Ask Price</td><td>'+cbook.ask_price+'</td></tr>'+
+            '<tr><td>Rating</td><td>'+cbook.rating+'</td></tr>'+
+            '<tr><td>Status</td><td>'+cbook.status.toProperCase()+'</td></tr>'+
+            '<tr><td>Date Posted</td><td>'+cbook.posted+'</td></tr>'+
+            '</tbody></table><a href="javascript:void(0)" id="ex-'+raw+'"onclick="showConDetails('+raw+')">expand</a></div>';
+    }
+    $("div#consign-result").html(markup);
+}
+function showConDetails(num){
+    $("#body-"+num).slideDown(300);
+    $("#ex-"+num).hide();
 }
 function loadRequested(){
     var xmlhttp = ajaxRequest();
@@ -80,7 +101,7 @@ function loadRequested(){
                 //populate data
             }else if (xmlhttp.status === 400){//no data
                 $("#request-loading").hide();
-                $("#request-response").html("You have not requested any item. Click here to <a href=''>request for an item</a>");
+                $("#request-response").html("You have not requested any item. Click here to <a href='/book/request'>request for an item</a>");
                 $("#request-response").show();
             }else{
                 $("#request-loading").hide();

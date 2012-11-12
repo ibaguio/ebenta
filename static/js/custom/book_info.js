@@ -4,6 +4,7 @@
 
 //ajax request
 function requestSellers(sort_by,def){
+    console.log("requesting sellers")
     document.getElementById("loading").className = "";
     def = typeof def !== 'undefined' ? def : true;  //if def(ault) is null, set to true
     if (document.getElementById("li-sort-"+sort_by).className === "active" && def===true)
@@ -31,7 +32,7 @@ function requestSellers(sort_by,def){
             document.getElementById("loading").className = "hidden";
             document.getElementById("load-error").className="hidden";
             if (xmlhttp.status === 200){
-                populateUsers(JSON.parse(xmlhttp.responseText));
+                pupulateListings(JSON.parse(xmlhttp.responseText));
                 displayTab(sort_by);
                 $("#sorting-nav").show();
                 $("#results-nav").show();
@@ -57,20 +58,24 @@ function requestSellers(sort_by,def){
 }
 
 //fills the list of sellers for a book
-function populateUsers(jdata){
+function pupulateListings(jdata){
+    console.log("populating users");
     window.jdata = jdata;
     $("#sellers-list").hide();
     html = "";
+    console.log(jdata);
     for (var num in window.jdata.books){
         var book = JSON.parse(window.jdata.books[num]);
-        var user = JSON.parse(book.user);
-        var markup = '<div class="span7" style="margin-bottom:20px"><div id="item-info" class="row span5" style="position:relative;padding:14px 0px;">\n' +
-            '<span class="thumbnail" style="margin:0 15px;width:105px;">\n' +
-            '<a class="thumbnail" href="/user?usr=' + user.username + '" target="blank"><img src="' +user.image + '" class="img100"></a></span>\n'+
-            '<table class="table table-condensed" style="position:absolute;top:15px;left:140px;">\n' +
-            '<tr><td>Seller</td><td><a href="/user?usr=' + user.username + '" target="blank">' + user.username + '</a></td></tr>\n' +
+        var markup = '<div class="span7" style="margin-bottom:20px"><div id="item-info" class="row span5" style="position:relative;padding:14px 0px;">' +
+            '<span class="thumbnail" style="margin:0 15px;width:105px;">';
+            if (book.img_url!=="/images/noimage")
+                markup+='<img src="'+book.img_url+'" class="img100 thumbnail">';
+            else
+                markup+='<span class="result-img" ><div style="height:33px;margin:33px 0"></span>';
+            markup+='<label class="label label-success" alt="no image available" title="No image available" style="text-align:center;"/>No image<br/>available</label></div>'+
+            '<table class="table table-condensed" style="position:absolute;top:15px;left:140px;">' +
             '<tr><td>Book Rating</td><td><a class=\"stars\" rel=\"popover\" data-content=\"' + getDesc(book.rating).toString();
-            if (book.comment !== null)
+            if (book.comment !== undefined)
                  markup+= "<br/><br/><b>Seller's Comment:</b><p>" + book.comment + "</p>";
             markup += "\" data-original-title=\""+ getDescTitle(book.rating)+ "\">" + generateStars(book.rating)+ '</a></td></tr>\n' +
             '<tr><td>Price</td><td>Php '+ book.price +'</td></tr>';
@@ -78,7 +83,7 @@ function populateUsers(jdata){
             markup+= '<tr><td>Comments</td><td>'+book.comment+'</td></tr>';
         markup+= '<tr><td>Date Posted</td><td>'+ book.posted +'</td></tr></table></div>'+
         '<span class="pull-right" style="margin-top:130px">'+
-        '<button type="button" class="btn btn-success btn-mini" onclick="viewDetails('+book.sellid+')">View Details</button> '+
+        '<button type="button" class="btn btn-success btn-mini" onclick="viewDetails('+book.cid+')">View Details</button> '+
         '</span></div>';
         html += markup;
     }
@@ -89,12 +94,11 @@ function populateUsers(jdata){
     $("a.stars").popover(); 
     $("#sellers-list").show(700);
 }
-
 /* show the book stats*/
 function getStats(){
+    console.log("getting stats")
     $("#book-stats").slideDown(500,function(){
         $("#icon-show-stats").removeClass();
-        $("#icon-show-stats").addClass("icon-ok");
     });
 }
 //asc desc setting of active
@@ -107,6 +111,7 @@ function activate(order){
     document.getElementById("li-sort-"+order).className = "active";
 }
 function gotoPage(page){
+    console.log("going to page "+page);
     if (window.listing_page === page)
         return;
 
@@ -124,17 +129,15 @@ function gotoPrevPage(){
     if (page < 1) return;
     gotoPage(page);   
 }
-
 //more info click in book info
 function moreInfo(){
     var inf = document.getElementsByName("info");
     for (var i=0;i< inf.length;i++){
         inf[i].className = "";
     }
-    document.getElementById("more-info").onclick="";
-    document.getElementById("icon-more-info").className = "icon-ok";
 }
 function loadOrder(order){
+    console.log("loading order")
     var xmlhttp = ajaxRequest();
     xmlhttp.onreadystatechange=function(){
         if (xmlhttp.readyState==2){
@@ -171,11 +174,13 @@ function loadOrder(order){
 }
 //type is either sell or buy
 function showItemInfo(type,id){
+    console.log("showiteminfo");
     document.getElementById(type+"-info-item"+id).className='';
     document.getElementById(type+"-link"+id).className='hidden';
 }
 /*  generate pagination for listings */
 function generatePaginationMarkup(){
+    console.log("generating pagination markup")
     var i=0;
     var limit=5;
     var data = window.jdata
@@ -233,6 +238,7 @@ function getDescTitle(rating){
 /* activates the current tab in the sort tabs
     update this and use bootstrap-tabs instead */
 function displayTab(sort_by){
+    console.log("displaying tab")
     window.sortBy = sort_by;
     document.getElementById("li-sort-posted").className = "";
     document.getElementById("li-sort-rating").className = "";
@@ -246,57 +252,91 @@ function reorder(order){
     activate(order);
     requestSellers(window.sortBy,false);
 }
-
 /* ajax request to load details */
-function getDetails(sellid){
+function getDetails(cid){
+    console.log("getting details");
     var xmlhttp = ajaxRequest();
     xmlhttp.onreadystatechange = function(){
         if (xmlhttp.readyState === 2){
         }
     }
-    var params= "sellid="+encodeURIComponent(sellid);
+    var params= "cid="+encodeURIComponent(cid);
     params+="&bid="+encodeURIComponent(window.jdata.bid);
     xmlhttp.open("POST","/sell/order",true);
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xmlhttp.send(params);
 }
-
-function viewDetails(sellid){
+function viewDetails(cid){
     $("div#modal-order-details").modal();
     $("#loading-details").show();
-    //getDetails(sellid);
+    //getDetails(cid);
     var theBook;
     for (var num in window.jdata.books){
         var b = JSON.parse(window.jdata.books[num]);
-        if (b.sellid == sellid){
+        if (b.cid === cid){
             populateModal(b);
             break;
         }
     }
-    loadImages(sellid);
+    loadImages(cid);
 }
 
 function populateModal(book){
-    seller = JSON.parse(book.user);
-    var html = '<div class="span5" ><h3>User Info</h3><table class="table table-condensed" style="margin-top:10px">'+
-        '<tr><td style="width:130px">Seller</td><td>'+seller.username+'</td></tr>'+
-        '<tr><td>Contact Number</td><td>';
-        if (seller.contactNum) html+= seller.contactNum;
-        else html+= " Info Private";
-        html+='</td></tr><tr><td>Email</td><td>';
-        if (seller.email) html+= seller.email;
-        else html+=
-            " Info Private";
-        html+='</td></tr><tr><td>Feedback Score</td><td>'+seller.score+'</td></tr>'+
-        '</table></div><div class="span5" ><h3>Book Info</h3><table class="table table-condensed" style="margin-top:10px">'+
+    console.log("populating modal")
+    var html = '</div><div class="span5" ><h3>Book Info</h3>'+
+            '<table class="table table-condensed" style="margin-top:10px">'+
             '<tr><td style="width:130px">Rating</td><td>'+generateStars(book.rating)+'</td></tr>'+
             '<tr><td>Price</td><td>Php '+book.price+'</td></tr>'+
+            '<tr><td>Date Posted</td><td>'+book.posted+'</td></tr>'+
             '<tr><td></td><td></td></tr>'+
         '</table></div>';
-    document.getElementById("order-details").innerHTML = html;
+        /*'<div class="span5"><h3>Admin\'s Comments</h3>'+
+        '<table class="table table-condensed" style="margin-top:10px">'+
+        '<tr><td></td><td></td></tr>'+
+        '</table>'+*/
+    $("input#cid").val(book.cid);
+    $("input#bid").val(book.bid);
+    $("div#order-details").html(html);
+    updateDate();
 }
+
+function buyConsigned(){
+    var cid = $("input#cid").val();
+    if (!cid)
+        return;
+    var xmlhttp=ajaxRequest();
+    xmlhttp.onreadystatechange = function(){
+        if (xmlhttp.readyState === 2){
+            $("i#buy-loading").show();
+            $("button#btn-buy").attr("disabled","");
+        }else if (xmlhttp.readyState === 4){
+            $("button#btn-buy").hide();
+            $("i#buy-loading").hide();
+            if (xmlhttp.status === 200){
+                var tid = JSON.parse(xmlhttp.responseText).tid;
+                console.log(xmlhttp.responseText);
+                console.log(tid);
+                $("#transaction-id").text(String(tid));
+                $("form#buy-form").hide(0,function(){
+                    $("#buy-ok").slideDown(300);    
+                });
+            }else{
+                $("form#buy-form").hide(0,function(){
+                    $("#buy-not-ok").slideDown(300);    
+                });
+            }
+        }
+    }
+    var params = "cid="+encodeURIComponent(cid)
+        +"&bid="+encodeURIComponent(bid)+"&needed"+encodeURIComponent($("input#date-picker").val());
+    xmlhttp.open("POST","/book/consign/buy",true);
+    xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+    xmlhttp.send(params);
+}
+
 /* gets the images for the sell order */
 function loadImages(oid){
+    console.log("loading images");
     var xmlhttp = ajaxRequest();
     var bid = parseURLParams()["book"];
     xmlhttp.onreadystatechange = function(){
@@ -334,10 +374,74 @@ function adminAddImage(num){
         });
     }else{
         showAdminModal();
+        $("div#add-consignee").hide();
         $("div#addImage").show();
     }
 }
 function adminEditInfo(){
     $("[id^=xbook]").hide();
     $("[id^=xinput]").show();
-} 
+}
+function addConsignee(){
+    $("div#add-consignee").show();
+    $("div#addImage").hide();
+    showAdminModal();
+}
+/*sends an ajax request to search for key (email, username, name) */
+function searchUsername(){
+    search("username");
+}
+function searchEmail(){
+    search("email");
+}
+function search(key){
+    var xmlhttp = ajaxRequest();
+    xmlhttp.onreadystatechange = function(){
+        if (xmlhttp.readyState === 2){
+            $("span#search-loading").show();
+        }else if (xmlhttp.readyState === 4){
+            $("span#search-loading").hide();
+            if (xmlhttp.status === 200){
+                var user = JSON.parse(xmlhttp.responseText);
+                $("input#dis-uname").val(user.username);
+                $("[name='uname']").val(user.username);
+                $("div#div-query").hide();
+                $("div#add-consign").show();
+                $("img#search-error").hide();
+            }else{
+                $("img#search-error").show();
+            }
+        }
+    }
+    var params= "key="+encodeURIComponent(key);
+    params+= "&val="+encodeURIComponent($("input#user-query").val());
+    xmlhttp.open("POST","/admin/user/search",true);
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.send(params);
+}
+
+function updateDate(){
+        window.today = getDateToday();
+        var targdate = new Date();
+        var numberOfDaysToAdd = 6;
+        targdate.setDate(targdate.getDate() + numberOfDaysToAdd); 
+        var dd = targdate.getDate();
+        var mm = targdate.getMonth()+1;
+        var yy = targdate.getFullYear();
+        if (dd<10){dd="0"+dd}
+        if (mm<10){mm="0"+mm}
+        targdate = dd+"/"+mm+"/"+yy;
+
+        $("#date-picker").val(targdate);
+        $("#date-picker").datepicker().on('changeDate', function(ev){
+        if (ev.date.valueOf() < window.today.valueOf()){
+            $("#invalid-date").text("Invalid");
+            $("#invalid-date").show();
+        }else if (ev.date.valueOf() == today.valueOf()){
+            $("#invalid-date").text("Today?");
+            $("#invalid-date").show();
+        }else{
+            $("#invalid-date").hide();
+        }
+        });
+    }

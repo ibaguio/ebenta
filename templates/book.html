@@ -10,8 +10,22 @@
 {% endblock %}
 {% block script_src%}
     <script src="/static/js/custom/book_info.js"></script>
+    <script src="/static/js/bootstrap/datepicker.js"></script>
 {% endblock%}
-
+{% block other_css %}<link type="text/css" rel="stylesheet" href="/static/css/datepicker.css" />{% endblock %}
+{% block jscript%}
+    $("[id^=stats-]").hide();
+    window.sortBy="posted";
+    window.offset=0;
+    activate('desc');
+    function oload(){
+        requestSellers('posted');
+        getStats();
+        moreInfo();
+    }
+    document.onload = oload();
+    $("#err-container").removeClass();
+{% endblock %}
 {% block content %}
     {% if msg: %}
     {{ msg }}
@@ -32,8 +46,8 @@
                 <table class="table table-bordered table-condensed">
                     <tr><td style="width:55px">Title</td><td>{{book.title}}</td></tr>
                     <tr><td>Author</td><td>{{book.author}}</td></tr>
-                    <tr class="hidden" name="info"><td>ISBN</td><td>{%if book.isbn%}{{book.isbn}}{%else%}No Data{%endif%}</td></tr>
-                    {% if book.description%}<tr class="hidden" name="info"><td></td><td>{{book.description}}</td></tr>{%endif%}
+                    <tr><td>ISBN</td><td>{%if book.isbn%}{{book.isbn}}{%else%}No Data{%endif%}</td></tr>
+                    {% if book.description%}<tr><td></td><td>{{book.description}}</td></tr>{%endif%}
                     <tr class="hidden" name="info"></tr>
                 </table>
                 {% endif%}
@@ -42,7 +56,7 @@
                 <div id="book-stats" style="display:none">
                     <h3><small>Book Statistics</small></h3>
                     <table class="table table-condensed">
-                        <tr><td style="width:90px">Listed</td>
+                        <tr><td style="width:90px">Available</td>
                             <td>{{stats["listed"]}}</td></tr>
                         <tr><td>Total Sold</td>
                             <td>{{stats["totalSold"]}}</td></tr>
@@ -56,17 +70,15 @@
             </div>
             <div id="mini-nav" class="well span3 pull-right" style="padding:8px 0;width:160px;margin-top:25px;margin-right:20px">
                 <ul class="nav nav-list">
-                    <li><a style="margin-top:5px" href="javascript:void(0)" id="more-info" onclick="moreInfo()" class="">
-                        <i class="icon-info-sign" id="icon-more-info"></i>More Info</a></li>
-                    <li ><a href="javascript:void(0)" onclick="getStats()" id="show-stats-link"><i class="icon-list-alt" id="icon-show-stats"></i>Show stats</a></li>
-                    <li><a href="/sell/step3?book={{book.key().id()}}"><i class="icon-book" id="icon-sell-book"></i>Sell your copy</a></li>
+                    <li><a href="/book/consign?book={{book.key().id()}}"><i class="icon-book" id="icon-sell-book"></i>Consign (Sell)</a></li>
+                    <li><a href="/book/request?book={{book.key().id()}}"><i class="icon-shopping-cart" id="icon-sell-book"></i>Request Copy</a></li>
                     <li><a href="#how-to-buy" data-toggle="modal"><i class="icon-question-sign"></i>How to Buy?</a></li>
                 </ul>
             </div>
         </div>
         <div class="row">
     	<div class="span7">
-    		<h3>People Selling this book </h3>
+    		<h3>Copies of this book for sale</h3>
             <div style="position:relative;" id="sorting-nav">
                 <div style="margin-left:185px;position:absolute">
                     <h2><small>Sort by</small></h2>
@@ -76,8 +88,8 @@
                 </span><img title="Error in fetching listings" src="/static/images/error.gif" class="hidden" id="load-error" style="position:absolute;right:13px;top:7px;width:18px">
                 <div class="offset3" >{# upper nav #}
                 <ul class="nav nav-tabs">
-                    <li id="li-sort-posted"><a href="javascript:void(0)" onclick="requestSellers('posted')">Date</a></li>
-                    <li id="li-sort-rating"><a href="javascript:void(0)" onclick="requestSellers('rating')">Rating</a></li>
+                    <li id="li-sort-posted"><a href="javascript:void(0)"onclick="requestSellers('posted')">Date</a></li>
+                    <li id="li-sort-rating"><a href="javascript:void(0)"onclick="requestSellers('rating')">Rating</a></li>
                     <li id="li-sort-price"><a href="javascript:void(0)" onclick="requestSellers('price')">Price</a></li>
                     <li class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)"><b class="caret"></b></a>
@@ -114,7 +126,7 @@
                 <li class="nav-header">Admin Nav</li>
                 <li><a href="javascript:void(0)" id="" onclick="adminEditInfo()">
                     <i class="icon-pencil"></i>Edit Information</a></li>
-                <li ><a href="javascript:void(0)" id="" onclick="">
+                <li ><a href="javascript:void(0)" id="" onclick="addConsignee()">
                     <i class="icon-plus-sign" ></i>Add Consignee</a></li>
                 <li ><a href="javascript:void(0)" id="" onclick="adminAddImage()">
                     <i class="icon-picture" ></i>Add Image</a></li>
@@ -133,8 +145,6 @@
             <h3>How to Buy</h3>
         </div>
         <div class="modal-body">
-            
-            
         </div>
         <div class="modal-footer">
             <a href="#" class="btn" data-dismiss="modal">Close</a>
@@ -149,12 +159,40 @@
         <div class="modal-body">
             <div id="order-details" class="span">
             </div>
+            <div class="span">
+                <form id="buy-form" class="form-horizontal">
+                    <div class="control-group">
+                    <label class="control-label" for="isbn"> Date Needed</label>
+                    <div class="controls">
+                            <input class="input-medium datepicker" type="text" id="date-picker" 
+                             name="needed" data-date-format="dd/mm/yyyy" value="{{data_date}}">
+                        <span id="invalid-date" class="label label-warning" style="display:none">Invalid Date</span>
+                    </div>
+                    <input type="hidden" id="cid">
+                    <input type="hidden" id="bid">
+                </div>
+                </form>
+                <span style="margin-left:215px;" id="buy-confirm">
+                    <button onclick="buyConsigned()" id="btn-buy" class="btn btn-success">Buy this copy!</button>
+                    <i class="request-loading" id="buy-loading" style="display:none;"></i>
+                </span>
+            </div>
+            <div class="span">
+            <span id="buy-ok" class="hidden">
+                <h4>Your Request has been posted!</h4>
+                Please wait for an admin to contact you (thrus SMS) regarding this transaction. You could also email us at admin@ebenta.com.ph
+                <br/><br/><h3>Transaction/Reference ID: <span id="transaction-id"></span></h3>
+            </span>
+            <span id="buy-not-ok" class="hidden">
+                <h4>Failed to post request!</h4>
+                An error has occured. Try refreshing and try again. If problem persists, contact administrators at admin@ebenta.com.ph
+            </span>
+            </div>
             <div id="images-div" class="span">
             </div>
         </div>
         <div class="modal-footer">
-            <a href="#">Report</a>
-            <button type="button" class="btn btn-danger">Remove</button>
+            {%if user.admin%}<button type="button" class="btn btn-danger">Remove</button>{%endif%}
             <a href="#" class="btn" data-dismiss="modal">Close</a>
         </div>
     </div>
@@ -164,8 +202,8 @@
             <button type="button" class="close" data-dismiss="modal">×</button>
             <h3>Admin Control</h3>
         </div>
-        <div class="modal-body">
-            <div id="addImage">
+        <div class="modal-body" style="min-height:150px">
+            <div id="addImage" style="display:none">
                 <h3>Upload Image</h3>
                 <form action="/admin" method="post" enctype="multipart/form-data">
                     <input type="file" name="img1" id="img-upload" onchange="adminAddImage(2)"/>
@@ -173,39 +211,46 @@
                     <input type="hidden" name="bid" value="{{book.key().id()}}">
                 </form>
             </div>
-            <div id="addConsignee">
-                <h3>Add Consignee</h3>
-
+            <div id="add-consignee" style="display:none">
+                <h3>Add Consignee to '{{book.title}}'</h3>
+                <br/>
                 <div class="span5">
-                Search User
-                <form action="/" method="post" class="form-inline">
-                    <div class="row">
-                    <div class="span"><input type="text" name="user-query" placeholder="Username, Name, or Email"></div>
+                    <div class="row" id="div-query">
+                        <h4>Search User</h4>
+                    <div class="span"><input type="text" id="user-query" placeholder="Username, Name, or Email"></div>
                     <div class="btn-group span">
                         <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">Search
                             <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Username</a></li>
-                        <li><a href="#">Name</a></li>
-                        <li><a href="#">Email</a></li>
-                    </ul>
-                    </div>  
+                        <ul class="dropdown-menu">
+                            <li><a href="#" onclick='searchUsername()'>Username</a></li>
+                            {#<li><a href="#" >Name</a></li>#}
+                            <li><a href="#" onclick='searchEmail()'>Email</a></li>
+                        </ul>
+                    </div> 
+                    <form action="/" method="post" class="form-inline">
+                    <span class="hidden" id="search-loading" style="margin-left:20px">
+                        <i class="request-loading"></i>
+                    </span>
+                    <img src="/static/images/error.gif" style="display:none" id="search-error">
                     </div>
                 </form>
                 </div>
-                <div class="span5">
-                <form action="/admin" method="post">
+                <div class="span5" id="add-consign" style="display:none">
+                <form action="/admin/add/consigned" method="post" enctype="multipart/form-data">
                     <input type="text" placeholder="Username" class="input-medium" id="dis-uname" disabled>
                     <div class="input-prepend">
                         <span class="add-on">Php</span><input type="text" name="ask-price" placeholder="Ask Price" class="input-mini"> 
                     </div>
                     <div class="input-prepend">
-                        <span class="add-on">Php</span><input type="text" name="price" placeholder="Sell Price" class="input-mini"> 
+                        <span class="add-on">Php</span><input type="text" name="price" placeholder="Sell Price" class="input-mini">
                     </div>
-                    Rating
-                    <br/><input type="submit" id="add-consignee" value="Add Consigned Copy" name="upload-img" class="btn btn-success">
-                    <input type="hidden" name="uid">
+                    <input type="text" name="rating" placeholder="Rating" class="input-mini">
+                    <br/><textarea name="desc" style="width:200px;height:60px;" placeholder="Description"></textarea>
+                    <br/><input type="file" name="img">
+                    <br/><input type="submit" id="add-consignee" value="Add Consigned Copy" class="btn btn-success">
                     <input type="hidden" name="bid" value="{{book.key().id()}}">
+                    <input type="hidden" name="uname">
+                    <input type="hidden" name="adder" value="{{user.username}}">
                 </form>
                 </div>
             </div>
@@ -218,14 +263,6 @@
 
 {% endblock %}
 
-{% block jscript%}
-    $("[id^=stats-]").hide();
-    window.sortBy="posted";
-    window.offset=0;
-    activate('desc');
-    document.onload = requestSellers('posted');
-    $("#err-container").removeClass();
-{% endblock %}
 
 {% macro getDesc(rating) %}
 {%if rating==1%}

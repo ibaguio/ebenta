@@ -54,8 +54,16 @@ function validateImage(input_img,success_callback,fail_callback,cancel_callback)
     }
     success_callback();
 }
-
 /* identical to pythons string.title() built-in function */
 String.prototype.toProperCase = function () {
     return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 };
+// Source: http://stackoverflow.com/questions/497790
+function getDateToday(){
+    var today = new Date();
+    today.setMinutes(0);
+    today.setHours(0);
+    today.setSeconds(0);
+    today.setMilliseconds(0);
+    return today;
+}

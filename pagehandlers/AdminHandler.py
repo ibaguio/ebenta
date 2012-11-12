@@ -1,6 +1,59 @@
 #!/usr/bin/env python
 from pagehandlers.PageHandler import *
+from google.appengine.api import images
 from utils.image import *
+import logging, json
+
+class AdminAddBookHandler(PageHandler):
+    def post(self):
+        logging.info(self.request.POST)
+        title= self.request.get("title")
+        author=self.request.get("author")
+        isbn=self.request.get("isbn")
+        desc=self.request.get("desc")
+        p = self.request.get("brandprice",default_value=-1.0)
+        sk = self.request.get("sk").split()
+        
+        try:
+            if not p: raise
+            else: price = float(p)
+        except:
+            price = -1.0
+        
+        logging.info(title)
+        logging.info(author)
+        logging.info(price)
+
+        if not title or not author:
+            return
+
+        newBook = Library(title=title,author=author,isbn=isbn,description=desc,brandNewPrice=price)
+        newBook.generateSk()
+        if sk:
+            for s in sk:
+                newBook.addSk(s)
+        newBook.put()
+
+        res = """<html><body><pre>
+                OK ADDED
+                Title:          %(title)s
+                Author:         %(author)s
+                ISBN:           %(isbn)s
+                Description:    %(desc)s
+                Brandnew Price: %(bnew)f
+                Search Keys:    %(sk)s
+
+                WILL REDIRECT BACK IN ABOUT 3 seconds... 
+                <a href='/home#addbook'>click here to go back</a>
+                Note: if brand new price is, -1.0. that means there is No Data
+
+                </pre></body></html>
+                <script>window.onload=(function() {
+                    setTimeout("location.pathname='/home'", 3000);});</script>
+                """
+
+        sss = ",".join(newBook.searchKeys)
+        self.write(res%{"title":title,"author":author,"isbn":isbn,"desc":desc,"bnew":price,"sk":sss})
 
 class AdminHandler(PageHandler):
     def get(self):
@@ -19,7 +72,28 @@ class AdminHandler(PageHandler):
             self.infoUpdate()
         elif self.request.get("add-consignee"):
             self.addConsignee()
+        elif self.request.get("addbook"):
+            self.addBook()
         self.redirectBack()
+
+    def addBook(self):
+        logging.info("addbook")
+        title= self.request.get("title")
+        author=self.request.get("author")
+        isbn=self.request.get("isbn")
+        desc=self.request.get("desc")
+        price=self.request.get("brandprice")
+        sk = self.request.get("sk").split()
+
+        if not title or not author:
+            return
+
+        newBook = Library(title=title,author=author,isbn=isbn,description=desc,brandNewPrice=brandprice)
+        newBook.generateSk()
+        if sk:
+            newBook.addSk(sk)
+        newBook.put()
+        self.write("ok added")
 
     def imgUpdate(self):
         img_raw = self.request.get("img1")
@@ -82,3 +156,53 @@ class AdminHandler(PageHandler):
 
         except:
             pass
+
+class UserSearchHandler(PageHandler):
+    def post(self):
+        key = self.request.get("key")
+        val = self.request.get("val")
+        logging.info(key)
+        logging.info(val)
+        if not key or not val:
+            self.response.status_int = 401
+            return
+
+        if key == "email":
+            user = User.all().filter("email",val).get()
+        elif key == "username":
+            user = User.get_by_key_name(val)
+        #elif key == "name"
+        if not user:
+            self.response.status_int = 401
+            return
+        res = {"username":user.username}
+        self.write(json.dumps(res))
+
+class AddConsigneeHandler(PageHandler):
+    def post(self):
+        try:
+            logging.info(self.request.body)
+            user = User.get_by_key_name(self.request.get("uname"))
+            ask_price = float(self.request.get("ask-price"))
+            sell_price = float(self.request.get("price"))
+            rating = int(self.request.get("rating"))
+            added_by = User.get_by_key_name(self.request.get("adder"))
+            book = Library.get_by_id(int(self.request.get("bid")))
+
+            if not user or not ask_price or not sell_price or not rating or not book or not added_by:
+                logging.info("bad")
+                raise
+
+            new_consigned_book = ConsignedBook(parent=book,consignee=user,added_by=added_by,\
+                ask_price=ask_price,rating=rating,price=sell_price)
+            new_consigned_book.put()
+
+            #add the image
+            img = self.request.get("img")
+            ftype = getImageFormat(img)
+            if img:
+                new_image = Image(ref=new_consigned_book,image=db.Blob(img),ftype=ftype)
+                new_image.put()
+            self.write("OK added")
+        except:
+            self.write("NOT ADDED")

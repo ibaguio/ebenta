@@ -26,23 +26,19 @@ function requestLibrary(page){
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xmlhttp.send(params);
 }
-
 function noImage(){
     return '<div class="result-img" title="no image available"><div style="height:25px"></div>'+
             '<label class="label label-success" style="text-align:center;">No Image<br/>Available</label></div>';
 }
-
 function getImage(img){
     return '<div class="result-img"><div style="height:25px"></div>'+
             '<img src="'+img+'"></div>';
 }
-
 function getDescription(desc){
     if (!desc)
         return "No Description available";
     return desc
 }
-
 function modTitle(title){
     if (title.length>=28)
         return title.substr(0,25)+"...";
@@ -57,7 +53,7 @@ function modAuthor(author){
 function populateResults(jdata,callback){
     var i=0;
     var books = JSON.parse(jdata.books);
-    var buySell = JSON.parse(jdata.buySell);
+    var con = JSON.parse(jdata.con);
     var pages = jdata.pages;
     window.jdata = jdata;
     window.page = jdata.page;
@@ -78,8 +74,13 @@ function populateResults(jdata,callback){
             ' data-original-title="'+book.title+'">'+modTitle(book.title)+'</a></td></tr>'+
             '<tr><td><img src="/static/images/author.png" title="Author" class="icon16px"></td><td>'+
             modAuthor(book.author) +'</td></tr>'+'</table><span class="browsed-stats">'+
-            '<span title="Buying"><i class="icon-shopping-cart"></i> '+buySell[i][0].toString()+' </span>'+
-            '<span title="Selling"><i class="icon-book"></i> '+buySell[i][1].toString()+' </span></span></div></div></div>';
+            '<button class="btn btn-dropdown-toggle btn-success btn-mini-mini" data-toggle="dropdown"'+
+            'style="margin-top:-5px;margin-right:3px;">'+
+            '<span class="caret"></span></button><ul class="dropdown-menu">';
+            if (con[i]>0) markup+='<li><a href="/book/info?book='+book.key+'">Buy</a></li>';
+            else markup+='<li><a href="/book/request?book='+book.key+'">Request</a></li>';
+            markup+='<li><a href="/book/consign?book='+book.key+'">Consign (Sell)</a></li></ul>'+
+            '<span title="'+con[i].toString()+' Copies on Stock"><i class="icon-book"></i> '+con[i].toString()+' </span></span></div></div></div>';
         html_code+=markup;
     }
     $("#browsed-div").html(html_code);
@@ -121,12 +122,12 @@ function gotoPage(page){
     requestLibrary(page);
 }
 function gotoNextPage(){
-    page = window.page+1;
+    var page = window.page+1;
     if (page > window.pages) return;
     gotoPage(page);
 }
 function gotoPrevPage(){
-    page = window.page-1;
+    var page = window.page-1;
     if (page < 1) return;
     gotoPage(page);   
 }

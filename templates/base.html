@@ -19,15 +19,15 @@
           <div class="nav-collapse collapse">
             <ul class="nav">
               <li class="{{browse_active}}"><a href="/browse">Browse</a></li>
-              <li class="dropdown">
+              <li class="{{request_active}}"><a href="/book/request">Request</a></li>
+              <!--<li class="dropdown">
                 <a href="javascript:void(0)" class="dropdown-toggle {{buy_active}}" data-toggle="dropdown">Buy<b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a href="/browse/for-sale">Browse items for sale</a></li>
                   <li><a href="/book/request">Request for a book</a></li>
                 </ul>
-              </li>
-              <li class="{{sell_active}}"><a href="/sell">Sell</a></li>
-              {% if user%}{%if user.admin%}<li class="{{admin_active}}"><a href="/admin">Admin</a></li>{%elif user.consignee%}<li class="{{consign_active}}"><a href="/consignee">Consign</a></li>{%endif%}{%endif%}
+              </li>-->
+              <li class="{{sell_active}}"><a href="/book/consign">Consign</a></li>
             </ul>
           </div>
       </div>
@@ -45,7 +45,7 @@
       &copyCopyright ebenta, 2012
       <br/>Powered by <a href="https://developers.google.com/appengine/" target="blank">Google AppEngine</a> and <a href="http://twitter.github.com/bootstrap/" target="blank">Twitter Bootstrap</a>.
       </div>
-      <span class="pull-right">
+      <!--<span class="pull-right">
         <a href="/">Home</a> · 
         <a href="/buy">Buy</a> · 
         <a href="/sell">Sell</a> · 
@@ -53,7 +53,7 @@
         <a target="blank" href="/about/contact">Contact</a> · 
         <a target="blank" href="/about">About</a>
       </span>
-    </div>
+    </div>-->
   </footer>
     <!-- Le javascript -->  
     <script src="/static/js/custom/core.js"></script>
@@ -63,14 +63,15 @@
     <script type="text/javascript">{%block jscript%}{%endblock%}</script> 
     <!-- Analytics -->
         <script type="text/javascript">
-  /*var _gaq = _gaq || [];
+  var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-33865639-1']);
   _gaq.push(['_trackPageview']);
   (function() {
     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();*/
+  })();
+if (location.hostname==="e-benta.appspot.com"){window.location.href="http://ebenta.com.ph";}
 </script>
   </body>
 </html>

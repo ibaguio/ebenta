@@ -1,0 +1,48 @@
+{% extends "home_base.html"%}
+{% import "macros.html" as macro %}
+
+{% block login %}
+    {{ macro.top_welcome(user) }}    
+{% endblock %}
+
+{% block left_content%}
+    <div id="book-consign-form" class="span5" style="margin-left:50px">
+        <legend>Book Consign Form</legend>
+        <form action="" method="post" class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="title"> Title </label>
+                <div class="controls"><input type="text" class="input-medium" placeholder="Title" id="title" value={%if book%}"{{book.title}}" disabled{%else%}""{%endif%}></div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="author"> Author </label>
+                <div class="controls"><input type="text" class="input-medium" id ="author" placeholder="Author (optional)" value={%if book%}"{{book.author}}" disabled{%else%}""{%endif%}></div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="isbn"> ISBN </label>
+                <div class="controls"><input type="text" class="input-medium" placeholder="ISBN (optional)" id="isbn" value={%if book%}"{{book.isbn}}"disabled{%else%}""{%endif%}></div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="isbn"> Special Requests</label>
+                <div class="controls">
+                    <textarea class="input-medium" style="height:70px;max-width:200px"></textarea>
+                </div>
+            </div>
+            {%if book%}<input type="hidden" name="bid" value="book.key().id()">{%endif%}
+            <center>
+                <div class="control-group"><div class="controls">
+                    <input type="submit" class="btn btn-success" value="Consign Book"></div>
+                </div>
+            </center>
+        </form>
+    </div>
+{% endblock %}
+
+{% block right_content%}
+    <div id="book-request-info" style="border:solid" class="span4">
+        <h3>Consigning a Book</h3>
+        <div>
+            
+        </div>
+        
+    </div>
+{% endblock %}

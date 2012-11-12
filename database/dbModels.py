@@ -48,11 +48,15 @@ class User(db.Model):
         return "/static/images/no_profile_pic.jpg"
 
 class Image(db.Model):
-    ref = db.ReferenceProperty(collection_name="images")
+    ref = db.ReferenceProperty(required=True,collection_name="images")
     image = db.BlobProperty(required=True)
     ftype = db.StringProperty(required=True,indexed=False)
     comment = db.StringProperty(default=None,indexed=False)
     posted = db.DateTimeProperty(auto_now_add=True)
+
+    def getUrl(self):
+        return "/image/"+str(self.key().id())+"."+ftype
+
 
 class Author(db.Model):
     name = db.StringProperty(required=True)
@@ -119,7 +123,7 @@ class Library(db.Model):
         if stats["newPrice"] <= 0:
             stats["newPrice"] = "No Data"
 
-        tsold = Transaction.all().ancestor(self).count()
+        tsold = ConsignedBook.all().ancestor(self).filter("completed=",True).count()
         if tsold == 0:
             stats["totalSold"] = "None yet"
         elif tsold == 1:
@@ -145,6 +149,12 @@ class Library(db.Model):
         stats["listed"] = listed.count()
         return stats
 
+#books that are added by users and would not be shown on browse
+class UnlistedLibrary(db.Model):
+    title = db.StringProperty(required=True)
+    author = db.StringProperty(required=True)
+    isbn = db.StringProperty()
+
 class ConsignedBook(db.Model):
     """ consignee - owner of book
         added_by - admin who added the book
@@ -157,30 +167,59 @@ class ConsignedBook(db.Model):
     added_by = db.ReferenceProperty(User,required=True,collection_name="consigned_books_added")
     status = db.StringProperty(default="posted",choices=set(["posted","processing","tbd","delivered","completed"]))
     ask_price = db.FloatProperty(required=True)
-    price = db.FloatProperty()
+    price = db.FloatProperty(required=True)
     rating = db.RatingProperty(required=True)
     completed = db.BooleanProperty(default=False)
     posted = db.DateTimeProperty(auto_now_add=True)
 
-    def toJson(self):
+    def toJson(self,book_info=False,**kwargs):
+        return json.dumps(self.toDict(book_info,**kwargs))
+
+    def toDict(self,book_info=False,**kwargs):
         book = self.parent()
-        d = {'title':book.title,
-             'author':book.author,
-             'bid':book.key().id,
-             'added_by':self.added_by,
+        d = {'added_by':self.added_by.username,
              'rating':self.rating,
-             'posted':self.posted,
-             'completed':self.completed}
+             'posted':self.posted.strftime("%B %d, %Y"),
+             'price':self.price,
+             'ask_price':self.ask_price,
+             'cid':self.key().id(),
+             'status':self.status}
+        d.update(kwargs)
+        i = Image.all().ancestor(self).get()
+        if i:
+            d["img_url"] = i.getUrl()
+        else:
+            d["img_url"] = "/images/noimage"
+        if book_info:
+            d.update({'title':book.title,'author':book.author,'bid':book.key().id(),})
+        return d
+
+    @classmethod
+    def getListings(cls,book,limit=30,offset=0,order="-posted",count=False,listings=True):
+        q = cls.all().ancestor(book).order(order)
+        ret = q.fetch(limit=limit,offset=offset)
+        if count and listings:
+            return (ret, q.count())
+        elif count and not listings:
+            return q.count()
+        else:
+            return ret
 
 class RequestedBook(db.Model):
     user = db.ReferenceProperty(User,required=True,collection_name="requested_books")
+    brand_new = db.BooleanProperty(default=True)
     max_price = db.FloatProperty(required=True)
     min_rating = db.RatingProperty(required=True)
     status = db.StringProperty(default="pending",choices=set(["pending","processing","tbd","delivered","completed"]))
     posted = db.DateTimeProperty(auto_now_add=True)
+    date_needed = db.StringProperty()
     completed = db.BooleanProperty(required=True,default=False)
+    requests = db.StringProperty()
 
     def toJson(self):
+        return json.dumps(self.toDict())
+
+    def toDict(self):
         book = self.parent()
         d = {'title':book.title,
              'author':book.author,
@@ -188,7 +227,25 @@ class RequestedBook(db.Model):
              'max_price':self.max_price,
              'min_rating':self.min_rating,
              'posted':self.posted,
-             'completed':self.completed}
+             'completed':self.completed,
+             'requests':self.requests}
+        return d
+
+    @classmethod
+    def getListings(cls,book,limit=30,offset=0,order="=posted",count=False,listings=True):
+        q = cls.all().ancestor(book).order(order)
+        ret = q.fetch(limit=limit,offset=offset)
+        if count and listings:
+            return (ret, q.count())
+        elif count and not listings:
+            return q.count()
+        else:
+            return ret
+
+class BuyConsigned(db.Model):
+    item = db.ReferenceProperty(ConsignedBook, required=True)
+    buyer = db.ReferenceProperty(User, required=True, collection_name="buying_book")
+    date_needed = db.StringProperty()
 
 class BlogPost(db.Model):
     title = db.StringProperty(required=True)

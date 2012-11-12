@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 import logging
 import math
+import json
 from pagehandlers.PageHandler import *
 from pagehandlers.BuyHandler import *
+from pagehandlers.BlogPostHandler import *
 from pagehandlers.UserBookOrders import *
 from pagehandlers.SellHandler import *
 from pagehandlers.log_in_out import *
@@ -14,6 +16,7 @@ from pagehandlers.AdminHandler import *
 from pagehandlers.ConsigneeHandler import *
 from pagehandlers.SearchHandler import *
 from pagehandlers.ImageHandler import *
+from pagehandlers.BrowseHandler import *
 from cron.UpdateBookList import *
 from cron.ManageExpiry import *
 
@@ -45,81 +48,6 @@ class Help2Handler(PageHandler):
         if param=="consign":
             self.redirect("/help")
             
-class BrowseAdsHandler(PageHandler):
-    def get(self,category="",*a):
-        m = self.request.get("m")
-        if category == "":
-            category = "library"
-        
-        if category == "library":
-            lib,buySell,count = self.getLibListings()
-            self.render("browse.html",show=lib,info=buySell,lenS=len(lib),q="lib",browse_active="active")
-        elif category == "buying":
-            lib,buySell = self.getSellListings()
-            self.render("browse.html",show=lib,info=buySell,lenS=len(lib),q="sell",sell_active="active")
-        elif category == "for-sale":
-            lib,buySell = self.getBuyListings()
-            self.render("browse.html",show=lib,info=buySell,lenS=len(lib),q="buy",buy_active="active")
-
-    def post(self):
-        limit = 14
-        page = self.request.get("page")
-        try:
-            page = int(page)
-            assert page > 0
-        except:
-            page = 1
-
-        lib,buySell,count = self.getLibListings(offset=(page-1)*limit)
-        books = []
-        for book in lib:
-            books.append(book.toJson(image=True))
-
-        response_data ={"books": json.dumps(books),
-                        "buySell":json.dumps(buySell),
-                        "page": page,
-                        "items":len(buySell),#number of returned items
-                        "total":count,
-                        "pages": int(math.ceil(count/limit))}
-        self.write(json.dumps(response_data))
-
-    #cache this funtion!!!
-    #gets limit books starting from offset, arrange by order
-    def getLibListings(self,offset=0,order="title"):
-        lib,count = Library.getListings(count=True,limit=14,offset=offset)
-        buySell = []
-        for book in lib:
-            buy = BuyBook.getListings(book,count_only=True)
-            sell = SellBook.getListings(book,count_only=True)
-            buySell.append([buy,sell])
-        return lib,buySell,count
-    
-    #returns books with unexpired sale listings
-    def getSellListings(self,limit=30,offset=0,order="title"):
-        lib = Library.all().order(order).fetch(limit=limit,offset=offset)
-        show = []
-        buySell = []    #info for book listing count
-        for book in lib:
-            sell = SellBook.getListings(book,count_only=True)
-            if (sell>0):
-                buy = BuyBook.getListings(book,count_only=True)
-                show.append(book)
-                buySell.append([buy,sell])
-        return show,buySell
-    
-    #returns books with unexpired buying listings
-    def getBuyListings(self,limit=30,offset=0,order="title"):
-        lib = Library.all().order(order).fetch(limit=limit,offset=offset)
-        show = []
-        buySell = []
-        for book in lib:
-            buy = BuyBook.getListings(book,count_only=True)
-            if (buy>0):
-                sell = SellBook.getListings(book,count_only=True)
-                show.append(book)
-                buySell.append([buy,sell])
-        return show,buySell
-
 class CommentHandler(PageHandler):
     def post(self):
         user =  self.isLogged()
@@ -179,11 +107,76 @@ class RequestBookHandler(PageHandler):
         except:
             self.render("book_request.html")
             return
-        self.render("book_request.html",book=book,data_date=self.getDataDate(),today=datetime.datetime.today())
+        self.render("book_request.html",book=book,data_date=self.getDataDate())
 
     def getDataDate(self):
         date_now = datetime.date.today() + datetime.timedelta(days=7)
         return str(date_now.strftime("%d/%m/%Y"))
+
+    def post(self):
+        bid = self.request.get("bid")
+        if not bid:
+            title = self.request.get("title")
+            author = self.request.get("author")
+            isbn = self.request.get("isbn")
+
+            if not title:#title must be required
+              self.showError()
+
+        needed = self.request.get("needed")
+        request = self.request.get("requests")
+        if self.request.get("copy_kind") == "used":
+          max_price = float(self.request.get("maxprice"))
+          min_rating = long(self.request.get("condition"))
+        
+        user = self.isLogged()
+        if bid:
+          book = Library.get_by_id(float(bid))
+          if not book:
+              raise
+        else:
+          new_unlisted_book = UnlistedLibrary(title=title,author=author,isbn=isbn)
+          new_unlisted_book.put()
+          book = new_unlisted_book
+
+        new_request = RequestedBook(book,user=user,max_price=max_price,min_rating=min_rating,\
+            requests=request,date_needed=needed)
+        new_request.put()
+        self.render("request_ok.html")
+
+class ConsignBookHandler(PageHandler):
+    def get(self):
+      if not self.isLogged():
+          self.render("loggedout.html")
+          return
+      try:
+        bid = self.request.get("book")
+        book = Library.get_by_id(int(bid))
+      except:
+        pass
+      self.render("book_consign.html",book=book)
+
+    def post(self):
+      pass
+
+class ConsignBuyHandler(PageHandler):
+    def post(self):
+      user = self.getUser()
+      bid = int(self.request.get("bid"))
+      cid = int(self.request.get("cid"))
+      needed = self.request.get("needed")
+
+      if not user or not cid or not bid:
+        self.response.status_int = 400
+        return
+      
+      parent = Library.get_by_id(bid)
+      consigned = ConsignedBook.get_by_id(cid,parent=parent)
+      buyConsigned = BuyConsigned(item=consigned,buyer=user,date_needed=needed)
+      buyConsigned.put()
+      tid = {"tid": buyConsigned.key().id()}
+      logging.info(json.dumps(tid))
+      self.write(json.dumps(tid))
 
 class BookError(PageHandler):
     def get(self):
@@ -194,7 +187,7 @@ class TestDb(PageHandler):
         logging.info("pid="+str(pid))
         if pid == '0':
             generalTest()
-            loadOtherBooks()
+            #loadOtherBooks()
         elif pid == '1':
             logging.info("Creating initial dummy db")
             generalTest()
@@ -270,6 +263,8 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/book/info/?',BookInfoHandler),
                                (r'/book/add/?',AddBookHandler),
                                (r'/book/request/?',RequestBookHandler),
+                               (r'/book/consign/?',ConsignBookHandler),
+                               (r'/book/consign/buy/?',ConsignBuyHandler),
                                (r'/book/error/?',BookError),
                                (r'/browse/?',BrowseAdsHandler),
                                (r'/browse/((.)+)/?',BrowseAdsHandler),
@@ -278,10 +273,14 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/help/?',HelpHandler),
                                (r'/help/(\w+)/?',Help2Handler),
                                (r'/admin/?',AdminHandler),
+                               (r'/admin/blogpost/?',BlogPostHandler),
+                               (r'/admin/add/consigned/?',AddConsigneeHandler),
+                               (r'/admin/addbook/?',AdminAddBookHandler),
+                               (r'/admin/user/search?',UserSearchHandler),
                                (r'/consignee/?',ConsigneeHandler),
                                (r'/testimage/?',TestImage),
                                (r'/clear/datastore/?',ClearDatastore),
                                (r'/update_list/?',UpdateBookList),
                                (r'/_admin/update_expiry/?',UpdateExpiry),#cron job
                                (r'/image/(\d+)(\.jpe?g|\.png|\.gif|\.bmp)?/?',ImageServeHandler),
-                              ],debug=True)
+                              ],debug=False)

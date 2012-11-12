@@ -7,6 +7,9 @@ function hideAll(){//hide all divs in profile
     $("div#request").hide();
     $("div#admin-blog-post").hide();
     $("div#admin-new-item").hide();
+    $("div#admin-update-request").hide();
+    $("div#admin-view-user").hide();
+    $("div#admin-add-book-lib").hide();
     $("li#li_home").attr("class","");
     $("li#li_search").attr("class",""); 
     $("li#li_setting").attr("class","");
@@ -54,14 +57,14 @@ function loadConsigned(){
         if (xmlhttp.readyState===2){    
             $("#consign-loading").show();
         }else if(xmlhttp.readyState===4){
+            $("#consign-loading").hide();
             if (xmlhttp.status===200){
-                //populate data
+                var data = JSON.parse(xmlhttp.responseText);
+                populateConsigned(data);
             }else if (xmlhttp.status === 400){//no data
-                $("#consign-loading").hide();
-                $("#consign-response").html("You have no consigned items. Click here to <a href=''>learn more about consigning </a>");
+                $("#consign-response").html("You have no consigned items")//. Click here to <a href=''>learn more about consigning </a>");
                 $("#consign-response").show();
             }else{
-                $("#consign-loading").hide();
                 $("#consign-response").text("Failed to fetch data. Please try again in a while.");
                 $("#consign-response").show();
             }
@@ -71,6 +74,23 @@ function loadConsigned(){
     xmlhttp.open("POST","/user/orders",true);
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
     xmlhttp.send(params);
+}
+function populateConsigned(data){
+    var markup = "";
+    window.test2 = data;
+    for (var raw in data){
+        var cbook = data[raw];
+        markup += '<div><table class="table table-condensed table-bordered">'+
+            '<tr><td>Title</td><td>'+cbook.title+'</td></tr>'+
+            '<tbody id="body-'+raw+'" class="">'+
+            '<tr><td>Author</td><td>'+cbook.author+'</td></tr>'+
+            '<tr><td>Ask Price</td><td>'+cbook.ask_price+'</td></tr>'+
+            '<tr><td>Rating</td><td>'+cbook.rating+'</td></tr>'+
+            '<tr><td>Status</td><td>'+cbook.status.toProperCase()+'</td></tr>'+
+            '<tr><td>Date Posted</td><td>'+cbook.posted+'</td></tr>'+
+            '</tbody></table></div>';
+    }
+    $("div#consign-result").html(markup);
 }
 function loadRequested(){
     var xmlhttp = ajaxRequest();
@@ -82,7 +102,7 @@ function loadRequested(){
                 //populate data
             }else if (xmlhttp.status === 400){//no data
                 $("#request-loading").hide();
-                $("#request-response").html("You have not requested any item. Click here to <a href=''>request for an item</a>");
+                $("#request-response").html("You have not requested any item. Click here to <a href='/book/request'>request for an item</a>");
                 $("#request-response").show();
             }else{
                 $("#request-loading").hide();
@@ -186,6 +206,8 @@ function checkUrl(){
     var targ = location.href.substr(index,15);
     if (targ==="#")
         showUserHome();
+    else if (targ==="#query")
+        showSearch();
     else if (targ==="#profile")
         showProfile();
     else if(targ==="#settings")
@@ -198,6 +220,21 @@ function checkUrl(){
         showHelp('selling');
     else if(targ==="#help_buying")
         showHelp('buying');   
+    else if(targ==="#post"){
+        showAdmin();
+        showNewBlog();
+    }else if(targ==="#newitem"){
+        showAdmin();
+        showNewItem();
+    }else if(targ==="#update"){
+        showAdmin();
+        showUpdateRequest();
+    }else if(targ==="#view"){
+        showAdmin();
+        showViewUser();
+    }else if(targ==="#admin")
+        showAdmin();
+
 }/* settings functions*/
 function changePassword(){
     document.getElementById("form-change-password").className="";
@@ -243,15 +280,30 @@ function hidePassword(){
 }
 //admin functions
 function showAdmin(){
-    hideAll();
-    $("#ul_admin").attr("class","nav nav-list");
+    var admn = $("#uladmin");
+    if (admn.attr("class")==="hidden")
+        admn.attr("class","nav nav-list");
+    else
+        admn.attr("class","hidden");
 }
 function showNewBlog(){
     hideAll();
     show("admin-blog-post");
 }
 
-function newItem(){
+function showNewItem(){
     hideAll();
     show("admin-new-item");
+}
+function showUpdateRequest(){
+    hideAll();
+    show("admin-update-request");
+}
+function showViewUser(){
+    hideAll();
+    show("admin-view-user");
+}
+function showAddBook(){
+    hideAll();
+    show("admin-add-book-lib")
 }

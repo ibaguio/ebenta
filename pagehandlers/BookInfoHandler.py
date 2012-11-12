@@ -48,7 +48,6 @@ class BookInfoHandler(PageHandler):
 
 
     #handles ajax request to get listings
-    #SellOrder
     def getListings(self):
         sort = self.request.get("sort")
         order = self.request.get("order")
@@ -80,26 +79,18 @@ class BookInfoHandler(PageHandler):
         else:
             raise BaseException
         
-        logged_user = self.getUser()
-        if not logged_user:
-            viewer = 0
-        elif not logged_user.admin:
-            viewer = 1
-        elif logged_user.admin:
-            viewer = 3
-
         #gets the result as a tuple
-        query = SellBook.getListings(book,order=qOrder,limit=limit,offset=offset,count=True)
+        query = ConsignedBook.getListings(book,order=qOrder,limit=limit,offset=offset,count=True)
         #breaks down the tuple
         listings_raw,total_count = query[0],query[1]
 
-        if total_count == 0:    #tells the client that there is now listings for this book
+        if total_count == 0:    #tells the client that there is no listings for this book
             self.response.status_int = 401  #change this to something reasonable in http
             return
 
         listings_json = []
         for listing in listings_raw:
-            listings_json.append(listing.toJson(viewer=viewer))
+            listings_json.append(listing.toJson())
 
         page = self.getPage(offset,limit)
 

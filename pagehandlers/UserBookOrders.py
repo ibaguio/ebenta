@@ -1,11 +1,12 @@
 from pagehandlers.PageHandler import *
+import json
 
 class UserBookOrders(PageHandler):
     """ Responds to ajax request that asks for the 
         user's consigned/requested books"""
 
     def post(self):
-        me = self.getUser()
+        me = self.isLogged()
         logging.info("user: "+me.username)
         if not me:
             self.response.status_int = 401
@@ -15,15 +16,22 @@ class UserBookOrders(PageHandler):
             self.getConsigned(me)
         elif req == "request":
             self.getRequest(me)
+        else:
+            self.response.status_int = 401
 
     def getConsigned(self,user):
-        raw_books = user.consigned_books
-        if raw_books.count()==0:
+        consigned_books = user.consigned_books
+        logging.info(consigned_books.count())
+        if consigned_books.count()==0:
+            logging.info("No consigned")
             self.response.status_int = 400
             return
         books = []
-        for book in raw_books:
-            books.append(book.toJson())
+        for cbook in consigned_books:
+            books.append(cbook.toDict(book_info=True))
+
+        logging.info(json.dumps(books))
+        self.write(json.dumps(books))
 
     def getRequest(self,user):
         raw_books = user.requested_books
@@ -32,8 +40,8 @@ class UserBookOrders(PageHandler):
             logging.info("b")
             self.response.status_int = 400
             return
-        logging.info("a")
         books = []
         for book in raw_books:
-            books.append(book.toJson())
+            books.append(book.toDict())
+        self.write(json.dumps(books))
         
