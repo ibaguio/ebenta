@@ -2,7 +2,7 @@ from pagehandlers.PageHandler import *
 
 class SearchHandler(PageHandler):
     def get(self):
-        query = self.getQuery()
+        query = self.getQuery().strip() #remove trailing whitespaces
         if not query:
             self.render("search.html")
         if type(query) == unicode:
@@ -14,7 +14,7 @@ class SearchHandler(PageHandler):
 
     def basicSearch(self,query):
         user =  self.isLogged()
-        if query == "" or query == "enter title or author":
+        if query == "":
             self.redirect(self.request.referer)
             return
 
@@ -25,7 +25,7 @@ class SearchHandler(PageHandler):
             return
 
         results,time = searchBooks(query.lower())
-        self.render('search_results.html',
+        self.render('search_result2.html',
                         results=results,
                         time=self.getTime(time),
                         query=query,
@@ -42,7 +42,7 @@ class SearchHandler(PageHandler):
             for i in range(len(postfix)):
                 ntime = time*1000
                 if ntime > 1:
-                    ret = "<b>" + str(ntime)[:6] + "</b> "+postfix[i]+" seconds"
+                    ret = "<b>" + str(ntime)[:6] + "</b> "+postfix[i]+"seconds"
                     break
         return ret
 
@@ -55,8 +55,7 @@ class SearchHandler(PageHandler):
         if qtype != "advanced":
             return self.request.get("q")
         else:
-            return {"category":self.request.get("category"),
-                    "sub-category":self.request.get("sub-category"),
+            return {"sub-category":self.request.get("sub-category"),
                     "title":self.request.get("title"),
                     "author":self.request.get("author"),
                     "isbn":self.request.get("isbn")}

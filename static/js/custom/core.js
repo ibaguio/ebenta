@@ -67,3 +67,11 @@ function getDateToday(){
     today.setMilliseconds(0);
     return today;
 }
+function qsFocus(){
+  $("#quick-search").animate({width:'270px'},400);
+  $("#quick-search-button").show();
+}
+function qsBlur(){
+  $("#quick-search").animate({width:'130px'},400);
+  $("#quick-search-button").hide();
+}

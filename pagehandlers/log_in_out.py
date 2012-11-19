@@ -36,7 +36,6 @@ class LoginHandler(PageHandler):
         x = {'user': self.request.get("uname"),
             'pass': self.request.get("password"),
             'rem':  self.request.get("remember")}
-        #logging.info(x)
         return x
 
 class LogoutHandler(PageHandler):

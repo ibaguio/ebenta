@@ -2,7 +2,7 @@
 
 from database.dbModels import *
 from collections import Counter
-import re, time
+import re, time,logging
 
 #BookScore = namedTuple('BookScore',['book','score'])
 #Search book from ebenta library
@@ -10,12 +10,12 @@ import re, time
 def getBook(bid):
     return Library.get_by_id(int(bid))
 
-#search books whose keywords match with the query    
+#search books whose keywords match with the query
 def searchBooks(query):
     start = time.time()
     #splits the query into words
     words = re.split('\W+',query)
-    
+    logging.info("searching for "+query)
     dbInstance = {}
     found = []
     ret = []
@@ -23,10 +23,12 @@ def searchBooks(query):
     # and appends every found result (even if it is already there)
     # to found and stores the respective dbModel instace to results
     for word in words:
-        r = Library.all().filter('searchKeys', word).fetch(15)
+        r = Library.all().filter('searchKeys', word).fetch(20)
         updateFound(found,dbInstance,r)
-        
+    
     score = Counter(found)
+    logging.info(found)
+    logging.info(score)
 
     sorted_score = mergeSort(invert(score))
     
@@ -36,8 +38,8 @@ def searchBooks(query):
     return ret, end-start
     
 #loops to all found keys and appends their id to found
-def updateFound(found,dbInstance,r):
-    for book in r:
+def updateFound(found,dbInstance,result):
+    for book in result:
         bid = book.key().id()
         found.append(bid)
         if bid not in dbInstance:
@@ -73,5 +75,4 @@ def mergeSort(toSort):
 		result.extend(mergeSort(left))
 	else:
 		result.extend(mergeSort(right))
-
 	return result

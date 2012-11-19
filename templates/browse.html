@@ -18,9 +18,8 @@
       <i class="request-loading" id="loading" style="display:none"></i>
       <img title="Error in fetching listings" src="/static/images/error.gif" style="display:none;width:20px;margin-right:5px" id="load-error">
     </div>
-    <h2><a href="javascript:void(0)"><img src="/static/images/list_icon.png" style="margin-top:-5px" title="Show Navigation" id="imgHide" onclick="showNav()" class="hidden"/></a> Showing {{ showing(q) }}</h2>
+    <h3><a href="javascript:void(0)"><img src="/static/images/list_icon.png" style="margin-top:-5px" title="Show Navigation" id="imgHide" onclick="showNav()" class="hidden"/></a> <span id="result-header"></span></h3>
   </div>
-
   <div class="span8 well" id="browsed-div">
   </div>
   <div id="results-nav" class="span9 offset3">
@@ -41,28 +40,6 @@
   window.onload = requestLibrary(1);
 {% endblock %}
 
-{% macro advanceSearch() %}
-  <div id="search-title" class="span4"><h2>Advance Search</h2></div>
-  <div class="span8 well" id="advance-search">
-    <form action="<search_action>" method="post" class="form-horizontal">
-      <div class="control-group">
-        <label class="control-label" for="title">Title</label>
-        <div class="controls"> <input type="text" placeholder="Title" id="title"> </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="author">Author</label>
-        <div class="controls"> <input type="text" placeholder="Author" id="author"> </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="subject">Subject</label>
-        <div class="controls">  <input type="text" placeholder="Subject" id="subject"> </div>
-      </div>
-      <div class="control-group">
-      </div>
-    </form>
-  </div>
-{% endmacro %}
-
 {% macro modTitle(title)%}
   {% if title[28]: %}{{title[:25]}}...{% else %}{{title}}{%endif%}
 {% endmacro %}
@@ -77,17 +54,10 @@
         <li class><a href="javascript:void(0)" onclick="">Mathematics</a></li>
         <li class><a href="javascript:void(0)" onclick="">Science</a></li>
         <li class><a href="javascript:void(0)" onclick="">English</a></li>
-        <li class><a href="javascript:void(0)" onclick="">Philisophy</a></li>#}
+        <li class><a href="javascript:void(0)" onclick="">Philisophy</a></li>
         <li class="divider"></li>
-        <li class><a href="javascript:void(0)" onclick="">Advance Search</a></li>
+        <li class><a href="javascript:void(0)" onclick="">Advance Search</a></li>#}
       </ul>
   </div>
   </div>
-{% endmacro %}
-
-{% macro showing(q) %}
-    {% if q=='lib':%}all books in library
-    {% elif q=='buy':%}all books that are for sale
-    {% elif q=='sell':%}all books with buy orders
-    {% endif %}
 {% endmacro %}

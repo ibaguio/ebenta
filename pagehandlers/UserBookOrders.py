@@ -7,7 +7,6 @@ class UserBookOrders(PageHandler):
 
     def post(self):
         me = self.isLogged()
-        logging.info("user: "+me.username)
         if not me:
             self.response.status_int = 401
             return
@@ -21,27 +20,28 @@ class UserBookOrders(PageHandler):
 
     def getConsigned(self,user):
         consigned_books = user.consigned_books
-        logging.info(consigned_books.count())
-        if consigned_books.count()==0:
-            logging.info("No consigned")
+        consigned_request = user.request_to_consign
+        if consigned_books.count()==0 and consigned_request.count()==0:
             self.response.status_int = 400
             return
         books = []
         for cbook in consigned_books:
             books.append(cbook.toDict(book_info=True))
+        req = []
+        for rbook in consigned_request:
+            req.append(rbook.toDict())
 
-        logging.info(json.dumps(books))
-        self.write(json.dumps(books))
+        d = {"books":books,
+            "req":req}
+
+        self.write(json.dumps(d))
 
     def getRequest(self,user):
         raw_books = user.requested_books
-        logging.info("a")
         if raw_books.count()==0:
-            logging.info("b")
             self.response.status_int = 400
             return
         books = []
         for book in raw_books:
             books.append(book.toDict())
         self.write(json.dumps(books))
-        

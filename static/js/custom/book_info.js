@@ -394,6 +394,7 @@ function searchUsername(){
 function searchEmail(){
     search("email");
 }
+/*function to search for a user*/
 function search(key){
     var xmlhttp = ajaxRequest();
     xmlhttp.onreadystatechange = function(){

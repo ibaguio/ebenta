@@ -1,5 +1,4 @@
 /* get the typeahead data for the book */
-
 function getSearchData(){
     var xmlhttp;
     if (window.XMLHttpRequest)// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -74,5 +73,5 @@ function populateOptions(newOptions){
 $(window).ready(function(){
     //var subcat = DICT OF SUBCAT
     //window.subCategory = JSON.parse()
-    getSearchData();
+    //getSearchData();
 });

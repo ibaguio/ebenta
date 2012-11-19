@@ -1,7 +1,12 @@
 body{
-  background-color: #d0d0d0;
+  background-color: #d0d0d0;  
 }
-
+.wrap {
+    min-height: 100%;
+    height: auto;
+    height: 100%;
+    margin: 0 auto;
+}
 @media 
 input[type=text]{
   background: #ffc;

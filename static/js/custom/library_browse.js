@@ -3,17 +3,15 @@
 function requestLibrary(page){
     var xmlhttp = ajaxRequest();
     xmlhttp.onreadystatechange=function(){
-        if (xmlhttp.readyState === 2){
-            $("i#loading").show();
-            $("#load-error").hide();
-        }if (xmlhttp.readyState === 4){
+        if (xmlhttp.readyState === 4){
             if (xmlhttp.status === 200){
                 var jdata=JSON.parse(xmlhttp.responseText);
                 window.pages = jdata.pages;
                 window.page = jdata.page;
+                $("#result-header").text("Showing all books in library");
                 populateResults(jdata,function(){
-                    $("#loading").hide();
                     $("#load-error").hide();
+                    $("#loading").hide();
                 });
             }else{
                 $("#loading").hide();
@@ -25,14 +23,15 @@ function requestLibrary(page){
     xmlhttp.open("POST","/browse");
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xmlhttp.send(params);
+    $("#loading").show();
+    $("#load-error").hide();
 }
 function noImage(){
     return '<div class="result-img" title="no image available"><div style="height:25px"></div>'+
             '<label class="label label-success" style="text-align:center;">No Image<br/>Available</label></div>';
 }
 function getImage(img){
-    return '<div class="result-img"><div style="height:25px"></div>'+
-            '<img src="'+img+'"></div>';
+    return '<div class="result-img"><img   src="'+img+'"></div>';
 }
 function getDescription(desc){
     if (!desc)
@@ -87,7 +86,7 @@ function populateResults(jdata,callback){
     $(".link").popover();
     generateBrowsePaginationMarkup();
     var offset = ((jdata.page-1)*14)+1;
-    var disp = "Showing "+offset+"-"+(offset+jdata.items)+" of "+jdata.total;
+    var disp = "Showing "+offset+"-"+(offset+jdata.items-1)+" of "+jdata.total;
     $("#display-info").text(disp);
     callback();
 }
@@ -96,6 +95,7 @@ function generateBrowsePaginationMarkup(){
     var limit=14;
     var data = window.jdata;
     //calculate the number of pages
+    console.log(data);
     var pages = data.pages;
     //current page
     var page = data.page;

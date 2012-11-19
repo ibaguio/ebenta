@@ -23,19 +23,19 @@ class User(db.Model):
     admin = db.BooleanProperty(default=False)
 
     #0 - guest  1 - user  3 - admin (AND YES ITS 3)
-    def toJson(self,_all=False,viewer=0):
-        d ={"username": self.username,
+    def toJson(self):
+        return json.dumps(self.toDict())
+
+    def toDict(self):
+        return {"username": self.username,
             "image": self.getImage(),
-            "score": self.score,
             "firstName":self.firstName,
             "lastName":self.lastName,
             "admin":self.admin,
-            "consignee":self.consignee,
             "contactNum":self.contactNum,
             "email":self.email,
             "college":self.college,
             "degree":self.degree}
-        return json.dumps(d)
     
     def completeName(self):
         return self.lastName +", "+self.firstName
@@ -92,6 +92,7 @@ class Library(db.Model):
     def generateSk(self):
         try:
             k = re.split('\W+',self.title.lower()) + re.split('\W+',self.author.lower())
+            if '' in k: k.pop(k.index(''))  #remove null string
             self.searchKeys = k
         except BaseException as e:
             pass
@@ -152,9 +153,25 @@ class Library(db.Model):
 #books that are added by users and would not be shown on browse
 class UnlistedLibrary(db.Model):
     title = db.StringProperty(required=True)
-    author = db.StringProperty(required=True)
+    author = db.StringProperty()
     isbn = db.StringProperty()
 
+class ConsignRequest(db.Model):
+    book = db.ReferenceProperty(required=True)
+    user = db.ReferenceProperty(User,collection_name="request_to_consign",required=True)
+    status = db.StringProperty(default="pending",choices=set(["pending","processing"]))
+    posted = db.DateTimeProperty(auto_now_add=True)
+
+    def toDict(self):
+        return {"title":self.book.title,
+                "author":self.book.author,
+                "isbn":self.book.isbn,
+                "status":self.status,
+                "posted":self.posted.strftime("%B %d, %Y"),
+                "crid":self.key().id(),
+                "user":self.user.username}
+
+#parent is book
 class ConsignedBook(db.Model):
     """ consignee - owner of book
         added_by - admin who added the book
@@ -207,9 +224,9 @@ class ConsignedBook(db.Model):
 
 class RequestedBook(db.Model):
     user = db.ReferenceProperty(User,required=True,collection_name="requested_books")
-    brand_new = db.BooleanProperty(default=True)
-    max_price = db.FloatProperty(required=True)
-    min_rating = db.RatingProperty(required=True)
+    brand_new = db.BooleanProperty(default=False)
+    max_price = db.StringProperty()
+    min_rating = db.RatingProperty()
     status = db.StringProperty(default="pending",choices=set(["pending","processing","tbd","delivered","completed"]))
     posted = db.DateTimeProperty(auto_now_add=True)
     date_needed = db.StringProperty()
@@ -223,12 +240,15 @@ class RequestedBook(db.Model):
         book = self.parent()
         d = {'title':book.title,
              'author':book.author,
-             'bid':book.key().id,
+             'bid':book.key().id(),
              'max_price':self.max_price,
              'min_rating':self.min_rating,
-             'posted':self.posted,
+             'posted':self.posted.strftime("%B %d, %Y"),
+             'status':self.status,
              'completed':self.completed,
-             'requests':self.requests}
+             'requests':self.requests,
+             'rid':self.key().id(),
+             'user':self.user.username}
         return d
 
     @classmethod
@@ -252,31 +272,6 @@ class BlogPost(db.Model):
     content = db.TextProperty(required=True)
     added_by = db.ReferenceProperty(User,collection_name="blog_posts")
     posted = db.DateTimeProperty(auto_now_add=True)
-
-#contains messages from 2 users
-class Conversation(db.Model):
-    userA = db.ReferenceProperty(User,required=True,collection_name="conversation_a") #receiver
-    userB = db.ReferenceProperty(User,required=True,collection_name="conversation_b") #sender
-    updated = db.DateTimeProperty(auto_now_add=True)
-
-    def getMessages(self):
-        messages = self.messages.order("-posted")
-        return messages
-
-    def toJson(self):
-        data = {"usr1":userA.username,
-                "usr2":userB.username,
-                "updated":updated}
-        return json.dumps(data)
-
-#message from user to user
-class Message(db.Model):
-    title = db.StringProperty()
-    message = db.TextProperty(required=True)
-    read = db.BooleanProperty(required=True)
-    #the conversation where this message is linked to
-    conversation = db.ReferenceProperty(Conversation,collection_name="messages")
-    sender = db.ReferenceProperty(User)  #if the sender is logged in, reference him
 
 class Comment(db.Model):
     user = db.ReferenceProperty(User, required=True)

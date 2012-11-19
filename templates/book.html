@@ -32,11 +32,11 @@
     {% endif %}
     <div class="span12">
     	<div style=";margin-top:10px;height:180px;width:920px;" class="row">
-            <div class="result-image pull-left" >
+            <div class="pull-left" >
             {% if book.images.get(): %}
                 <img src="/image/{{book.images.get().key().id()}}.{{book.images.get().ftype}}" class="info-img img-rounded" alt="{{book.title}}"/>
             {% else:%}
-                <div class="result-img" ><div style="height:25px;"></div>
+                <div class="result-img"><div style="height:55px;"></div>
                 <label class="label label-success" alt="no image available" title="No image available" style="text-align:center;"/>No image<br/>available</label></div>
             {% endif %}
             </div>
@@ -52,11 +52,11 @@
                 </table>
                 {% endif%}
             </div>
-            <div class="span3">
+            <div class="span" style="width:165px">
                 <div id="book-stats" style="display:none">
                     <h3><small>Book Statistics</small></h3>
                     <table class="table table-condensed">
-                        <tr><td style="width:90px">Available</td>
+                        <tr><td style="width:70px">Available</td>
                             <td>{{stats["listed"]}}</td></tr>
                         <tr><td>Total Sold</td>
                             <td>{{stats["totalSold"]}}</td></tr>
@@ -72,7 +72,7 @@
                 <ul class="nav nav-list">
                     <li><a href="/book/consign?book={{book.key().id()}}"><i class="icon-book" id="icon-sell-book"></i>Consign (Sell)</a></li>
                     <li><a href="/book/request?book={{book.key().id()}}"><i class="icon-shopping-cart" id="icon-sell-book"></i>Request Copy</a></li>
-                    <li><a href="#how-to-buy" data-toggle="modal"><i class="icon-question-sign"></i>How to Buy?</a></li>
+                    <!--<li><a href="#how-to-buy" data-toggle="modal"><i class="icon-question-sign"></i>How to Buy?</a></li>-->
                 </ul>
             </div>
         </div>
@@ -103,7 +103,7 @@
             <div style="width:360px;margin-left:90px" id="no-results" class="hidden">
                 <h2><small>No one is selling this item as of the moment</small></h2>
                 <a href="/book/request?book={{book.key().id()}}">Click here to request</a> a copy of this book
-                <br/><a href="/sell/step3?book={{book.key().id()}}">Click here to sell</a> a copy of this book
+                <br/><a href="/book/consign?book={{book.key().id()}}">Click here to sell</a> a copy of this book
             </div>
             <div style="display:table;" id="sellers-list">
             </div>
@@ -153,7 +153,7 @@
     <div class="modal hide fade" id="modal-order-details">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">×</button>
-            <h3>Sell Details</h3>
+            <h3>Details</h3>
             <i class="request-loading" id="loading-details" style="display:none;margin:-22px 0 0 110px;float:left;"></i>
         </div>
         <div class="modal-body">

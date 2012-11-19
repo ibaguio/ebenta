@@ -6,7 +6,6 @@ import logging, json
 
 class AdminAddBookHandler(PageHandler):
     def post(self):
-        logging.info(self.request.POST)
         title= self.request.get("title")
         author=self.request.get("author")
         isbn=self.request.get("isbn")
@@ -20,10 +19,6 @@ class AdminAddBookHandler(PageHandler):
         except:
             price = -1.0
         
-        logging.info(title)
-        logging.info(author)
-        logging.info(price)
-
         if not title or not author:
             return
 
@@ -77,7 +72,6 @@ class AdminHandler(PageHandler):
         self.redirectBack()
 
     def addBook(self):
-        logging.info("addbook")
         title= self.request.get("title")
         author=self.request.get("author")
         isbn=self.request.get("isbn")
@@ -161,8 +155,7 @@ class UserSearchHandler(PageHandler):
     def post(self):
         key = self.request.get("key")
         val = self.request.get("val")
-        logging.info(key)
-        logging.info(val)
+
         if not key or not val:
             self.response.status_int = 401
             return
@@ -181,7 +174,6 @@ class UserSearchHandler(PageHandler):
 class AddConsigneeHandler(PageHandler):
     def post(self):
         try:
-            logging.info(self.request.body)
             user = User.get_by_key_name(self.request.get("uname"))
             ask_price = float(self.request.get("ask-price"))
             sell_price = float(self.request.get("price"))
@@ -190,7 +182,6 @@ class AddConsigneeHandler(PageHandler):
             book = Library.get_by_id(int(self.request.get("bid")))
 
             if not user or not ask_price or not sell_price or not rating or not book or not added_by:
-                logging.info("bad")
                 raise
 
             new_consigned_book = ConsignedBook(parent=book,consignee=user,added_by=added_by,\
@@ -206,3 +197,41 @@ class AddConsigneeHandler(PageHandler):
             self.write("OK added")
         except:
             self.write("NOT ADDED")
+
+class UserListHandler(PageHandler):
+    def post(self):
+        user = self.isLogged()
+        if not user.admin:
+            self.response.status_int = 400
+            return
+
+        ret = []
+        all_users = User.all().order("username").fetch(100)
+        for u in all_users:
+            ret.append(u.toDict())
+        self.write(json.dumps(ret))
+
+class AllUserRequests(PageHandler):
+    def post(self):
+        if not self.isLogged().admin:
+            return
+
+        all_req = RequestedBook.all().order("-posted")
+
+        ret = []
+        for req in all_req.fetch(100):
+            ret.append(req.toDict())
+
+        self.write(json.dumps(ret))
+
+class AllUserRTC(PageHandler):
+    def post(self):
+        if not self.isLogged().admin:
+            self.response.status_int = 400
+            return
+
+        all_rtc = ConsignRequest.all().order("-posted").fetch(100)
+        ret = []
+        for rtc in all_rtc:
+            ret.append(rtc.toDict())
+        self.write(json.dumps(ret))

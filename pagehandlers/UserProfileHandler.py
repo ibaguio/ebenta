@@ -6,12 +6,14 @@ class UserProfile(PageHandler):
     #only show profile if user is admin
     def get(self):
         me = self.getUser()
-        #if not me.admin:
-        self.redirect("/home#profile")
-        return
-        usr = self.request.get("usr")  #gets the username of user from url
+        if not me.admin:
+            self.redirect("/home#profile")
+            return
+
+        usr = self.request.get("user")  #gets the username of user from url
         try:
-            uid = int(usr)
+            uid = User.get_by_key_name(usr).key().id()
+
         except:
             uid = None
         
@@ -155,4 +157,49 @@ class UserOrder(PageHandler):
             list_order.append(order.toJson())
         ret = json.dumps(list_order)
         self.write(ret)
-        logging.info("order:"+ret)
+
+class UserConsigned(PageHandler):
+    """gets the list of consigned books for the user"""
+    def post(self):
+        if not self.isLogged().admin:
+            self.response.status_int = 400
+            return
+
+        u = self.request.get("u") #get username
+        user = User.get_by_key_name(u)
+        if not user:
+            self.response.status_int = 400
+            return
+        consigned = user.consigned_books
+        req_consign = user.request_to_consign
+
+        ret = {}
+        ret["c"] = []#consigned
+        ret["rtc"] = []#request to consign
+        for book in consigned:
+            ret["c"].append(book.toDict(book_info=True))
+        for book in req_consign:
+            ret["rtc"].append(book.toDict())
+
+        self.write(json.dumps(ret))
+
+class UserRequests(PageHandler):
+    def post(self):
+        if not self.isLogged().admin:
+            self.response.status_int = 400
+            return
+        
+        u = self.request.get("u") #get username
+        user = User.get_by_key_name(u)
+        if not user:
+            self.response.status_int = 400
+            return
+
+        requests = user.requested_books
+        if requests.count()==0:
+            return            
+        ret = []
+        for req in requests:
+            ret.append(req.toDict())
+
+        self.write(json.dumps(ret))

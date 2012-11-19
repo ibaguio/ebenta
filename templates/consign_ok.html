@@ -1,0 +1,36 @@
+{% extends "home_base.html"%}
+{% import "macros.html" as macro %}
+
+{% block login %}
+    {% if user: %}
+        {{ macro.top_welcome(user) }}
+    {% else: %}
+        {{ macro.top_login() }}
+    {% endif %}
+{% endblock %}
+{% block left_content%}
+    <div  class="span5" style="margin-left:50px">
+        <h2>Request completed</h2>
+        <br/>
+        <span style="font-size:15px;">We have received your request for consignment and will contact you thru SMS (or email, but most likely SMS) as soon as possible. If you have any other concerns, you may contact us at admin@ebenta.com.ph.</span>
+
+        <br/><br/>NOTE: Please make sure your contact details on listed your <a href="/home#profile">profile</a> are up to date and correct.
+    </div>
+{% endblock %}
+
+{% block right_content%}
+    <div id="book-consign-info">
+        <h3>Consigning a Book</h3>
+        <div style="margin-top:20px;font-size:15px">
+            <h4>How it works:</h4>
+               <ol>
+                    <li>Users who are interested to consign (sell) their books must contact eBenta administrators by <b>filling up the form</b> beside, or by sending an email to admin@ebenta.com.ph (for bulk consigning)</li>
+                    <li>Wait for an eBenta admin to contact you within 24 hours, regarding your consign request.</li>
+                    <li>You and the administrator shall agree the details of the consignment (price, dates, etc)</li>
+                    <li>Once a price has been agreed for the book, the user may now submit their book, to be added in the eBenta inventory, which is visible to other users as for sale.</li>
+                    <li>The owner may view the status of their consigned item in the dashboard anytime.</li>
+                    <li>Once the consigned item is sold, the owner <b>will</b> be notified immediately. He may opt to receive his profit from the sale, or wait for his other consigned items to be sold. </li>
+                </ol>
+        </div>
+    </div>
+{% endblock %}

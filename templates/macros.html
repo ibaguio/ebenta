@@ -1,8 +1,8 @@
 {% macro ebentaSearch(user,action="/search",next="") %}
   <div style="width:90%;margin:0 auto;">
-    <legend style="text-align:center"><a href="#" onclick="toggleSearch()" id="toggle-search" style="font-size:12px">Advanced Search</a></legend>
+    <legend style="text-align:center"><!--<a href="#" onclick="toggleSearch()" id="toggle-search" style="font-size:12px">Advanced Search</a>--></legend>
         <div id="search-basic">
-            <form  class="form-search" action="{{ action }}" method="get">
+            <form  class="form-search" action="{{action}}" method="get">
             <input type="text" id="q" name="q" class="search-query" style="width:80%" placeholder="enter title or author" autocomplete="off">
             <button type="submit" class="btn btn-success">Search</button>
             </form>

@@ -38,12 +38,19 @@
             $("#invalid-date").hide();
         }
         });
+        setCondition(4);
     })
 {% endblock %}
 {% block left_content%}
     <div id="book-request-form" class="span5" style="margin-left:50px">
         <legend>Book Request Form</legend>
         <form action="" method="post" class="form-horizontal">
+            {% if showErr%}
+            <div class="alert alert-error">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                <center>At least a book title must be supplied.</center>
+            </div>
+            {% endif %}
             <div class="control-group">
                 <label class="control-label" for="title"> Title </label>
                 <div class="controls"><input type="text" class="input-medium" placeholder="Title" name="title" value={%if book%}"{{book.title}}" disabled{%else%}""{%endif%}></div>
@@ -94,7 +101,7 @@
                     <textarea name="requests" class="input-medium" style="height:70px;max-width:200px"></textarea>
                 </div>
             </div>
-            {%if book%}<input type="hidden" name="bid" value="book.key().id()">{%endif%}
+            {%if book%}<input type="hidden" name="bid" value="{{book.key().id()}}">{%endif%}
             <input type="hidden" name="condition" id="condition">
             <center>
                 <div class="control-group"><div class="controls">
@@ -106,8 +113,16 @@
 {% endblock %}
 
 {% block right_content%}
-    <div id="book-request-info" style="border:solid" class="span4">
+    <div id="book-request-info">
         <h3>Requesting for a Book</h3>
-        
+        <div style="margin-top:20px;font-size:15px">
+            <h4>How it works:</h4>
+                <ol>
+                    <li>To request for a copy of a book, simply fill up the form beside. You may also contact the administrators directly by sending an email to admin@ebenta.com.ph.</li>
+                    <li>After submitting a valid request form, wait for an eBenta admin to contact you (thru SMS or email) within 24 hours, regarding your request.</li>
+                    <li>Coordinate with the admin untill the details of your request has been finalized.</li>
+                    <li>Depending on the current supply of books, you may have to wait for a few days.</li>
+                </ol>
+        </div>
     </div>
 {% endblock %}

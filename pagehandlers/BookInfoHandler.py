@@ -107,7 +107,6 @@ class BookInfoHandler(PageHandler):
             return
 
         response = json.dumps(response_data)
-        #logging.info(response)
         self.write(response)
 
     def getPage(self,offset,limit):

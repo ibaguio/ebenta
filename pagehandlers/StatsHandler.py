@@ -28,6 +28,5 @@ class BookStatsHandler(PageHandler):
 			ave = 0.0
 		stats["avePrice"] = str(round(ave,2))
 		stats["listings"] = listed.count()
-		logging.info("stats:"+str(stats))
 		response = json.dumps(stats)
 		self.write(response)

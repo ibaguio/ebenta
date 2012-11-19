@@ -1,5 +1,5 @@
 {% extends "home_base.html"%}
-
+{% import "macros.html" as macro %}
 {% block login %}
     {% if user: %}
         {{ macro.top_welcome(user) }}
@@ -11,7 +11,6 @@
     <div  class="span5" style="margin-left:50px">
         <h2>Request completed</h2>
         <span style="font-size:15px;">We have received your request and will contact you thru SMS (or email, but most likely SMS) as soon as possible. If you have any other concerns, you may contact us at admin@ebenta.com.ph.</span>
-
     </div>
 {% endblock %}
 

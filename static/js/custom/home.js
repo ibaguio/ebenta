@@ -57,11 +57,10 @@ function loadConsigned(){
                 var data = JSON.parse(xmlhttp.responseText);
                 populateConsigned(data);
             }else if (xmlhttp.status === 400){//no data
-                $("#consign-response").html("You have no consigned items")//. Click here to <a href=''>learn more about consigning </a>");
-                $("#consign-response").show();
+                $("div#consign-result").html("<span style='font-size:15px'>You have no consigned books</span>")//. Click here to <a href=''>learn more about consigning </a>");
+                $("div#consign-request").html("<span style='font-size:15px'>You have not requested to consign any book yet</span>");
             }else{
-                $("#consign-response").text("Failed to fetch data. Please try again in a while.");
-                $("#consign-response").show();
+                $("#consign-result").text("Failed to fetch data. Please try again in a while.");
             }
         }
     }
@@ -72,24 +71,47 @@ function loadConsigned(){
 }
 function populateConsigned(data){
     var markup = "";
-    window.test2 = data;
-    for (var raw in data){
-        var cbook = data[raw];
-        markup += '<div><table class="table table-condensed table-bordered">'+
-            '<tr><td>Title</td><td>'+cbook.title+'</td></tr>'+
-            '<tr><td>Author</td><td>'+cbook.author+'</td></tr>'+
-            '<tbody id="body-'+raw+'" class="hidden">'+
-            '<tr><td>Ask Price</td><td>'+cbook.ask_price+'</td></tr>'+
-            '<tr><td>Rating</td><td>'+cbook.rating+'</td></tr>'+
-            '<tr><td>Status</td><td>'+cbook.status.toProperCase()+'</td></tr>'+
-            '<tr><td>Date Posted</td><td>'+cbook.posted+'</td></tr>'+
-            '</tbody></table><a href="javascript:void(0)" id="ex-'+raw+'"onclick="showConDetails('+raw+')">expand</a></div>';
+    var books = data.books;
+    if (books.length===0){
+        $("div#consign-result").html("You have no consigned books.");
+    }else{
+        for (var raw in books){
+            var cbook = books[raw];
+            markup += '<table class="table table-condensed table-bordered" style="width:350px;margin-left:40px;margin-bottom:0;margin-top:20px">'+
+                '<tr><td style="width:80px">Title</td><td>'+cbook.title+'</td></tr>'+
+                '<tbody id="cbody-'+raw+'" class="hidden">'+
+                '<tr><td>Author</td><td>'+cbook.author+'</td></tr>'+
+                '<tr><td>Ask Price</td><td>'+cbook.ask_price+'</td></tr>'+
+                '<tr><td>Rating</td><td>'+cbook.rating+'</td></tr>'+
+                '<tr><td>Status</td><td>'+cbook.status.toProperCase()+'</td></tr>'+
+                '<tr><td>Date Posted</td><td>'+cbook.posted+'</td></tr>'+
+                '</tbody></table><a href="#" style="margin-left:350px;" id="cex-'+raw+
+                '"onclick="showConDetails('+"'c'"+','+raw+')">expand</a></div>';
+        }
+        $("div#consign-result").html(markup);
     }
-    $("div#consign-result").html(markup);
+    var req = data.req;
+    if (req.length===0){
+        $("div#consign-request").html("You have not requested to consign any book.");
+    }else{
+        markup="";
+        for (var raw in req){
+            var rbook = req[raw];
+            markup += '<table class="table table-condensed table-bordered" style="width:350px;margin-left:40px">'+
+                '<tr><td style="width:80px">Title</td><td>'+rbook.title+'</td></tr>'+
+                '<tbody id="xbody-'+raw+'" class="hidden">'+
+                '<tr><td>Author</td><td>'+rbook.author+'</td></tr>'+
+                '<tr><td>Status</td><td>'+rbook.status.toProperCase()+'</td></tr>'+
+                '<tr><td>Date Posted</td><td>'+rbook.posted+'</td></tr>'+
+                '</tbody></table><a href="#" style="margin-left:350px;" id="tex-'+raw+
+                '"onclick="showConDetails('+"'x'"+','+raw+')">expand</a></div>';
+        }
+        $("div#consign-request").html(markup);   
+    }
 }
-function showConDetails(num){
-    $("#body-"+num).slideDown(300);
-    $("#ex-"+num).hide();
+function showConDetails(t,num){
+    $("#"+t+"body-"+num).slideDown(300);
+    $("#"+t+"ex-"+num).hide();
 }
 function loadRequested(){
     var xmlhttp = ajaxRequest();
@@ -97,14 +119,14 @@ function loadRequested(){
         if (xmlhttp.readyState===2){
             $("#request-loading").show();
         }else if(xmlhttp.readyState===4){
+            $("#request-loading").hide();
             if (xmlhttp.status===200){
-                //populate data
-            }else if (xmlhttp.status === 400){//no data
-                $("#request-loading").hide();
+                var data = JSON.parse(xmlhttp.responseText);
+                populateRequested(data);
+            }else if (xmlhttp.status === 400){
                 $("#request-response").html("You have not requested any item. Click here to <a href='/book/request'>request for an item</a>");
                 $("#request-response").show();
             }else{
-                $("#request-loading").hide();
                 $("#request-response").text("Failed to fetch data. Please try again in a while.");
                 $("#request-response").show();
             }
@@ -114,6 +136,29 @@ function loadRequested(){
     xmlhttp.open("POST","/user/orders",true);
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
     xmlhttp.send(params);
+}
+function populateRequested(data){
+    var markup = "";
+    window.test2 = data;
+    for (var raw in data){
+        var rbook = data[raw];
+        markup += '<div style="margin-top:20px"><table class="table table-condensed table-bordered" style="width:350px;margin-left:40px;margin-bottom:0;margin-top:20px">'+
+            '<tr><td style="width:80px">Title</td><td>'+rbook.title+'</td></tr>'+
+            '<tr><td>Author</td><td>'+rbook.author+'</td></tr>'+
+            '<tbody id="rbody-'+raw+'" class="hidden">';
+            if (rbook.ask_price)
+                markup+= '<tr><td>Max Price</td><td>'+rbook.ask_price+'</td></tr>'+
+                '<tr><td>Min Rating</td><td>'+rbook.rating+'</td></tr>';
+            markup+='<tr><td>Status</td><td>'+rbook.status.toProperCase()+'</td></tr>'+
+            '<tr><td>Date Posted</td><td>'+rbook.posted+'</td></tr>'+
+            '</tbody></table><a href="#" style="margin-left:350px;" id="ex-'+raw+
+                '"onclick="showReqDetails('+raw+')">expand</a></div>';
+    }
+    $("div#request-result").html(markup);
+}
+function showReqDetails(num){
+    $("#rbody-"+num).slideDown(300);
+    $("#ex-"+num).hide();
 }
 /*functions to change user information*/
 function changeName(){

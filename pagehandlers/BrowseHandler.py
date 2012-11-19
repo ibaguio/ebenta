@@ -1,6 +1,6 @@
 from pagehandlers.PageHandler import *
 from database.dbModels import *
-
+import time
 class BrowseAdsHandler(PageHandler):
     def get(self,category="",*a):
         m = self.request.get("m")
@@ -41,29 +41,3 @@ class BrowseAdsHandler(PageHandler):
         for book in lib:
             con.append(ConsignedBook.getListings(book,count=True,listings=False))
         return lib,con,count
-    
-    #returns books with unexpired sale listings
-    def getSellListings(self,limit=30,offset=0,order="title"):
-        lib = Library.all().order(order).fetch(limit=limit,offset=offset)
-        show = []
-        buySell = []    #info for book listing count
-        for book in lib:
-            sell = SellBook.getListings(book,count_only=True)
-            if (sell>0):
-                buy = BuyBook.getListings(book,count_only=True)
-                show.append(book)
-                buySell.append([buy,sell])
-        return show,buySell
-    
-    #returns books with unexpired buying listings
-    def getBuyListings(self,limit=30,offset=0,order="title"):
-        lib = Library.all().order(order).fetch(limit=limit,offset=offset)
-        show = []
-        buySell = []
-        for book in lib:
-            buy = BuyBook.getListings(book,count_only=True)
-            if (buy>0):
-                sell = SellBook.getListings(book,count_only=True)
-                show.append(book)
-                buySell.append([buy,sell])
-        return show,buySell

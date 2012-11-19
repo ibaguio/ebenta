@@ -9,25 +9,25 @@
     <div id="book-consign-form" class="span5" style="margin-left:50px">
         <legend>Book Consign Form</legend>
         <form action="" method="post" class="form-horizontal">
+            {% if showErr%}
+            <div class="alert alert-error">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                <center>At least a book title must be supplied.</center>
+            </div>
+            {% endif %}
             <div class="control-group">
                 <label class="control-label" for="title"> Title </label>
-                <div class="controls"><input type="text" class="input-medium" placeholder="Title" id="title" value={%if book%}"{{book.title}}" disabled{%else%}""{%endif%}></div>
+                <div class="controls"><input type="text" class="input-medium" placeholder="Title" name="title" value={%if book%}"{{book.title}}" disabled{%else%}""{%endif%}></div>
             </div>
             <div class="control-group">
                 <label class="control-label" for="author"> Author </label>
-                <div class="controls"><input type="text" class="input-medium" id ="author" placeholder="Author (optional)" value={%if book%}"{{book.author}}" disabled{%else%}""{%endif%}></div>
+                <div class="controls"><input type="text" class="input-medium" name ="author" placeholder="Author (optional)" value={%if book%}"{{book.author}}" disabled{%else%}""{%endif%}></div>
             </div>
             <div class="control-group">
                 <label class="control-label" for="isbn"> ISBN </label>
-                <div class="controls"><input type="text" class="input-medium" placeholder="ISBN (optional)" id="isbn" value={%if book%}"{{book.isbn}}"disabled{%else%}""{%endif%}></div>
+                <div class="controls"><input type="text" class="input-medium" placeholder="ISBN (optional)" name="isbn" value={%if book%}"{{book.isbn}}"disabled{%else%}""{%endif%}></div>
             </div>
-            <div class="control-group">
-                <label class="control-label" for="isbn"> Special Requests</label>
-                <div class="controls">
-                    <textarea class="input-medium" style="height:70px;max-width:200px"></textarea>
-                </div>
-            </div>
-            {%if book%}<input type="hidden" name="bid" value="book.key().id()">{%endif%}
+            {%if book%}<input type="hidden" name="bid" value="{{book.key().id()}}">{%endif%}
             <center>
                 <div class="control-group"><div class="controls">
                     <input type="submit" class="btn btn-success" value="Consign Book"></div>
@@ -38,11 +38,19 @@
 {% endblock %}
 
 {% block right_content%}
-    <div id="book-request-info" style="border:solid" class="span4">
+    <div id="book-consign-info">
         <h3>Consigning a Book</h3>
-        <div>
-            
+        <div style="margin-top:20px;font-size:15px">
+            <h4>How it works:</h4>
+                <ol>
+                    <li>Users who are interested to consign (sell) their books must contact eBenta administrators by <b>filling up the form</b> beside, or by sending an email to admin@ebenta.com.ph (for bulk consigning)</li>
+                    <li>Wait for an eBenta admin to contact you within 24 hours, regarding your consign request.</li>
+                    <li>You and the administrator shall agree the details of the consignment (price, dates, etc)</li>
+                    <li>Once a price has been agreed for the book, the user may now submit their book, to be added in the eBenta inventory, which is visible to other users as for sale.</li>
+                    <li>The owner may view the status of their consigned item in the dashboard anytime.</li>
+                    <li>Once the consigned item is sold, the owner <b>will</b> be notified immediately. He may opt to receive his profit from the sale, or wait for his other consigned items to be sold. </li>
+                </ol>
+
         </div>
-        
     </div>
 {% endblock %}

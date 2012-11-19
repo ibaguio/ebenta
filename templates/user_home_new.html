@@ -151,19 +151,20 @@
             </div>
             <!--book consigned-->
             <div id="consign" style="display:none">
-                <div><h3>Your Consigned Items</h3>
-                    <div id="consign-loading" style="margin-top:20px;font-size:17px;display:none">
+                <div><h3>Your Consigned Items <small>Your books that are for sale</small></h3>
+                    <div id="consign-loading" style="font-size:14px;margin-top:-23px;margin-right:25px;" class="pull-right hidden">
                         <img src="/static/images/loading.gif"> Loading</div>
-                    <div id="consign-response" style="margin-top:20px;font-size:17px;display:none">
-                    </div>
-                    <div id="consign-result" class="span5" style="margin-top:25px"></div>
+                    <div id="consign-result" style="margin-top:10px"></div>
+                </div>
+                <div style="margin-top:20px"><h3>Your requests to consign <small>Pending request to consign your books</small></h3>
+                    <div id="consign-request" style="margin-top:10px"></div>
                 </div>
                 <input type="hidden" id="sell-loaded" value="false">
             </div>
             <!--user's buy orders div-->
             <div id="request" style="display:none">
                 <div><h3>Your Requested Items</h3>
-                    <div id="request-loading" style="margin-top:20px;font-size:17px;display:none">
+                    <div id="request-loading" style="font-size:14px;margin-top:-23px;margin-right:25px;" class="pull-right hidden">
                         <img src="/static/images/loading.gif"> Loading</div>
                     <div id="request-response" style="margin-top:20px;font-size:17px;display:none">
                     </div>
@@ -206,7 +207,9 @@
     <li><a href="#newitem" onclick="showNewItem()">New Item</a></li>
     <li><a href="#addbook" onclick="showAddBook()">Add Book to Library</a></li>
     <li><a href="#update" onclick="showUpdateRequest()">Update Request</a></li>
-    <li><a href="#view" onclick="showViewUser()">View User Profile</a></li>
+    <li><a href="#view" onclick="showViewUser()">View All Users</a></li>
+    <li><a href="#all_requests" onclick="showUserRequest()">View All Requests</a></li>
+    <li><a href="#all_requests" onclick="showAllRTC()">View Req to Consign</a></li>
 </ul>
 
 {% endmacro %}
@@ -327,7 +330,13 @@
     </form>
 </div>
 <div id="admin-view-user" style="display:none">
-    Feature to be added.
+    
+</div>
+<div id="admin-view-requests" style="display:none">
+    
+</div>
+<div id="admin-view-rtc" style="display:none">
+    
 </div>
 {%endmacro%}
 {% macro showUserIcon(user) %}{% if user.admin: %}<img src="/static/images/admin1.png" class="admin-icon" title="Admin">{% elif user.consignee%}<img src="/static/images/handshake.ico" class="admin-icon" title="Consignee">{% endif %}{% endmacro %}

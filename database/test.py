@@ -49,6 +49,22 @@ def createTestConsign(users,max_=3):
                 rating=random.randint(1,5), ask_price=ask,price=math.ceil(ask*1.1))
             con.put()
 
+def createTestReqConsign(users,max_=3):
+    books = Library.all().fetch(20)
+    for book in books:
+        for i in range(random.randint(0,max_)):
+            con = ConsignRequest(book=book,user=users[random.randint(0,len(users)-1)])
+            con.put()
+
+def createTestRequest(users,max_=3):
+    books = Library.all().fetch(20)
+    for book in books:
+        for i in range(random.randint(1,max_)):
+            ask = str(random.randint(20,70)*10.0)
+            new_req = RequestedBook(parent=book,user=users[random.randint(0,len(users)-1)],max_price=ask,\
+                min_rating=random.randint(1,5))
+            new_req.put()
+
 #creates database of sample books
 def createBookDb():
     for b in books:
@@ -77,6 +93,8 @@ def generalTest():
     createMyAccount()
     createBookDb()
     createTestConsign(u,7)
+    createTestReqConsign(u)
+    createTestRequest(u)
 
 def getAllUsers():
     users = User.all().fetch(15)

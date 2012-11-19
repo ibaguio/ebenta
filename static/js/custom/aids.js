@@ -9,6 +9,7 @@ function hideAll(){//hide all divs in profile
     $("div#admin-new-item").hide();
     $("div#admin-update-request").hide();
     $("div#admin-view-user").hide();
+    $("div#admin-view-requests").hide();
     $("div#admin-add-book-lib").hide();
     $("li#li_home").attr("class","");
     $("li#li_search").attr("class",""); 
@@ -62,11 +63,10 @@ function loadConsigned(){
                 var data = JSON.parse(xmlhttp.responseText);
                 populateConsigned(data);
             }else if (xmlhttp.status === 400){//no data
-                $("#consign-response").html("You have no consigned items")//. Click here to <a href=''>learn more about consigning </a>");
-                $("#consign-response").show();
+                $("div#consign-result").html("<span style='font-size:15px'>You have no consigned books</span>")//. Click here to <a href=''>learn more about consigning </a>");
+                $("div#consign-request").html("<span style='font-size:15px'>You have not requested to consign any book yet</span>");
             }else{
-                $("#consign-response").text("Failed to fetch data. Please try again in a while.");
-                $("#consign-response").show();
+                $("#consign-result").text("Failed to fetch data. Please try again in a while.");
             }
         }
     }
@@ -77,20 +77,47 @@ function loadConsigned(){
 }
 function populateConsigned(data){
     var markup = "";
-    window.test2 = data;
-    for (var raw in data){
-        var cbook = data[raw];
-        markup += '<div><table class="table table-condensed table-bordered">'+
-            '<tr><td>Title</td><td>'+cbook.title+'</td></tr>'+
-            '<tbody id="body-'+raw+'" class="">'+
-            '<tr><td>Author</td><td>'+cbook.author+'</td></tr>'+
-            '<tr><td>Ask Price</td><td>'+cbook.ask_price+'</td></tr>'+
-            '<tr><td>Rating</td><td>'+cbook.rating+'</td></tr>'+
-            '<tr><td>Status</td><td>'+cbook.status.toProperCase()+'</td></tr>'+
-            '<tr><td>Date Posted</td><td>'+cbook.posted+'</td></tr>'+
-            '</tbody></table></div>';
+    var books = data.books;
+    if (books.length===0){
+        $("div#consign-result").html("You have no consigned books.");
+    }else{
+        for (var raw in books){
+            var cbook = books[raw];
+            markup += '<table class="table table-condensed table-bordered" style="width:350px;margin-left:40px;margin-bottom:0;margin-top:20px">'+
+                '<tr><td style="width:80px">Title</td><td>'+cbook.title+'</td></tr>'+
+                '<tbody id="cbody-'+raw+'" class="hidden">'+
+                '<tr><td>Author</td><td>'+cbook.author+'</td></tr>'+
+                '<tr><td>Ask Price</td><td>'+cbook.ask_price+'</td></tr>'+
+                '<tr><td>Rating</td><td>'+cbook.rating+'</td></tr>'+
+                '<tr><td>Status</td><td>'+cbook.status.toProperCase()+'</td></tr>'+
+                '<tr><td>Date Posted</td><td>'+cbook.posted+'</td></tr>'+
+                '</tbody></table><a href="#" style="margin-left:350px;" id="cex-'+raw+
+                '"onclick="showConDetails('+"'c'"+','+raw+')">expand</a></div>';
+        }
+        $("div#consign-result").html(markup);
     }
-    $("div#consign-result").html(markup);
+    var req = data.req;
+    if (req.length===0){
+        $("div#consign-request").html("You have not requested to consign any book.");
+    }else{
+        markup="";
+        for (var raw in req){
+            var rbook = req[raw];
+            markup += '<table class="table table-condensed table-bordered" style="width:350px;margin-left:40px">'+
+                '<tr><td style="width:80px">Title</td><td>'+rbook.title+'</td></tr>'+
+                '<tbody id="xbody-'+raw+'" class="hidden">'+
+                '<tr><td>Author</td><td>'+rbook.author+'</td></tr>'+
+                '<tr><td>Status</td><td>'+rbook.status.toProperCase()+'</td></tr>'+
+                '<tr><td>Date Posted</td><td>'+rbook.posted+'</td></tr>'+
+                '</tbody></table><a href="#" style="margin-left:350px;" id="tex-'+raw+
+                '"onclick="showConDetails('+"'x'"+','+raw+')">expand</a></div>';
+        }
+        $("div#consign-request").html(markup);   
+    }
+}
+function showConDetails(t,num){
+    $("#"+t+"body-"+num).slideDown(300);
+    $("#"+t+"ex-"+num).hide();
 }
 function loadRequested(){
     var xmlhttp = ajaxRequest();
@@ -98,14 +125,14 @@ function loadRequested(){
         if (xmlhttp.readyState===2){
             $("#request-loading").show();
         }else if(xmlhttp.readyState===4){
+            $("#request-loading").hide();
             if (xmlhttp.status===200){
-                //populate data
-            }else if (xmlhttp.status === 400){//no data
-                $("#request-loading").hide();
+                var data = JSON.parse(xmlhttp.responseText);
+                populateRequested(data);
+            }else if (xmlhttp.status === 400){
                 $("#request-response").html("You have not requested any item. Click here to <a href='/book/request'>request for an item</a>");
                 $("#request-response").show();
             }else{
-                $("#request-loading").hide();
                 $("#request-response").text("Failed to fetch data. Please try again in a while.");
                 $("#request-response").show();
             }
@@ -115,6 +142,29 @@ function loadRequested(){
     xmlhttp.open("POST","/user/orders",true);
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
     xmlhttp.send(params);
+}
+function populateRequested(data){
+    var markup = "";
+    window.test2 = data;
+    for (var raw in data){
+        var rbook = data[raw];
+        markup += '<div style="margin-top:20px"><table class="table table-condensed table-bordered" style="width:350px;margin-left:40px;margin-bottom:0;margin-top:20px">'+
+            '<tr><td style="width:80px">Title</td><td>'+rbook.title+'</td></tr>'+
+            '<tr><td>Author</td><td>'+rbook.author+'</td></tr>'+
+            '<tbody id="rbody-'+raw+'" class="hidden">';
+            if (rbook.ask_price)
+                markup+= '<tr><td>Max Price</td><td>'+rbook.ask_price+'</td></tr>'+
+                '<tr><td>Min Rating</td><td>'+rbook.rating+'</td></tr>';
+            markup+='<tr><td>Status</td><td>'+rbook.status.toProperCase()+'</td></tr>'+
+            '<tr><td>Date Posted</td><td>'+rbook.posted+'</td></tr>'+
+            '</tbody></table><a href="#" style="margin-left:350px;" id="ex-'+raw+
+                '"onclick="showReqDetails('+raw+')">expand</a></div>';
+    }
+    $("div#request-result").html(markup);
+}
+function showReqDetails(num){
+    $("#rbody-"+num).slideDown(300);
+    $("#ex-"+num).hide();
 }
 /*functions to change user information*/
 function changeName(){
@@ -302,8 +352,127 @@ function showUpdateRequest(){
 function showViewUser(){
     hideAll();
     show("admin-view-user");
+    getAllUsers();
 }
 function showAddBook(){
     hideAll();
     show("admin-add-book-lib")
+}
+function getAllUsers(){
+    if (window.user_list != undefined)
+        populateUsers();
+    var xmlhttp = ajaxRequest();
+    xmlhttp.onreadystatechange = function(){
+        if (xmlhttp.readyState==2){
+        }if (xmlhttp.readyState==4){ 
+            if (xmlhttp.status==200){
+                window.user_list = xmlhttp.responseText;
+                populateUsers();
+            }else{
+
+            }
+        }
+    }
+    xmlhttp.open("POST","/admin/user/getlist",true);
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+    xmlhttp.send("");
+}
+function populateUsers(){
+    var data = JSON.parse(window.user_list);
+    var markup = '<div><h4>User count: '+data.length+'</h4></div><br/>';
+    for (var i in data){
+        var user = data[i];
+        markup +='<div class="row"><table class="span table table-bordered table-condensed" style="width:370px;margin-left:60px">'+
+            '<tr><td style="width:90px">Name</td><td><a href="/user?user='+user.username+'">'+user.lastName + ', '+ user.firstName+'</a></td></tr>'+
+            '<tbody id="usr-'+i+'" style="display:none">'+
+            '<tr><td>Username</td><td>'+user.username+'</td></tr>'+
+            '<tr><td>Contact</td><td>'+user.contactNum+'</td></tr>'+
+            '<tr><td>Email</td><td>'+user.email+'</td></tr>'+
+            '</tbody></table><a href="#" class="span" onclick="expandUser('+i+')" id="show'+i+'"><i class="icon-plus"></i></a></div>';
+    }
+    $("div#admin-view-user").html(markup);
+}
+function expandUser(num){
+    $("#usr-"+num).slideDown();
+    $("#show"+num).hide();
+}
+function showUserRequest(){
+    hideAll();
+    show("admin-view-requests");
+    var xmlhttp = ajaxRequest();
+    xmlhttp.onreadystatechange = function(){
+        if (xmlhttp.readyState==2){
+        }if (xmlhttp.readyState==4){ 
+            if (xmlhttp.status==200){
+                window.all_user_reqs = JSON.parse(xmlhttp.responseText);
+                populateAllReqs();
+            }else{
+
+            }
+        }
+    }
+    xmlhttp.open("POST","/admin/getallreqs",true);
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+    xmlhttp.send("");
+}
+function populateAllReqs(){
+    var data = window.all_user_reqs;
+    var markup="<h4>All Book Requests</h4><br/>";
+    for (var i in data){
+        var c = data[i];
+        markup+= '<div class="row"><table class="span table-bordered table table-condensed" style="width:370px;margin-left:40px">'+
+            '<tr><td style="width:90px">Title</td><td>'+c.title+'</td></tr>'+
+            '<tr><td>Requested By:</td><td><a href="/user?user='+c.user+'">'+c.user+'</a></td></tr>'+
+            '<tbody id="b-'+i+'" style="display:none">'+
+            '<tr><td>Author</td><td>'+c.author+'</td></tr>'+
+            '<tr><td>Max Price</td><td>Php '+c.max_price+'</td></tr>'+
+            '<tr><td>Min Rating</td><td>'+c.min_rating+'</td></tr>'+  
+            '<tr><td>Status</td><td>'+c.status.toProperCase()+'</td></tr>'+
+            '<tr><td>Posted</td><td>'+c.posted+'</td></tr>'+
+            '<tr><td>ID</td><td>'+c.rid+'</td></tr>'+
+        '</tbody></table><a href="javascript:void(0)" id="a-'+i+'"onclick="expand('+i+')" class="span"><i class="icon-plus"></i></a></div>';
+    }
+    $("#admin-view-requests").html(markup);
+}
+function expand(num){
+    $("#b-"+num).slideDown(200);
+    $("a#a-"+num).hide();
+}
+function showAllRTC(){
+    hideAll();
+    show("admin-view-rtc");
+    var xmlhttp = ajaxRequest();
+    xmlhttp.onreadystatechange = function(){
+        if (xmlhttp.readyState==2){
+        }if (xmlhttp.readyState==4){ 
+            if (xmlhttp.status==200){
+                window.all_rtc = JSON.parse(xmlhttp.responseText);
+                populateAllRTC();
+            }else{
+
+            }
+        }
+    }
+    xmlhttp.open("POST","/admin/getallrtc",true);
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+    xmlhttp.send("");
+}
+function populateAllRTC(){
+    var data = window.all_rtc;
+    var markup="<h4>Request to Consign</h4><br/>";
+    for (var i in data){
+        var c = data[i];
+        console.log(c);
+        markup+= '<div class="row"><table class="span table-bordered table table-condensed" style="width:370px;margin-left:40px">'+
+            '<tr><td style="width:90px">Title</td><td>'+c.title+'</td></tr>'+
+            '<tr><td>Requested By:</td><td><a href="/user?user='+c.user+'">'+c.user+'</a></td></tr>'+
+            '<tbody id="b-'+i+'" style="display:none">'+
+            '<tr><td>Author</td><td>'+c.author+'</td></tr>'+
+            '<tr><td>ISBN</td><td>'+c.isbn+'</td></tr>'+
+            '<tr><td>Status</td><td>'+c.status.toProperCase()+'</td></tr>'+
+            '<tr><td>Posted</td><td>'+c.posted+'</td></tr>'+
+            '<tr><td>ID</td><td>'+c.crid+'</td></tr>'+
+        '</tbody></table><a href="javascript:void(0)" id="a-'+i+'"onclick="expand('+i+')" class="span"><i class="icon-plus"></i></a></div>';
+    }
+    $("#admin-view-rtc").html(markup);
 }

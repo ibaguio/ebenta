@@ -3,10 +3,9 @@ import logging
 import math
 import json
 from pagehandlers.PageHandler import *
-from pagehandlers.BuyHandler import *
 from pagehandlers.BlogPostHandler import *
 from pagehandlers.UserBookOrders import *
-from pagehandlers.SellHandler import *
+from pagehandlers.RegisterHandler import *
 from pagehandlers.log_in_out import *
 from pagehandlers.UserProfileHandler import *
 from pagehandlers.HomePage import *
@@ -17,8 +16,6 @@ from pagehandlers.ConsigneeHandler import *
 from pagehandlers.SearchHandler import *
 from pagehandlers.ImageHandler import *
 from pagehandlers.BrowseHandler import *
-from cron.UpdateBookList import *
-from cron.ManageExpiry import *
 
 class AboutHandler(PageHandler):
     def get(self):
@@ -102,7 +99,7 @@ class RequestBookHandler(PageHandler):
             return
         bid = self.request.get("book")
         try:
-            book = Library.get_by_id(int(bid))
+            book = Library.get_by_id(long(bid))
             if not book: raise
         except:
             self.render("book_request.html")
@@ -121,27 +118,33 @@ class RequestBookHandler(PageHandler):
             isbn = self.request.get("isbn")
 
             if not title:#title must be required
-              self.showError()
+              self.render("book_request.html",showErr=True)
+              return
 
-        needed = self.request.get("needed")
-        request = self.request.get("requests")
-        if self.request.get("copy_kind") == "used":
-          max_price = float(self.request.get("maxprice"))
-          min_rating = long(self.request.get("condition"))
-        
+
         user = self.isLogged()
         if bid:
-          book = Library.get_by_id(float(bid))
+          book = Library.get_by_id(long(bid))
           if not book:
-              raise
+              logging.info("bid not found")
+              self.response.status_int = 400
+              return
         else:
           new_unlisted_book = UnlistedLibrary(title=title,author=author,isbn=isbn)
           new_unlisted_book.put()
           book = new_unlisted_book
 
-        new_request = RequestedBook(book,user=user,max_price=max_price,min_rating=min_rating,\
-            requests=request,date_needed=needed)
-        new_request.put()
+        needed = self.request.get("needed")
+        request = self.request.get("requests")
+        if self.request.get("copy_kind") == "used":
+            max_price = self.request.get("maxprice")
+            min_rating = long(self.request.get("condition"))
+            new_request = RequestedBook(book,user=user,max_price=max_price,min_rating=min_rating,\
+                requests=request,date_needed=needed)
+            new_request.put()
+        else:
+            new_request = RequestedBook(book,user=user,requests=request,date_needed=needed,brand_new=True)
+            new_request.put()
         self.render("request_ok.html")
 
 class ConsignBookHandler(PageHandler):
@@ -149,6 +152,7 @@ class ConsignBookHandler(PageHandler):
       if not self.isLogged():
           self.render("loggedout.html")
           return
+      book=None
       try:
         bid = self.request.get("book")
         book = Library.get_by_id(int(bid))
@@ -157,7 +161,24 @@ class ConsignBookHandler(PageHandler):
       self.render("book_consign.html",book=book)
 
     def post(self):
-      pass
+      user = self.isLogged()
+      bid = self.request.get("bid")
+      if bid:
+          book = Library.get_by_id(int(bid))
+      else:
+          title = self.request.get("title")
+          author = self.request.get("author")
+          isbn = self.request.get("isbn")
+          if not title:
+              self.render("book_consign.html",showErr=True)
+              return
+
+          book = UnlistedLibrary(title=title,author=author,isbn=isbn)
+          book.put()
+
+      consign_request = ConsignRequest(book=book,user=user)
+      consign_request.put()
+      self.render("consign_ok.html")
 
 class ConsignBuyHandler(PageHandler):
     def post(self):
@@ -175,7 +196,6 @@ class ConsignBuyHandler(PageHandler):
       buyConsigned = BuyConsigned(item=consigned,buyer=user,date_needed=needed)
       buyConsigned.put()
       tid = {"tid": buyConsigned.key().id()}
-      logging.info(json.dumps(tid))
       self.write(json.dumps(tid))
 
 class BookError(PageHandler):
@@ -184,10 +204,8 @@ class BookError(PageHandler):
 
 class TestDb(PageHandler):
     def get(self,pid):
-        logging.info("pid="+str(pid))
         if pid == '0':
             generalTest()
-            #loadOtherBooks()
         elif pid == '1':
             logging.info("Creating initial dummy db")
             generalTest()
@@ -198,76 +216,26 @@ class TestDb(PageHandler):
             loadOtherBooks()
         self.redirect("/")
 
-class TestImage(PageHandler):
-    def get(self):
-        i = Image.get_by_id(int(self.request.get("img")))
-        if i.image:
-            self.response.headers['Content-Type'] = "image/png"
-            self.response.out.write(i.image)
-        else:
-            self.error(404)
-
-#debug ONLY, remove during production
-class ClearDatastore(PageHandler):
-    def get(self):
-        if self.request.get("do_it") != "true":
-            self.write("Unable to process request")
-            return
-
-        users = User.all()
-        for u in users:
-            u.delete()
-        lib = Library.all()
-        for book in lib:
-            book.delete()
-        s_ord = SellBook.all()
-        for ordd in s_ord:
-            ordd.delete()
-        b_ord = BuyBook.all()
-        for ordd in b_ord:
-            ordd.delete()
-        col = Colleges.all()
-        for c in col:
-            c.delete()
-        priv = PrivacySetting.all()
-        for p in priv:
-            p.delete()
-
-        self.write("Datastore Cleared Boss")
-
-class NewHomePage(PageHandler):
-    def get(self):
-        self.render("new_home.html")
-
 app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/register/?',RegisterHandler),
                                (r'/home/?',UserHome),
                                (r'/logout/?',LogoutHandler),
                                (r'/login/?',LoginHandler),
-                               #(r'/oauth',TestLoginHandler),
-                               #(r'/oauth/ok',TestGetCredentials),
-                               (r'/sell/?',SellHandler),
-                               (r'/sell/(step[1-4])/?',SellHandler),
-                               (r'/sell/search/?',SearchHandler),
-                               #(r'/buy/?',BuyHandler),
-                               #(r'/buy/(step[1-4])/?',BuyHandler),
-                               #(r'/buy/search/?',SearchHandler),
                                (r'/suggest/?',CommentHandler),
                                (r'/search/?',SearchHandler),
                                (r'/testdb/(\d+)/?',TestDb),
                                (r'/user/update/?',UserSettings),
-                               #(r'/user/sendmessage/?',SendMessage),
-                               #(r'/user/inbox/?',SendMessage),
                                (r'/user/orders/?',UserBookOrders),
                                (r'/user/?',UserProfile),
+                               (r'/user/consiged/?',UserConsigned),
+                               (r'/user/requests/?',UserRequests),
                                (r'/book/info/?',BookInfoHandler),
-                               (r'/book/add/?',AddBookHandler),
+                               #(r'/book/add/?',AddBookHandler),
                                (r'/book/request/?',RequestBookHandler),
                                (r'/book/consign/?',ConsignBookHandler),
                                (r'/book/consign/buy/?',ConsignBuyHandler),
                                (r'/book/error/?',BookError),
                                (r'/browse/?',BrowseAdsHandler),
-                               (r'/browse/((.)+)/?',BrowseAdsHandler),
                                (r'/about/?',AboutHandler),
                                (r'/about/(\w+)/?',About2Handler),
                                (r'/help/?',HelpHandler),
@@ -276,11 +244,9 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/admin/blogpost/?',BlogPostHandler),
                                (r'/admin/add/consigned/?',AddConsigneeHandler),
                                (r'/admin/addbook/?',AdminAddBookHandler),
-                               (r'/admin/user/search?',UserSearchHandler),
-                               (r'/consignee/?',ConsigneeHandler),
-                               (r'/testimage/?',TestImage),
-                               (r'/clear/datastore/?',ClearDatastore),
-                               (r'/update_list/?',UpdateBookList),
-                               (r'/_admin/update_expiry/?',UpdateExpiry),#cron job
+                               (r'/admin/user/search/?',UserSearchHandler),
+                               (r'/admin/user/getlist/?',UserListHandler),
+                               (r'/admin/getallreqs/?',AllUserRequests),
+                               (r'/admin/getallrtc/?',AllUserRTC),
                                (r'/image/(\d+)(\.jpe?g|\.png|\.gif|\.bmp)?/?',ImageServeHandler),
                               ],debug=False)
