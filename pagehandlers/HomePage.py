@@ -13,6 +13,7 @@ class UserHome(PageHandler):
         user = self.isLogged()
         if user:
             news = BlogPost.all().order("-posted").fetch(5)
-            self.render('user_home_new.html',username = user,news=news)
+            self.render('user_home.html',username = user,news=news)
         else:
             self.redirect("/")
+

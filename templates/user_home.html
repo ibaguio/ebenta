@@ -1,19 +1,167 @@
-{% extends "home_base.html" %}
-{% import "macros.html" as macro %}
+{% extends "user_home_base.html" %}
 
-{% block login %}
-    {{ macro.top_welcome(user) }}
-{% endblock%}
-
-{% block left_content%}
-    {{ macro.ebentaSearch(username) }}
+{% block dash %}
+    <div class="hidden" id="settings-updated" style="width:190px;margin:5px auto;">
+                <button class="close" data-dismiss="alert">x</button>
+                <label id="req-ok"></label>
+        </div>
+        <div id="home" class="row">
+            <center><img src="/static/images/transparent.png" style="width:85%;"></center>
+            <div id="home-blog" style=";margin-top:30px;" class="span7">
+                <legend>Updates</legend>
+                <div>
+                {%if not news%}
+                <h4>No Updates Available</h4>
+                {%endif%}
+                {%for article in news: %}
+                <div class="span6" style="margin-bottom:20px">
+                    <h3>{{article.title}}</h3>
+                    <div>
+                        {{article.content}}
+                    </div>
+                </div>
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div id="search" class="row" style="display:none">
+            {{macro.ebentaSearch()}}
+        </div>
+        <!--user's profile tab-->
+        <div id="userprofile" class="row" style="display:none">
+            <ul class="thumbnails span2">
+                <li><div class="thumbnail" style="margin:0 15px;width:110px;height:">
+                    <a class="thumbnail"><img src="{{user.getImage()}}" id="profile-pic"></a>
+                </div></li>
+            </ul>
+                <div class="span5" style="padding:0 14px;">
+                    <form action="/user/update" method="post">
+                    <h3>{{macro.showUserIcon(user)}} {{user.username}}'s Profile</h3>
+                    <table class="table table-condensed" style="margin-top:20px;">
+                    <tr><td>Username</td>
+                        <td style="width:180px;">{{user.username}}</td><td></tr>
+                    <tr><td>Name</td>
+                        <td>
+                            <div id="form-name" class="hidden">
+                                <input type="text" class="input-medium" placeholder="First Name" name="first" id="name-first" value="{{user.firstName.title()}}" onchange="change('name')">
+                                <input type="text" class="input-medium" placeholder="Last Name" name="last" id="name-last" value="{{user.lastName.title()}}" onchange="change('name')">
+                            </div>
+                            <span id="user-name">{{user.completeName().title()}}</span></td>
+                        <td><a href="javascript:void(0)" onclick="changeName()" id="href-name"><i class="icon-wrench"></i>
+                            <span id="edit-name"> edit</span></a>
+                        </td></tr>
+                    <tr><td>Contact No</td>
+                        <td><div id="form-num" class="hidden">
+                            <input type="text" class="input-medium" placeholder="Contact Number" name="contact" id="input-num" value="{{user.contactNum}}" onchange="change('num')"></div>
+                            <span id="user-num">{{user.contactNum}}</span></td>
+                        <td><a href="javascript:void(0)" onclick="changeNum()" id="href-num"><i class="icon-wrench"></i>
+                                <span id="edit-num"> edit</span></a>
+                        </td></tr>
+                    <tr><td>Email</td>
+                        <td><div id="form-email" class="hidden">
+                                <input type="text" class="input-medium" placeholder="Email" name="email" id="input-email" value="{{user.email}}" onchange="change('email')">
+                            </div>
+                            <span id="user-email">{{user.email}}</span></td>
+                        <td><a href="javascript:void(0)" onclick="changeEmail()" id="href-email"><i class="icon-wrench"></i>
+                            <span id="edit-email"> edit</span></a>
+                        </td></tr>        
+                    <tr><td>College</td>
+                        <td><div id="form-college" class="hidden">
+                                <input type="text" class="input-medium" placeholder="College" name="college" id="input-college" value="{{user.college}}" onchange="change('college')">
+                            </div>
+                            <span id="user-college">{{user.college}}</span></td>
+                        <td><a href="javascript:void(0)" onclick="changeCollege()" id="href-college"><label><i class="icon-wrench"></i>
+                            <span id="edit-college"> edit</span></label></a>
+                        </td></tr>
+                    <tr><td>Degree</td>
+                        <td><div id="form-degree" class="hidden">
+                                <input type="text" class="input-medium" placeholder="Degree Course" name="degree" id="input-degree" value="{{user.degree}}" onchange="change('degree')">
+                            </div>
+                            <span id="user-degree">{{user.degree}}</span></td>
+                        <td><a href="javascript:void(0)" onclick="changeDegree()" id="href-degree"><label><i class="icon-wrench"></i>
+                            <span id="edit-degree"> edit</span></label></a>
+                        </td></tr>
+                    <tr><td>Dormitory</td>
+                        <td><div id="form-dormitory" class="hidden">
+                                <select name="dormitory" class="input-medium" id="input-dormitory" onchange="change('dormitory')">
+                                    <option value="None"{%if user.dormitory=="None"%}selected{%endif%}>None</option>
+                                    <option value="Centennial"{%if user.dormitory=="Centennial"%}selected{%endif%}>Centennial</option>
+                                    <option value="International Center"{%if user.dormitory=="International Center"%}selected{%endif%}>International Center</option>
+                                    <option value="Ilang-ilang"{%if user.dormitory=="Ilang-ilang"%}selected{%endif%}>Ilang-ilang</option>
+                                    <option value="Ipil"{%if user.dormitory=="Ipil"%}selected{%endif%}>Ipil</option>
+                                    <option value="Kalayaan"{%if user.dormitory=="Kalayaan"%}selected{%endif%}>Kalayaan</option>
+                                    <option value="Kamagong"{%if user.dormitory=="Kamagong"%}selected{%endif%}>Kamagong</option>
+                                    <option value="Kamia"{%if user.dormitory=="Kamia"%}selected{%endif%}>Kamia</option>
+                                    <option value="Molave"{%if user.dormitory=="Molave"%}selected{%endif%}>Molave</option>
+                                    <option value="Sampaguita"{%if user.dormitory=="Sampaguita"%}selected{%endif%}>Sampaguita</option>
+                                    <option value="Sanggumay"{%if user.dormitory=="Sanggumay"%}selected{%endif%}>Sanggumay</option>
+                                    <option value="Yakal"{%if user.dormitory=="Yakal"%}selected{%endif%}>Yakal</option> 
+                                </select>
+                            </div>
+                            <span id="user-dormitory">{{user.dormitory}}</span></td>
+                        <td><a href="javascript:void(0)" onclick="changeDormitory()" id="href-dormitory"><label><i class="icon-wrench"></i>
+                            <span id="edit-dormitory"> edit</span></label></a>
+                        </td></tr>
+                    <tr><td style="width:125px">Member Since</td>
+                        <td>{{user.joined}}</td><td></tr>
+                    </table>
+                    <button type="button" class="btn btn-success pull-right hidden" id="update-profile-submit" onclick="updateProfile()">Update Profile</button>
+                    <input type="hidden" id="change-name" value="False">
+                    <input type="hidden" id="change-num" value="False">
+                    <input type="hidden" id="change-email" value="False">
+                    <input type="hidden" id="change-college" value="False">
+                    <input type="hidden" id="change-degree" value="False">
+                    <input type="hidden" id="change-dormitory" value="False">
+                    </form>
+                </div>
+            </div>
+            <!--settings tab-->
+            <div id="setting" style="display:none">
+                <form action="/user/update" method="post">
+                <div><h3>Security</h3>
+                <div class="span6">
+                <table class="table table-condensed span5" style="margin-top:20px;">
+                    <tr><td style="width:170px;">Password</td>
+                        <td style="width:165px;">
+                            <div id="form-change-password" class="hidden">
+                                <input type="password" class="input-medium" placeholder="Old Password" id="old">
+                                <input type="password" class="input-medium" placeholder="New Password" id="new">
+                                <input type="password" class="input-medium" placeholder="Re-type New" id="new2" onkeyup="checkValid()">
+                                <label id="unmatch-pass" class="label label-warning hidden">Password does not match</label>
+                            </div>
+                        </td>
+                        <td><a href="javascript:void(0)" onclick="changePassword()" id="edit-password"><label><i class="icon-wrench"></i>
+                            <span> change</span></label></a>
+                    </td></tr>
+                </table>
+                <button type="button" onclick="updatePrivacy()" class="hidden" id="privacy-form-submit">Save Changes</button>
+                <input type="hidden" name="submit" value="settings">
+                </div>
+                </div>
+                </form>
+            </div>
+            <!--book consigned-->
+            <div id="consign" style="display:none">
+                <div><h3>Your Consigned Items <small>Your books that are for sale</small></h3>
+                    <div id="consign-loading" style="font-size:14px;margin-top:-23px;margin-right:25px;" class="pull-right hidden">
+                        <img src="/static/images/loading.gif"> Loading</div>
+                    <div id="consign-result" style="margin-top:10px"></div>
+                </div>
+                <div style="margin-top:20px"><h3>Your requests to consign <small>Pending request to consign your books</small></h3>
+                    <div id="consign-request" style="margin-top:10px"></div>
+                </div>
+                <input type="hidden" id="sell-loaded" value="false">
+            </div>
+            <!--user's buy orders div-->
+            <div id="request" style="display:none">
+                <div><h3>Your Requested Items</h3>
+                    <div id="request-loading" style="font-size:14px;margin-top:-23px;margin-right:25px;" class="pull-right hidden">
+                        <img src="/static/images/loading.gif"> Loading</div>
+                    <div id="request-response" style="margin-top:20px;font-size:17px;display:none">
+                    </div>
+                    <div id="request-result"></div>
+                </div>
+                <input type="hidden" id="buy-loaded" value="false">
+            </div>
+            <input type="hidden" id="user_username" value="{{user.username}}"/>
 {% endblock %}
-
-{% block right_content %}
-    {{ macro.getAbout() }}
-    {% if not comment :%}
-        {{ macro.getComments() }}
-    {% else: %}
-        {{ macro.getOkComments() }}
-    {% endif%}
-{% endblock%}

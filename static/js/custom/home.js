@@ -16,27 +16,39 @@ function hideAll(){//hide all divs in profile
     $("li#li_help-buying").attr("class","");
 }
 function showUserHome(){
+    if (window.location.pathname.indexOf("/home")===-1)
+        window.location.replace("/home")
     hideAll();
     show("home");
 }
 function showSearch(){
+    if (window.location.pathname.indexOf("/home")===-1)
+        window.location.replace("/home#search")
     hideAll();
     show("search");
 }
 function showProfile(){
+    if (window.location.pathname.indexOf("/home")===-1)
+        window.location.replace("/home#profile")
     hideAll();
     show("userprofile");
 }
 function showSettings(){
+    if (window.location.pathname.indexOf("/home")===-1)
+        window.location.replace("/home#settings")
     hideAll();
     show("setting");
 }
 function showConsigned(){
+    if (window.location.pathname.indexOf("/home")===-1)
+        window.location.replace("/home#myconsign")
     hideAll();
     show("consign");
     loadConsigned();
 }
 function showRequested(){
+    if (window.location.pathname.indexOf("/home")===-1)
+        window.location.replace("/home#myrequest")
     hideAll();
     show("request");
     loadRequested();

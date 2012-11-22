@@ -295,3 +295,5 @@
         </ul>
     </div>    
 {% endmacro%}
+
+{% macro showUserIcon(user) %}{% if user.admin: %}<img src="/static/images/admin1.png" class="admin-icon" title="Admin">{% elif user.consignee%}<img src="/static/images/handshake.ico" class="admin-icon" title="Consignee">{% endif %}{% endmacro %}

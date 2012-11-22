@@ -22,9 +22,7 @@ template_dir = os.path.join(os.path.dirname("main.py"),'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape = True)
 
 # constant globals for jinja
-# these are the red * in required fields
-jinja_env.globals.update(req = '<font style="color:red">*</font>')
-jinja_env.globals.update(req2 = '<label style="color:red;">*<font size="2">Required</font></label>')
+#jinja_env.globals.update(req = '<font style="color:red">*</font>')
 
 # RENDER TEMPLATE
 def render_str(template, **params):
@@ -52,7 +50,7 @@ class PageHandler(webapp2.RequestHandler):
         self.response.headers.add_header("Set-Cookie", "user=; Expires=Thu, 01-Jan-1970 00:00:00 GMT")
         self.response.headers.add_header("Set-Cookie", "ver=; Expires=Thu, 01-Jan-1970 00:00:00 GMT")
     
-    #takes a dictionary as input
+    #takes a dictionary as input and set cookies
     def setCookies(self,d, path = "Path=/;", expire=""):
         for (cookie,value) in d.items():
             biscuit = cookie + "=" + value +";"+ path+expire
@@ -74,6 +72,13 @@ class PageHandler(webapp2.RequestHandler):
         uname = self.getCookie('user')
         if uname:
             return User.all().filter('username',uname).get()
+    
+    #checks if the user is an admin
+    def isAdmin(self):
+        return self.getUser().admin
 
+    #redirects back to the referer
     def redirectBack(self):
         self.redirect(self.request.referer)
+
+

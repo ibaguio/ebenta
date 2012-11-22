@@ -3,7 +3,6 @@ import logging
 import math
 import json
 from pagehandlers.PageHandler import *
-from pagehandlers.BlogPostHandler import *
 from pagehandlers.UserBookOrders import *
 from pagehandlers.RegisterHandler import *
 from pagehandlers.log_in_out import *
@@ -12,6 +11,8 @@ from pagehandlers.HomePage import *
 from pagehandlers.SendMessage import *
 from pagehandlers.BookInfoHandler import *
 from pagehandlers.AdminHandler import *
+from pagehandlers.AdminViewHandlers import *
+from pagehandlers.AdminAddHandlers import *
 from pagehandlers.ConsigneeHandler import *
 from pagehandlers.SearchHandler import *
 from pagehandlers.ImageHandler import *
@@ -224,6 +225,8 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/suggest/?',CommentHandler),
                                (r'/search/?',SearchHandler),
                                (r'/testdb/(\d+)/?',TestDb),
+
+                               #USER
                                (r'/user/update/?',UserSettings),
                                (r'/user/orders/?',UserBookOrders),
                                (r'/user/?',UserProfile),
@@ -240,13 +243,13 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/about/(\w+)/?',About2Handler),
                                (r'/help/?',HelpHandler),
                                (r'/help/(\w+)/?',Help2Handler),
-                               (r'/admin/?',AdminHandler),
-                               (r'/admin/blogpost/?',BlogPostHandler),
+                               #ADMIN
                                (r'/admin/add/consigned/?',AddConsigneeHandler),
-                               (r'/admin/addbook/?',AdminAddBookHandler),
+                               (r'/admin/add/post/?',AddPostHandler),
+                               (r'/admin/add/book/?',AddBookHandler),
+                               (r'/admin/view/users/?',ViewUsersHandler),
+                               (r'/admin/view/requests/?',ViewRequestsHandler),
+                               (r'/admin/view/rtc/?',ViewRTCHandler),
                                (r'/admin/user/search/?',UserSearchHandler),
-                               (r'/admin/user/getlist/?',UserListHandler),
-                               (r'/admin/getallreqs/?',AllUserRequests),
-                               (r'/admin/getallrtc/?',AllUserRTC),
                                (r'/image/(\d+)(\.jpe?g|\.png|\.gif|\.bmp)?/?',ImageServeHandler),
-                              ],debug=False)
+                              ],debug=True)

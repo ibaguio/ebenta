@@ -1,0 +1,40 @@
+{% extends "user_home_base.html" %}
+
+{% block dash %}
+    <div class="row">
+        <h3 class="span">Request to Consign</h3>
+        <span class="span pull-right" style="margin-right:50px">
+            <form class="form-inline">
+                <label>Group by:</label>
+                <select style="width:75px" name="cat">
+                    <option {%if group=="user"%}selected{%endif%} value="user">User</option>
+                    <option {%if group=="book"%}selected{%endif%} value="book">Book</option>
+                    <option {%if group=="date"%}selected{%endif%} value="date">Date</option>
+                    <option {%if group=="status"%}selected{%endif%} value="status">Status</option>
+                </select>
+                <button class="btn"><i class="icon-chevron-right"></i></button>
+            </form>
+        </span>
+    </div>
+    <br/>
+    {% for key in reference: %}
+        <h4>{{key}} <small>Count: {{all_rtc[key]|length}}</small></h4><br/>
+        {% for i in range(all_rtc[key]|count) %}
+        {% set rtc = all_rtc[key][i] %}
+        <div class="row">
+            <table class="span table-bordered table table-hover table-condensed" style="width:430px;margin-left:40px">
+                <tr class="info"><td style="width:90px">Title</td><td>{{rtc.book.title.title()}}</td></tr>
+                <tr><td>Requested By:</td><td><a href="/user?user={{rtc.user.username}}">{{rtc.user.username}}</a></td></tr>
+                <tbody id="bdy-{{i}}" class="hidden">
+                    <tr><td>Author</td><td>{{rtc.book.author}}</td></tr>
+                    <tr><td>ISBN</td><td>{{rtc.book.isbn}}</td></tr>
+                    <tr><td>Status</td><td>{{rtc.status}}</td></tr>
+                    <tr><td>Posted</td><td>{{rtc.posted.strftime("%B %d, %Y")}}</td></tr>
+                    <tr><td>ID</td><td>{{rtc.key().id()}}</td></tr>
+                </tbody>
+            </table>
+            <a href="javascript:void(0)" class="span"><i id="ex-{{i}}" class="icon-plus"></i></a>
+        </div>
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

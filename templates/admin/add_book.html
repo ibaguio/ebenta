@@ -1,0 +1,44 @@
+{% extends "user_home_base.html" %}
+
+{% block dash %}
+    <form action="/admin/add/book" method="post" class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="title">Title</label>
+            <div class="controls">
+                <input type="text" name="title" placeholder="Title">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="author">Author</label>
+            <div class="controls">
+                <input type="text" name="author" placeholder="Author">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="isbn">ISBN</label>
+            <div class="controls">
+                <input type="text" name="isbn" placeholder="ISBN(optional)">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="desc">Description</label>
+            <div class="controls">
+                <input type="text" name="desc" placeholder="Description(optional)">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="brandprice">Brand New Price</label>
+            <div class="controls">
+                <input type="text" name="brandprice" placeholder="Brand New Price">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="sk">Search Keys</label>
+            <div class="controls">
+                <input type="text" name="sk" placeholder="Search keys (space separated)">
+            </div>
+        </div>
+        <input type="hidden" name="addbook" value="ok">
+        <input type="submit" class="btn btn-success" value="Update" style="margin-left:320px">
+    </form>
+{% endblock %}

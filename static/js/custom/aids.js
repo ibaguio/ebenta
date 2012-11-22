@@ -370,7 +370,7 @@ function getAllUsers(){
                 window.user_list = xmlhttp.responseText;
                 populateUsers();
             }else{
-
+                alert("Error loading users");
             }
         }
     }
@@ -387,15 +387,12 @@ function populateUsers(){
     </td><td><h4>Contact</h4></td><td><h4>Email</h4></td></tr></thead><tbody>';
     for (var i in data){
         var user = data[i];
+        console.log(user);
         markup +='<tr><td><a href="/user?user='+user.username+'">'+user.lastName + ', '+ user.firstName+'</a></td>'+
             '<td>'+user.username+'</td><td>'+user.contactNum+'</td><td>'+user.email+'</td></tr>';
     }
     markup+='</tbody></table>';
     $("div#admin-view-user").html(markup);
-}
-function expandUser(num){
-    $("#usr-"+num).slideDown();
-    $("#show"+num).hide();
 }
 function showUserRequest(){
     hideAll();

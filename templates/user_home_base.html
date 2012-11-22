@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% import "macros.html" as macro %}
+{% block login %}
+    {{ macro.top_welcome(user) }}
+{% endblock%}
+
+{% block script_src %}
+    <script src="/static/js/custom/home.js"></script>
+    {%if user.admin%}<script src="/static/js/custom/admin.js"></script>{%endif%}
+{%endblock%}
+
+{% block content%}
+    <div class="row">
+        {{showNav()}}
+        <div class="span7 well">
+        {% block dash%}
+        {% endblock %}
+        </div>
+    </div>
+{% endblock %}
+
+{% macro showNav() %}
+    <div class="span3 well" style="padding:8px 0;">
+        <ul class="nav nav-list">
+            <li class="nav-header">Dashboard</li>
+            <li class="active" id="li_home"><a href="#" onclick="showUserHome() "><i class="icon-home"></i> Home</a></li>
+            <li class="" id="li_search"><a href="#query" onclick="showSearch() "><i class="icon-search"></i> Search</a></li>
+            <li class="" id="li_userprofile"><a href="#profile" onclick="showProfile()"><i class="icon-user"></i> Profile</a></li>
+            {% if user.admin %}{{ showAdminNav() }}{% endif %}
+            <li class="" id="li_setting"><a href="#settings" onclick="showSettings()"><i class="icon-cog"></i> Settings</a></li>
+            <li class="nav-header">Book Orders</li>
+            <li class id="li_consign"><a href="#myconsign" onclick="showConsigned()"><i class="icon-tags"></i> Consigned</a></li>
+            <li class id="li_request"><a href="#myrequest" onclick="showRequested()"><i class="icon-book"></i> Requested</a></li>
+            <!--<li class="divider"></li>
+            <li class id="li_help"><a href="#help" onclick="showUserHelp()"><i class="icon-flag"></i> Help</a></li>
+            <ul class="hidden" style="margin-left:10px;" id="help-options">
+                <li id="li_help-consign"><a href="#help_consign" onclick="showHelp('consign')">Selling</a></li>
+                <li id="li_help-buy"><a href="#help_buying" onclick="showHelp('buying')">Buying</a></li>
+                <li><a href="javascript:void(0)"></a></li>
+            </ul>-->
+        </ul>
+    </div>
+{% endmacro %}
+
+{% macro showAdminNav()%}
+    <li class="" id="li_aids">
+    <a id="admin-nav" href="javascript:void(0)"><i class="icon-eye-open"></i> Admin</a></li>
+    <ul id="uladmin" class="hidden">
+        <li><a href="/admin/add/post" onclick="showNewBlog()">Blog Post</a></li>
+        <li><a href="/admin/add/newitem" onclick="showNewItem()">New Item</a></li>
+        <li><a href="/admin/add/book" onclick="showAddBook()">Add Book to Library</a></li>
+        <li><a href="/admin/update" onclick="showUpdateRequest()">Update Request</a></li>
+        <li><a href="/admin/view/users" onclick="showViewUser()">View All Users</a></li>
+        <li><a href="/admin/view/requests" onclick="showUserRequest()">View All Requests</a></li>
+        <li><a href="/admin/view/rtc" onclick="showAllRTC()">View Req to Consign</a></li>
+    </ul>
+{% endmacro %}

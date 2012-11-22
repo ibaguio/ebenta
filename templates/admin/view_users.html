@@ -1,0 +1,42 @@
+{% extends "user_home_base.html" %}
+
+{% block dash %}
+    <div class="row">
+        <span class="span" style="margin-top:6px"><h4>User count: {{count}}</h4></span>
+        <span class="span pull-right">Sort:
+            <select class="input-medium">
+                <option {% if not sort:%}selected{%endif%}></option>
+                <option {% if sort=="user"%}selected{%endif%} value="user">Username</option>
+                <option {% if sort=="last"%}selected{%endif%} value="last">Last Name</option>
+                <option {% if sort=="first"%}selected{%endif%} value="first">First Name</option>
+                <option {% if sort=="email"%}selected{%endif%} value="email">Email</option>
+                <option {% if sort=="date"%}selected{%endif%} value="date">Date joined</option>
+            </select>
+        </span>
+        <form class="span pull-right form-inline">
+            <input type="text" class="input-medium" placeholder="Name or Username" name="search">
+            <button type="button" class="btn"><i class="icon-search"></i></button>
+        </form>
+    </div>
+    <br/>
+    {% if query%}<h4>Results for: {{query}}</h4><br/>{%endif%}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <td><h4>Name</h4></td>
+                <td><h4>Username</h4></td>
+                <td><h4>Contact</h4></td>
+                <td><h4>Email</h4></td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in all_users: %}
+            <tr><td style="font-size:12px"><a href="/user?user={{user.username}}">{{user.completeName()}}</a></td>
+                <td style="font-size:11px">{{user.username}}</td>
+                <td style="font-size:11px">{{user.contactNum}}</td>
+                <td style="font-size:11px">{{user.email}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "home_base.html" %}
+{% import "macros.html" as macro %}
+
+{% block login %}
+    {{ macro.top_welcome(user) }}
+{% endblock%}
+
+{% block left_content%}
+    {{ macro.ebentaSearch(username) }}
+{% endblock %}
+
+{% block right_content %}
+    {{ macro.getAbout() }}
+    {% if not comment :%}
+        {{ macro.getComments() }}
+    {% else: %}
+        {{ macro.getOkComments() }}
+    {% endif%}
+{% endblock%}
