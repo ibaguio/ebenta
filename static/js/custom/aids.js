@@ -10,6 +10,7 @@ function hideAll(){//hide all divs in profile
     $("div#admin-update-request").hide();
     $("div#admin-view-user").hide();
     $("div#admin-view-requests").hide();
+    $("div#admin-view-rtc").hide();
     $("div#admin-add-book-lib").hide();
     $("li#li_home").attr("class","");
     $("li#li_search").attr("class",""); 
@@ -379,17 +380,17 @@ function getAllUsers(){
 }
 function populateUsers(){
     var data = JSON.parse(window.user_list);
-    var markup = '<div><h4>User count: '+data.length+'</h4></div><br/>';
+    var markup = '<div class="row"><h4 class="span">User count: '+data.length+
+    '</h4><span class="span pull-right">Sort: <select class="input-medium"><option>Last Name\
+    </option><option>First Name</option><option>Email</option><option>Date joined</option></select></span>\
+    </div><br/><table class="table table-bordered"><thead><tr><td><h4>Name</h4></td><td><h4>Username</h4>\
+    </td><td><h4>Contact</h4></td><td><h4>Email</h4></td></tr></thead><tbody>';
     for (var i in data){
         var user = data[i];
-        markup +='<div class="row"><table class="span table table-bordered table-condensed" style="width:370px;margin-left:60px">'+
-            '<tr><td style="width:90px">Name</td><td><a href="/user?user='+user.username+'">'+user.lastName + ', '+ user.firstName+'</a></td></tr>'+
-            '<tbody id="usr-'+i+'" style="display:none">'+
-            '<tr><td>Username</td><td>'+user.username+'</td></tr>'+
-            '<tr><td>Contact</td><td>'+user.contactNum+'</td></tr>'+
-            '<tr><td>Email</td><td>'+user.email+'</td></tr>'+
-            '</tbody></table><a href="#" class="span" onclick="expandUser('+i+')" id="show'+i+'"><i class="icon-plus"></i></a></div>';
+        markup +='<tr><td><a href="/user?user='+user.username+'">'+user.lastName + ', '+ user.firstName+'</a></td>'+
+            '<td>'+user.username+'</td><td>'+user.contactNum+'</td><td>'+user.email+'</td></tr>';
     }
+    markup+='</tbody></table>';
     $("div#admin-view-user").html(markup);
 }
 function expandUser(num){

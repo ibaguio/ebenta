@@ -72,6 +72,5 @@ function qsFocus(){
   $("#quick-search-button").show();
 }
 function qsBlur(){
-  $("#quick-search").animate({width:'130px'},400);
-  $("#quick-search-button").hide();
+  setTimeout(function(){$("#quick-search").animate({width:'130px'},400,function(){$("#quick-search-button").hide()})},1000)
 }

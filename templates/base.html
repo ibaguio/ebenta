@@ -47,13 +47,14 @@
       </div>
       <!--<span class="pull-right">
         <a href="/">Home</a> · 
-        <a href="/buy">Buy</a> · 
-        <a href="/sell">Sell</a> · 
+        {% if not user: %}<a href="/login">Login</a> ·{%endif%}
+        <a href="/request">Purchase</a> · 
+        <a href="/consign">Consign</a> · 
         <a href="/help">Help</a> ·
-        <a target="blank" href="/about/contact">Contact</a> · 
+        <a target="blank" href="/about/contact">Contact Us</a> · 
         <a target="blank" href="/about">About</a>
-      </span>
-    </div>-->
+      </span>-->
+    </div>
   </footer>
     <!-- Le javascript -->  
     <script src="/static/js/custom/core.js"></script>
@@ -63,16 +64,13 @@
     <script type="text/javascript">{%block jscript%}{%endblock%}</script> 
     <!-- Analytics -->
     <script type="text/javascript">
-  var _gaq = _gaq || [];
+    var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-33865639-1']);
   _gaq.push(['_trackPageview']);
   (function() {
     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-if (location.hostname==="e-benta.appspot.com"){window.location.href="http://ebenta.com.ph"+window.location.pathname;
-console.log("a")
-</script>
+  })();if (location.hostname==="e-benta.appspot.com")window.location.href="http://ebenta.com.ph"+window.location.pathname;</script>
   </body>
 </html>

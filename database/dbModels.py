@@ -213,7 +213,7 @@ class ConsignedBook(db.Model):
 
     @classmethod
     def getListings(cls,book,limit=30,offset=0,order="-posted",count=False,listings=True):
-        q = cls.all().ancestor(book).order(order)
+        q = cls.all().ancestor(book).order(order).filter("completed",False)
         ret = q.fetch(limit=limit,offset=offset)
         if count and listings:
             return (ret, q.count())

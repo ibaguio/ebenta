@@ -206,7 +206,7 @@ class UserListHandler(PageHandler):
             return
 
         ret = []
-        all_users = User.all().order("username").fetch(100)
+        all_users = User.all().order("username").fetch(1000)
         for u in all_users:
             ret.append(u.toDict())
         self.write(json.dumps(ret))

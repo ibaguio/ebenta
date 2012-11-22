@@ -2,19 +2,23 @@ indexes:
 - kind: ConsignedBook
   ancestor: yes
   properties:
+  - name: completed
   - name: posted
     direction: desc
 - kind: ConsignedBook
   ancestor: yes
   properties:
+  - name: completed
   - name: rating
     direction: desc
 - kind: ConsignedBook
   ancestor: yes
   properties:
+  - name: completed
   - name: rating
     direction: asc
 - kind: ConsignedBook
   ancestor: yes
   properties:
   - name: price
+  - name: completed
