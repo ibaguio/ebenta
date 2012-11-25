@@ -17,10 +17,12 @@
         <a class="brand" href="/">ebenta</a>
           {% block login %}{% endblock %}
           <div class="nav-collapse collapse pull-right">
+            <!--quick search bar-->
             <ul class="nav">
-              <li class><form class="navbar-search" method="get" action="/search">
+              <li class>
+                <form class="navbar-search" method="get" action="/search">
                 <input type="text" class="search-query" style="width:130px" name="q" id="quick-search" placeholder="Quick Search" onfocus="qsFocus()" onblur="qsBlur()"></form></li>
-                 <button class="btn" style="display:none" id="quick-search-button" type="button"><i class="icon-search"></i></button>
+                 <button class="btn" id="quick-search-button" type=""><i class="icon-search"></i></button>
             </ul>
           </div>
           <div class="nav-collapse collapse">

@@ -25,7 +25,7 @@ class SearchHandler(PageHandler):
             return
 
         results,time = searchBooks(query.lower())
-        self.render('search_result2.html',
+        self.render('search_result.html',
                         results=results,
                         time=self.getTime(time),
                         query=query,

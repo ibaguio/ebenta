@@ -1,4 +1,5 @@
 from pagehandlers.PageHandler import *
+from utils.image import *
 
 """ Admin Add Handlers 
     Adds new information posted by admins to database"""
@@ -35,7 +36,7 @@ class AddConsigneeHandler(PageHandler):
 
 class AddBookHandler(PageHandler):
     def get(self):
-        if not self.isAdmin:
+        if not self.isAdmin():
             return
         self.render("admin/add_book.html")
 
@@ -43,13 +44,15 @@ class AddBookHandler(PageHandler):
         if not self.isAdmin:
             return
 
-        title= self.request.get("title")
-        author=self.request.get("author")
-        isbn=self.request.get("isbn")
-        desc=self.request.get("desc")
+        title = self.request.get("title")
+        author = self.request.get("author")
+        isbn = self.request.get("isbn")
+        desc = self.request.get("desc")
         p = self.request.get("brandprice",default_value=-1.0)
         sk = self.request.get("sk").split(',')
-        
+        img_raw = self.request.get("img")
+        ftype = getImageFormat(img_raw)
+
         try:
             if not p: raise
             else: price = float(p)
@@ -66,6 +69,13 @@ class AddBookHandler(PageHandler):
                 newBook.addSk(s)
         newBook.put()
 
+        src = "None"
+        if ftype:
+            logging.info(ftype)
+            new_img = Image(image=db.Blob(img_raw),ref=newBook,ftype=ftype)
+            new_img.put()
+            src = new_img.getUrl()
+
         res = """<html><body><pre>
                 OK ADDED
                 Title:          %(title)s
@@ -74,6 +84,7 @@ class AddBookHandler(PageHandler):
                 Description:    %(desc)s
                 Brandnew Price: %(bnew)f
                 Search Keys:    %(sk)s
+                Image           <img src="%(img_src)s">
 
                 WILL REDIRECT BACK IN ABOUT 3 seconds... 
                 <a href='/admin/add/book'>click here to go back</a>
@@ -84,7 +95,7 @@ class AddBookHandler(PageHandler):
                     setTimeout("location.pathname='/admin/add/book'", 2500);});</script>
                 """
         search_keys = ",".join(newBook.searchKeys)
-        self.write(res%{"title":title,"author":author,"isbn":isbn,"desc":desc,"bnew":price,"sk":search_keys})
+        self.write(res%{"title":title,"author":author,"isbn":isbn,"desc":desc,"bnew":price,"sk":search_keys,"img_src":src})
 
 class AddPostHandler(PageHandler):
     def get(self):

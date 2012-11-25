@@ -20,19 +20,24 @@
                 <div class="controls"><input type="text" class="input-medium" placeholder="Title" name="title" value={%if book%}"{{book.title}}" disabled{%else%}""{%endif%}></div>
             </div>
             <div class="control-group">
+                <label class="control-label" for="edition"> Edition </label>
+                <div class="controls">
+                    <input type="text" name="edition" placeholder="Book Edition (e.g 12)" class="input-medium">
+                </div>
+            </div>
+            <div class="control-group">
                 <label class="control-label" for="author"> Author </label>
-                <div class="controls"><input type="text" class="input-medium" name ="author" placeholder="Author (optional)" value={%if book%}"{{book.author}}" disabled{%else%}""{%endif%}></div>
+                <div class="controls"><input type="text" class="input-medium" name ="author" placeholder="Author" value={%if book%}"{{book.author}}" disabled{%else%}""{%endif%}></div>
             </div>
             <div class="control-group">
                 <label class="control-label" for="isbn"> ISBN </label>
-                <div class="controls"><input type="text" class="input-medium" placeholder="ISBN (optional)" name="isbn" value={%if book%}"{{book.isbn}}"disabled{%else%}""{%endif%}></div>
+                <div class="controls"><input type="text" class="input-medium" placeholder="ISBN" name="isbn" value={%if book%}"{{book.isbn}}"disabled{%else%}""{%endif%}></div>
             </div>
             {%if book%}<input type="hidden" name="bid" value="{{book.key().id()}}">{%endif%}
-            <center>
                 <div class="control-group"><div class="controls">
+                    <div style="font-size:11px;margin-bottom:15px">*Only a title is required</div>
                     <input type="submit" class="btn btn-success" value="Consign Book"></div>
                 </div>
-            </center>
         </form>
     </div>
 {% endblock %}
@@ -40,7 +45,10 @@
 {% block right_content%}
     <div id="book-consign-info">
         <h3>Consigning a Book</h3>
-        <div style="margin-top:20px;font-size:15px">
+        <div>
+            <img src="/static/images/consign_info.jpg">
+        </div>
+        <div style="margin-top:20px;font-size:15px;display:none">
             <h4>How it works:</h4>
                 <ol>
                     <li>Users who are interested to consign (sell) their books must contact eBenta administrators by <b>filling up the form</b> beside, or by sending an email to admin@ebenta.com.ph (for bulk consigning)</li>

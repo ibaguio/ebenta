@@ -117,4 +117,3 @@ class UserSearchHandler(PageHandler):
             return
         res = {"username":user.username}
         self.write(json.dumps(res))
-

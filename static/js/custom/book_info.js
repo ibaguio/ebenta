@@ -1,15 +1,12 @@
 /*  book info scripts
     script used to update and modify info on the 
     book info pages */
-
-//ajax request
 function requestSellers(sort_by,def){
     console.log("requesting sellers")
     document.getElementById("loading").className = "";
     def = typeof def !== 'undefined' ? def : true;  //if def(ault) is null, set to true
     if (document.getElementById("li-sort-"+sort_by).className === "active" && def===true)
         return;
-    //set default values
     if (def)
         if (sort_by==="price")
             setSortOrderVal("asc");
@@ -23,7 +20,7 @@ function requestSellers(sort_by,def){
     if (order != "asc" && order != "desc")
         order="desc";
     var xmlhttp = ajaxRequest();
-    bid = parseURLParams()["book"];
+    bid = $("input#bid").val();
     xmlhttp.onreadystatechange=function(){
         if (xmlhttp.readyState === 2){
             document.getElementById("loading").className = "";
@@ -338,7 +335,7 @@ function buyConsigned(){
 function loadImages(oid){
     console.log("loading images");
     var xmlhttp = ajaxRequest();
-    var bid = parseURLParams()["book"];
+    var bid = $("input#bid").val();
     xmlhttp.onreadystatechange = function(){
         if (xmlhttp.readyState === 2){
         }else if (xmlhttp.readyState === 4){

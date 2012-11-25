@@ -233,12 +233,12 @@
  </span>
 {% endmacro %}
 
-{% macro printStar(gold,white) %}
+{% macro generateStars(stars) %}
     <span>
-    {% for i in range(gold): %}
+    {% for i in range(stars): %}
         <img src="/static/images/gold_star.png" class="rating-star12">
     {% endfor %}
-        {% for i in range(5-gold): %}
+    {% for i in range(5-stars): %}
         <img src="/static/images/white_star.png" class="rating-star12">
     {% endfor %}
     </span>

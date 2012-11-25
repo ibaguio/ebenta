@@ -1,0 +1,18 @@
+{% extends "user_home_base.html" %}
+
+{% block dash %}
+    <h3>New Blog Post</h3><br/>
+    <form method="post" class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="title">Title</label>
+            <div class="controls"><input type="text" name="title"></div>
+        </div>
+         <div class="control-group">
+            <label class="control-label" for="content">Content</label>
+            <div class="controls">
+                <textarea name="content" rows="7"></textarea>
+            </div>
+        </div>
+        <input type="submit" class="btn btn-success" value="Post" style="margin-left:330px">
+    </form>
+{% endblock %}

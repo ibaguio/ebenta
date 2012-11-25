@@ -13,13 +13,25 @@ import json
 import os
 import webapp2
 import jinja2
+import re
 
 #default days before post expires
 def_exp_days = 30
 
-# TEMPLATE
+# TEMPLATE stuff
 template_dir = os.path.join(os.path.dirname("main.py"),'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape = True)
+
+#jinja custom filters
+#returns the url acceptible format for the string
+#'The Calculus 7' => 'the-calculus-7'
+def toUrl(string):
+    if string:
+        return "-".join(re.split('\W+',string.strip().lower()))
+    else:
+        return "other"
+
+jinja_env.filters["toUrl"] = toUrl
 
 # constant globals for jinja
 #jinja_env.globals.update(req = '<font style="color:red">*</font>')
@@ -80,5 +92,3 @@ class PageHandler(webapp2.RequestHandler):
     #redirects back to the referer
     def redirectBack(self):
         self.redirect(self.request.referer)
-
-

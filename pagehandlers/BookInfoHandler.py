@@ -4,8 +4,7 @@ from datetime import datetime
 
 class BookInfoHandler(PageHandler):
     """Handler that generates the book's page"""
-    def get(self):
-        bid = self.request.get("book")
+    def get(self,bid):
         try:
         	book = Library.get_by_id(int(bid))
         except:

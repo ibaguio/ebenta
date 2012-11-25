@@ -11,21 +11,16 @@ class RegisterHandler(PageHandler):
     #REGISTER form post
     def post(self):
         err,errs,val = self.checkErrors()
-        if len(err) > 4: #accidentally pressed register and no input was placed, redir to home
-            self.redirect(val['from'])
-            return
-        elif len(err)>0:
-            if val["from"] == '/register':
-                self.render("register.html",err=err,errs=errs,val=val)
-            else:
-                self.render("homepage.html",err=err,errs=errs,val=val)
+        logging.info(val)
+        if len(err)>0:
+            self.render("register.html",err=err,errs=errs,val=val)
             return
 
         new = User(key_name=val['user'].lower(),
                    username = val['user'].lower(),
                    password =  pwHash(val['user'],val['pass']),
-                   firstName = val['first'],
-                   lastName = val['last'],
+                   firstName = val['first'].title(),
+                   lastName = val['last'].title(),
                    contactNum = val['con'],
                    email=val['email'])
         new.put()
@@ -41,14 +36,13 @@ class RegisterHandler(PageHandler):
         val = self.getRegister()
         err = []
         errs = []
-        dorms = ['None','Centennial','International Center','Ilang-ilang','Ipil',\
-            'Kalayaan','Kamagong','Kamia','Molave','Sampaguita','Sanggumay','Yakal']
-        #check if username already in db
-        if User.get_by_key_name(val.get('user')):
-            err.append("Username already exists!")
-            errs.append("uname")
-        elif not valid_username(val.get('user')):
+        
+        if not valid_username(val.get('user')):
             err.append("Invalid Username")
+            errs.append("uname")
+        elif User.get_by_key_name(val.get('user')):
+            #check if username already in db
+            err.append("Username already exists!")
             errs.append("uname")
         if val.get('pass') != val.get('ver'):
             err.append("Passwords must match")
@@ -68,11 +62,24 @@ class RegisterHandler(PageHandler):
         if not valid_email(val.get('email')):
             err.append("Invalid Email address")
             errs.append("email")
-        if val.get('dorm') not in dorms:
+        if val.get('dorm') not in self.dorms:
             err.append("Invalid Dormitory")
             errs.append("dorm")
+        if val.get('college') not in self.colleges:
+            err.append("Invalid College")
+            errs.append("college")
+        if not val.get("course"):
+            err.append("Please enter course")
+            errs.append("course")
         return err,errs,val
+
+    dorms = ['None','Centennial','International Center','Ilang-ilang','Ipil',\
+            'Kalayaan','Kamagong','Kamia','Molave','Sampaguita','Sanggumay','Yakal']
     
+    colleges = ['ait', 'asp', 'arki', 'asian', 'cal', 'cba', 'che', 'chk', 'cmc', 'cs',\
+        'cssp', 'cswcd', 'econ', 'educ', 'engg', 'fa', 'iis', 'issi', 'law', 'music', 'ncpag',\
+        'slis', 'solair', 'surp', 'stat','other']#, 'tmc', 'upis']
+
     #GETS data from register form    
     def getRegister(self):        
         return {'user': self.request.get("username"),
@@ -83,4 +90,6 @@ class RegisterHandler(PageHandler):
                 'con':  self.request.get("contactNo"),
                 'email': self.request.get("email"),
                 'from': self.request.get("from"),
-                'dorm': self.request.get('dorm')}
+                'dorm': self.request.get('dorm'),
+                'college':self.request.get("college"),
+                'course':self.request.get("course")}

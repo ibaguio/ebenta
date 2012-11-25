@@ -3,13 +3,19 @@ from database.dbModels import *
 import time
 class BrowseAdsHandler(PageHandler):
     def get(self,category="",*a):
-        m = self.request.get("m")
-        if category == "":
-            category = "library"
+        try:
+            page = int(self.request.GET["page"])
+            filtr = self.request.GET["filter"]
+        except Exception, e:
+            self.redirect("/browse?page=1&filter=all")
+            return
+
+        if not page: page = 1
+
+        books,con,count = self.getLibListings(offset=(page-1)*14)
+        data = {"books":books, "consigned":con}
         
-        if category == "library":
-            lib,con,count = self.getLibListings()
-            self.render("browse.html",show=lib,info=con,lenS=len(lib),q="lib",browse_active="active")
+        self.render("browse.html",data=data,count=count,browse_active="active")
 
     def post(self):
         limit = 14

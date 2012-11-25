@@ -2,20 +2,16 @@
 
 from database.dbModels import *
 from collections import Counter
-import re, time,logging
+import re, time
 
 #BookScore = namedTuple('BookScore',['book','score'])
 #Search book from ebenta library
-
-def getBook(bid):
-    return Library.get_by_id(int(bid))
 
 #search books whose keywords match with the query
 def searchBooks(query):
     start = time.time()
     #splits the query into words
     words = re.split('\W+',query)
-    logging.info("searching for "+query)
     dbInstance = {}
     found = []
     ret = []
@@ -27,8 +23,6 @@ def searchBooks(query):
         updateFound(found,dbInstance,r)
     
     score = Counter(found)
-    logging.info(found)
-    logging.info(score)
 
     sorted_score = mergeSort(invert(score))
     

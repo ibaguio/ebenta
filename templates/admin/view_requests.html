@@ -2,7 +2,7 @@
 
 {% block dash %}
     <div class="row">
-        <h3 class="span">Book Requests</h3>
+        <h3 class="span">Book Requests <small>Total: {{total}}</small></h3>
         <span class="span pull-right" style="margin-right:50px">
             <form class="form-inline">
                 <label>Group by:</label>
@@ -17,6 +17,7 @@
         </span>
     </div>
     <br/>
+    {% set idx = 0 %}
     {% for key in reference: %}
         <h4>{{key}} <small>Count: {{requests[key]|length}}</small></h4><br/>
         {% for i in range(requests[key]|length): %}
@@ -24,23 +25,25 @@
         <div class="row">
             <table class="span table-bordered table table-condensed" style="width:430px;margin-left:40px">
                 <tr><td style="width:90px">Title</td><td>{{req.parent().title.title()}}</td></tr>
-                <tr><td>Requested By:</td><td><a href="/user?user='+c.user+'">{{req.user.username}}</a></td></tr>
-                <tbody id="bdy-{{i}}" class="hidden">
-                    <tr><td>Author</td><td>{{req.parent.author}}</td></tr>
+                <tr><td>Requested By:</td><td><a href="/user?user={{req.user.username}}">{{req.user.username}}</a></td></tr>
+                <tbody id="bdy-{{idx}}" class="hidden">
+                    {% if req.parent.author %}<tr><td>Author</td><td>{{req.parent.author}}</td></tr>{% endif %}
                     {% if req.brand_new: %}
                     <tr><td>Brand New</td><td> Yes</td></tr>
                     {% else:%}
                     <tr><td>Brand New</td><td> No</td></tr>
                     <tr><td>Max Price</td><td>Php {{req.max_price}}</td></tr>
-                    <tr><td>Min Rating</td><td>{{req.min_rating}}</td></tr>
+                    <tr><td>Min Rating</td><td>{{ macro.generateStars(req.min_rating) }}</td></tr>
                     {% endif %}
                     <tr><td>Status</td><td>{{req.status.title()}}</td></tr>
-                    <tr><td>Posted</td><td>{{req.posted.strftime("%B %d, %Y")}}</td></tr>
+                    <tr><td>Posted</td><td>{{req.posted.strftime("%B %d %H:%M")}}</td></tr>
                     <tr><td>ID</td><td>{{req.key().id()}}</td></tr>
                 </tbody>
             </table>
-            <a href="javascript:void(0)" class="span"><i id="ex-{{i}}" class="icon-plus"></i></a>
+            <a href="javascript:void(0)" class="span"><i id="ex-{{idx}}" class="icon-plus"></i></a>
         </div>
+        {% set idx = idx + 1 %}
         {% endfor %}
+        {% set idx = idx + (requests[key]|length) %}
     {% endfor %}
 {% endblock %}

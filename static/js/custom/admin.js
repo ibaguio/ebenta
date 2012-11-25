@@ -1,4 +1,3 @@
-/* admin.js */
 window.onload = function(){
     var path = window.location.pathname;
     $("#admin-nav").click(function(){
@@ -21,13 +20,15 @@ window.onload = function(){
 function showAdmin(){
     hideAll();
     var admn = $("#uladmin");
-    if (admn.attr("class")==="hidden")
+    if (admn.attr("class")==="hidden") 
         admn.attr("class","nav nav-list");
-    else
+    else 
         admn.attr("class","hidden");
 }
 function toggle(id){
     var targ = $("tbody#bdy-"+id);
-    if (targ.css('display')==="none") targ.show(555);
-    else targ.hide(555);
+    if (targ.css('display')==="none"){
+        targ.show(555);  
+        $("i#ex-"+id).attr('class','icon-minus');
+    }else targ.hide(555,function(){$("i#ex-"+id).attr('class','icon-plus')});
 }

@@ -1,7 +1,8 @@
 {% extends "user_home_base.html" %}
 
 {% block dash %}
-    <form action="/admin/add/book" method="post" class="form-horizontal">
+    <h4>Add New Book to Library</h4><br/>
+    <form action="/admin/add/book" method="post" class="form-horizontal" enctype="multipart/form-data">
         <div class="control-group">
             <label class="control-label" for="title">Title</label>
             <div class="controls">
@@ -17,13 +18,13 @@
         <div class="control-group">
             <label class="control-label" for="isbn">ISBN</label>
             <div class="controls">
-                <input type="text" name="isbn" placeholder="ISBN(optional)">
+                <input type="text" name="isbn" placeholder="ISBN (optional)">
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="desc">Description</label>
             <div class="controls">
-                <input type="text" name="desc" placeholder="Description(optional)">
+                <input type="text" name="desc" placeholder="Description (optional)">
             </div>
         </div>
         <div class="control-group">
@@ -35,10 +36,15 @@
         <div class="control-group">
             <label class="control-label" for="sk">Search Keys</label>
             <div class="controls">
-                <input type="text" name="sk" placeholder="Search keys (space separated)">
+                <input type="text" name="sk" placeholder="Search keys (comma separated)">
             </div>
         </div>
-        <input type="hidden" name="addbook" value="ok">
+        <div class="control-group">
+            <label class="control-label" for="sk">Image</label>
+            <div class="controls">
+                <input type="file" name="img">
+            </div>
+        </div>
         <input type="submit" class="btn btn-success" value="Update" style="margin-left:320px">
     </form>
 {% endblock %}

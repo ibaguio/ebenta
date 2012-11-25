@@ -6,7 +6,134 @@
 {% endblock %}
 
 {% block content %}
-	<div class="span6 offset3">
-	{{ macro.getRegistrationForm(val,err,errs,"/register")}}
+	<div class="span7 offset2">
+    <div class="" style="padding-left:25px;">
+    {% if err: %}
+    <div class="alert alert-error">
+        <a class="close" data-dismiss="alert" href="javascript:void(0)">×</a>
+            {% for e in err %}<label>{{e}}</label>{% endfor %}
+    </div>
+    {% endif %}
+    <form action="/register" method="post" class="well form-horizontal">
+        <legend>Basic Information</legend>
+        <div class="control-group {%if 'uname' in errs:%}error{%endif%}">
+            <label class="control-label" for="username">Username</label>
+            <div class="controls">
+                <input type="text" name="username" value="{{val['user']}}" placeholder="Username" tabindex="1"/>
+                <a class="pops" href="#" rel="popover" title="Username" data-content="Username must be 6-15 characters, alphanumeric or underscore only.">
+                <i class="icon-question-sign"></i></a>
+            </div>
+        </div>
+        <div class="control-group {%if 'pass' in errs:%}error{%endif%}">
+            <label class="control-label" for="password">Password</label>
+            <div class="controls">
+                <input type="password" name="pass" placeholder="Password" tabindex="2">
+                <a class="pops" href="#" rel="popover" title="Password" data-content="Password must be 6-15 characters."/>
+                <i class="icon-question-sign"></i></a>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="verify">Re-type Password</label>
+            <div class="controls">
+                <input type="password" name="verify" placeholder="Re-type Password" tabindex="3"/>
+            </div>
+        </div>
+
+        <div class="control-group {%if 'name' in errs:%}error{%endif%}">
+            <label class="control-label" for="name">Complete Name</label>
+            <div class="controls">
+                <input type="text" name="firstName" value="{{val['first']}}" placeholder="First" style="width:95px;margin-right:6px;" tabindex="4"/>
+                <input type="text" name="lastName" value="{{val['last']}}" placeholder="Last" style="width:95px" tabindex="5"/>
+            </div>
+        </div>
+        
+        <div class="control-group {%if 'con' in errs:%}error{%endif%}">
+            <label class="control-label" for="contactNo">Contact Number</label>   
+            <div class="controls">
+                <input type="text" name="contactNo" value="{{val['con']}}" placeholder="Contact Number" tabindex="6">
+                <a class="pops"  href="#" rel="popover" title="Contact Number" data-content="Please use this format 09XX XXX XXXX">
+                <i class="icon-question-sign"></i></a>
+            </div>
+        </div>
+        <div class="control-group {%if 'email' in errs:%}error{%endif%}">
+            <label class="control-label" for="email">Email</label>
+            <div class="controls">
+                <input type="text" name="email" value="{{val['email']}}" placeholder="Email" tabindex="7">
+            </div>
+        </div>
+        <legend>Other Information <small style="font-size:10px"><a class="pops" href="#" rel="popover" title="Other Information" data-content="<h4>What is this for?</h4>These information will let us know more about you as a student, so we can serve you according to your needs">whats this?</a></small></legend>
+
+        <div class="control-group {%if 'college' in errs:%}error{%endif%}">
+            <label class="control-label" for="college">College</label>
+            <div class="controls">
+                <select name="college">
+                    <option value="" {% if val.college==""%}selected{%endif%}></option>
+<option value="ait" {% if val.college=="ait"%}selected{%endif%}>AIT - Asian Institute of Tourism</option>
+<option value="asp" {% if val.college=="asp"%}selected{%endif%}>ASP - Archaeological Studies Program</option>
+<option value="arki" {% if val.college=="arki"%}selected{%endif%}>Arki - College of Architecture</option>
+<!--<option value="asian" {% if val.college=="asian"%}selected{%endif%}>Asian - Asian Center</option>-->
+<option value="cal" {% if val.college=="cal"%}selected{%endif%}>CAL - College of Arts and Letters</option>
+<option value="cba" {% if val.college=="cba"%}selected{%endif%}>CBA - College of Business Administration</option>
+<option value="che" {% if val.college=="che"%}selected{%endif%}>CHE - College of Home Economics</option>
+<option value="chk" {% if val.college=="chk"%}selected{%endif%}>CHK - College of Human Kinetics</option>
+<option value="cmc" {% if val.college=="cmc"%}selected{%endif%}>CMC - College of Mass Communication</option>
+<option value="cs" {% if val.college=="cs"%}selected{%endif%}>CS - College of Science</option>
+<option value="cssp" {% if val.college=="cssp"%}selected{%endif%}>CSSP - College of Social Sciences and Philosophy</option>
+<option value="cswcd" {% if val.college=="cswcd"%}selected{%endif%}>CSWCD - College of Social Work and Community Development</option>
+<option value="econ" {% if val.college=="econ"%}selected{%endif%}>Econ - School of Economics</option>
+<option value="educ" {% if val.college=="educ"%}selected{%endif%}>Educ - College of Education</option>
+<option value="engg" {% if val.college=="engg"%}selected{%endif%}>Engg - College of Engineering</option>
+<option value="fa" {% if val.college=="fa"%}selected{%endif%}>FA - College of Fine Arts</option>
+<option value="iis" {% if val.college=="iis"%}selected{%endif%}>IIS - Institute of Islamic Studies</option>
+<option value="issi" {% if val.college=="issi"%}selected{%endif%}>ISSI - Institute for Small Scale Industries</option>
+<option value="law" {% if val.college=="law"%}selected{%endif%}>Law - College of Law</option>
+<option value="music" {% if val.college=="music"%}selected{%endif%}>Music - College of Music</option>
+<option value="ncpag" {% if val.college=="ncpag"%}selected{%endif%}>NCPAG - National College of Public Administration and Governance</option>
+<option value="slis" {% if val.college=="slis"%}selected{%endif%}>SLIS - School of Library and Information Studies</option>
+<option value="solair" {% if val.college=="solair"%}selected{%endif%}>SOLAIR - School of Labor and Industrial Relations</option>
+<option value="surp" {% if val.college=="surp"%}selected{%endif%}>SURP - School of Urban and Regional Planning</option>
+<option value="stat" {% if val.college=="stat"%}selected{%endif%}>Stat - School of Statistics</option>
+<!--<option value="tmc" {% if val.college=="tmc"%}selected{%endif%}>TMC - Technology Management Center</option>-->
+<!--<option value="upis" {% if val.college=="upis"%}selected{%endif%}>UPIS - UP Integrated School</option>-->
+<option value="other" {% if val.college=="other"%}selected{%endif%}>Other</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="course">Course</label>
+            <div class="controls">
+                <input type="text" name="course" value="{{val.course}}">
+            </div>
+        </div>
+
+        <div class="control-group {%if 'dorm' in errs:%}error{%endif%}">
+            <label class="control-label" for="dorm">Dormitory</label>
+            <div class="controls">
+                <select name="dorm">
+                    <option value="None">None</option>
+                    <option value="Centennial">Centennial</option>
+                    <option value="International Center">International Center</option>
+                    <option value="Ilang-ilang">Ilang-ilang</option>
+                    <option value="Ipil">Ipil</option>
+                    <option value="Kalayaan">Kalayaan</option>
+                    <option value="Kamagong">Kamagong</option>
+                    <option value="Kamia">Kamia</option>
+                    <option value="Molave">Molave</option>
+                    <option value="Sampaguita">Sampaguita</option>
+                    <option value="Sanggumay">Sanggumay</option>
+                    <option value="Yakal">Yakal</option> 
+                </select>
+            </div>
+        </div>
+        <legend></legend>
+        <div id="other-details" style="margin-top:-15px;font-size:11px;margin-left:100px">
+            The information above will only be visible to eBenta admins.
+        </div>
+        <br/>        
+        <center><input type="submit" value="Register to eBenta!" class="btn btn-success" tabindex="8"></center>
+        <input type="hidden" name="from" value="{{from}}">
+    </form>
+    </div>
+    <script type="text/javascript">$(document).ready(function(){$("a.pops").popover();});</script>
 	</div>
 {% endblock %}

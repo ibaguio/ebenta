@@ -55,8 +55,7 @@ class Image(db.Model):
     posted = db.DateTimeProperty(auto_now_add=True)
 
     def getUrl(self):
-        return "/image/"+str(self.key().id())+"."+ftype
-
+        return "/image/"+str(self.key().id())+"."+self.ftype
 
 class Author(db.Model):
     name = db.StringProperty(required=True)
@@ -71,6 +70,20 @@ class Library(db.Model):
     searchKeys = db.StringListProperty()
     description = db.StringProperty(default="",indexed=False)
     brandNewPrice = db.FloatProperty(default=-1.0,indexed=False);
+    edition = db.IntegerProperty(default=0)
+
+    def getEdition(self):
+        if self.edition > 0:
+            logging.info(strings.ordinalth(self.edition)+" Ed")
+            return strings.ordinalth(self.edition)+" Ed"
+        return ""
+
+    #returns title + edition
+    def getTitle(self):
+        edition_ = self.getEdition()
+        if edition_:
+            return self.title +", "+edition_
+        return self.title
 
     #returns a json representation of a specific book
     #title, author, key, + attributes specified in kwargs
@@ -266,6 +279,13 @@ class BuyConsigned(db.Model):
     item = db.ReferenceProperty(ConsignedBook, required=True)
     buyer = db.ReferenceProperty(User, required=True, collection_name="buying_book")
     date_needed = db.StringProperty()
+
+class AdminComments(db.Model):
+    """ Admin's comments to book requests """
+    added_by = db.ReferenceProperty(User,required=True)
+    post = db.ReferenceProperty(required=True,collection_name="comments")
+    posted = db.DateTimeProperty(auto_now_add=True)
+    comment = db.StringProperty(required=True)
 
 class BlogPost(db.Model):
     title = db.StringProperty(required=True)

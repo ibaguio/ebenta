@@ -6,7 +6,11 @@ from google.appengine.ext.db import GqlQuery
 
 def get_tmp(req,cat):
     if cat == "book":
-        return req.parent().title
+        try:
+            title = req.parent().title
+        except:
+            title = req.book.title
+        return title
     elif cat == "user":
         return req.user.username
     elif cat == "status":
@@ -26,7 +30,14 @@ class ViewRequestsHandler(PageHandler):
         except:
             cat = "date"
 
-        all_req = RequestedBook.all().fetch(1000)
+        all_req = RequestedBook.all()
+        total = all_req.count()
+
+        if cat == "date":
+            all_req = all_req.order("-posted").fetch(1000)
+        else:
+            all_req = all_req.fetch(1000)
+        
         sorted_ = {}
         ref_ = []
         tmp = None    
@@ -38,7 +49,7 @@ class ViewRequestsHandler(PageHandler):
                 ref_.append(tmp)
             sorted_[tmp].append(req)
 
-        self.render("admin/view_requests.html",requests=sorted_,group=cat,reference=ref_)
+        self.render("admin/view_requests.html",requests=sorted_,group=cat,reference=ref_,total=total)
 
 class ViewRTCHandler(PageHandler):
     """Handles displaying of all Request to 
@@ -53,7 +64,14 @@ class ViewRTCHandler(PageHandler):
         except:
             cat = "date"
 
-        all_rtc = ConsignRequest.all().fetch(1000)
+        all_rtc = ConsignRequest.all()
+        total = all_rtc.count()
+
+        if cat == "date":
+            all_rtc = all_rtc.order("-posted").fetch(1000)
+        else:
+            all_rtc = all_rtc.fetch(1000)
+        
         sorted_ = {}
         ref_ = []
         tmp = None    
@@ -65,7 +83,7 @@ class ViewRTCHandler(PageHandler):
                 ref_.append(tmp)
             sorted_[tmp].append(req)
 
-        self.render("admin/view_rtc.html",all_rtc=sorted_,group=cat,reference=ref_)
+        self.render("admin/view_rtc.html",all_rtc=sorted_,group=cat,reference=ref_,total=total)
 
 
 class ViewUsersHandler(PageHandler):
@@ -86,7 +104,7 @@ class ViewUsersHandler(PageHandler):
                     "last":"lastName",
                     "first":"firstName",
                     "email":"email",
-                    "date":"joined"}
+                    "date":"-joined"}
 
         try:
             s = self.request.GET["sort"]

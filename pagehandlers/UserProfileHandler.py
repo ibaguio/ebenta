@@ -97,67 +97,6 @@ class UserSettings(PageHandler):
             user.put()
             pass #no errors, response with http 200
 
-    def updatePrivacy(self,user):
-        info = {'old':self.request.get("old"),
-                'new':self.request.get("new"),
-                'new2':self.request.get("new2")}
-                #'priv_college':self.request.get("privacy-college"),
-                #'priv_contact':self.request.get("privacy-contact")}
-        error = []
-        logging.error("info:"+str(info))
-        change = False  #marker for update db
-        if info['old']:
-            #check if all input passwords are valid
-            if valid_password(info['old']) and valid_password(info['new']) and valid_password(info['new2']):
-                if user.correctPass(info['old']):   #user password is correct
-                    if info['new'] == info['new2']: #new passwords match
-                        user.password = pwHash(user.username,info['new'])
-                        change = True   #marker that a change has been made
-                    else: error.append("New password does not match")
-                else: error.append("Invalid Password Inner")
-            else: error.append("Invalid Password Outer")
-        logging.error("old:"+str(info["old"]))
-        #if (info['priv_college'] and info['priv_contact']) not in ["admin","user","guest"]:
-        #    logging.error("Privacy not in list")
-        #    error.append("Privacy not in list")
-        #    return  #error
-
-        #if a change in privacy has been done
-        #if info['priv_college'] != user.privacy.showCollege or info['priv_contact'] != user.privacy.showContact:
-        #    privacy = getPrivacy(str(info['priv_contact']),str(info['priv_college']))
-        #    user.privacy = privacy
-        #    change = True
-
-        if error:
-            self.response.status_int = 401
-            logging.error("error:"+str(error))
-        elif change:
-            user.put()
-            self.write("")
-            logging.error("response sent")
-
-class UserOrder(PageHandler):
-    """ Posting of user order. deprecated v3"""
-    def post(self):
-        username = self.request.get("user")
-        rtype = self.request.get("type")
-
-        error = False
-        user = User.get_by_key_name(username)
-        if not user or rtype not in ["sell","buy"]:
-            pass #error
-            return
-        if rtype == "sell":
-            orders = SellBook.all().filter("user",user).order("-posted").fetch(15)
-        else:
-            orders = BuyBook.all().filter("user",user).order("-posted").fetch(15)
-
-        list_order = []
-        for order in orders:
-            list_order.append(order.toJson())
-        ret = json.dumps(list_order)
-        self.write(ret)
-
 class UserConsigned(PageHandler):
     """gets the list of consigned books for the user"""
     def post(self):

@@ -317,3 +317,4 @@ function hidePassword(){
     document.getElementById("form-change-password").className = "hidden";
     document.getElementById("edit-password").className= " ";
 }
+window.onload = checkUrl();

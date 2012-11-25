@@ -1,4 +1,5 @@
-/*	general usefull functions*/
+$("#quick-search-button").click(function(){$("form.navbar-search").submit()});
+/*  general usefull functions*/
 /* creates an ajax object */
 function ajaxRequest(){
     var xmlhttp;
@@ -40,7 +41,6 @@ function generateStars(rating){
         markup+= '<img class="rating-star14" src="/static/images/white_star.png">';
     return markup;
 }
-/**/
 function validateImage(input_img,success_callback,fail_callback,cancel_callback){
     var fname = input_img.value;
     if (!fname)
@@ -72,5 +72,5 @@ function qsFocus(){
   $("#quick-search-button").show();
 }
 function qsBlur(){
-  setTimeout(function(){$("#quick-search").animate({width:'130px'},400,function(){$("#quick-search-button").hide()})},1000)
+  setTimeout(function(){$("#quick-search").animate({width:'130px'},400)},1234);
 }

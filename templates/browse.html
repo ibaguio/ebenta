@@ -9,8 +9,9 @@
     {% endif %}
 {% endblock %}
 
+{#
 {% block script_src%}<script src="/static/js/custom/library_browse.js"></script>{%endblock%}
-
+#}
 {% block content%}
   {{showBrowseNav()}}
   <div class="span9" id="browsed-title" >
@@ -21,6 +22,7 @@
     <h3><a href="javascript:void(0)"><img src="/static/images/list_icon.png" style="margin-top:-5px" title="Show Navigation" id="imgHide" onclick="showNav()" class="hidden"/></a> <span id="result-header"></span></h3>
   </div>
   <div class="span8 well" id="browsed-div">
+    {{showContent()}}
   </div>
   <div id="results-nav" class="span9 offset3">
     <div>
@@ -32,12 +34,10 @@
   </div>
 {% endblock %}
 
-{% macro getDescription(desc) %}
-  {% if desc.description %}{{description}}{%else%}No description available{%endif%}
-{% endmacro%}
-
 {% block jscript %}
-  window.onload = requestLibrary(1);
+  window.onload = function(){
+    $("a.pops").popover()
+  }
 {% endblock %}
 
 {% macro modTitle(title)%}
@@ -60,4 +60,71 @@
       </ul>
   </div>
   </div>
+{% endmacro %}
+
+{% macro showContent() %}
+  {% for d in range(data.books|count) %}
+  {% set book = data.books[d] %}
+  {% set cons = data.consigned[d] %}
+  {% set book_id = book.key().id() %}
+  {% set url_title = book.getTitle()|toUrl %}
+  {% set url_author = book.author|toUrl %}
+  <div class="browsed">
+    <div class="row-fluid">
+      <span class="browsed-img">
+        <a href="book/info/{{url_author}}/{{url_title}}/{{book_id}}/" class="book-image">
+        {% if not book.image %}
+           <div class="result-img" title="no image available">
+            <div style="height:25px"></div>
+            <label class="label label-success" style="text-align:center;">No Image<br/>Available</label>
+          </div>
+        {% else %}
+          <div class="result-img"><img src="{{book.image}}"></div>
+        {% endif %}
+        </a>
+      </span>
+      <div class="browsed-info">
+        <table>
+        <tr>
+          <td class="tdmarg">
+            <img src="/static/images/title.png" title="Book Title" class="icon16px">
+          </td>
+          <td>
+            <a href="/book/info/{{url_author}}/{{url_title}}/{{book_id}}/" class="pops" rel="popover" data-content='<b>Author: </b><font color="#049cdb">{{modAuthor(book.author)}}</font><br/><div style="margin-top:5px;">{{getDescription(book.description)}} </div>' data-original-title="{{book.getTitle()}}">{{modTitle(book.getTitle())}}</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <img src="/static/images/author.png" title="Author" class="icon16px">
+          </td>
+          <td>{{modAuthor(book.author)}}</td>
+        </tr>
+      </table>
+      <span class="browsed-stats">
+        <button class="btn btn-dropdown-toggle btn-success btn-mini-mini" data-toggle="dropdown" style="margin-top:-5px;margin-right:3px;"><span class="caret"></span></button>
+        <ul class="dropdown-menu">
+          <li><a href="/book/info/{{url_author}}/{{url_title}}/{{book_id}}/">Buy</a></li>
+          <li><a href="/book/request/{{url_author}}/{{url_title}}/{{book_id}}/">Request</a></li>
+          <li><a href="/book/consign/{{url_author}}/{{url_title}}/{{book_id}}/">Consign (Sell)</a></li></ul>
+        <span title="{{cons}} Used copies on Stock"><i class="icon-book"></i> {{cons}} </span></span>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+{% endmacro %}
+
+{% macro modTitle(title) %}
+  {% if title|length >= 28: %}
+    {{title[:25]}}
+  {% else %}
+    {{title}}
+  {%endif%}
+{% endmacro %}
+
+{% macro modAuthor(author)%}
+  {% if author:%}{{author}}{%endif%}
+{% endmacro %}
+
+{% macro getDescription(desc) %}
+  {% if not desc %} No Description Available {% else %} {{desc}} {% endif %}
 {% endmacro %}

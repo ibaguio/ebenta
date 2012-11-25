@@ -5,13 +5,13 @@ import json
 from pagehandlers.PageHandler import *
 from pagehandlers.UserBookOrders import *
 from pagehandlers.RegisterHandler import *
-from pagehandlers.log_in_out import *
+from pagehandlers.LogInOut import *
 from pagehandlers.UserProfileHandler import *
 from pagehandlers.HomePage import *
-from pagehandlers.SendMessage import *
 from pagehandlers.BookInfoHandler import *
 from pagehandlers.AdminHandler import *
 from pagehandlers.AdminViewHandlers import *
+from pagehandlers.AdminUpdateHandlers import *
 from pagehandlers.AdminAddHandlers import *
 from pagehandlers.ConsigneeHandler import *
 from pagehandlers.SearchHandler import *
@@ -43,6 +43,8 @@ class HelpHandler(PageHandler):
 
 class Help2Handler(PageHandler):
     def get(self,param):
+        self.write(param)
+        return
         if param=="consign":
             self.redirect("/help")
             
@@ -62,37 +64,6 @@ class CommentHandler(PageHandler):
             com.put()
             self.redirect('/home?comment=success')
             
-class AddBookHandler(PageHandler):
-    def get(self):
-        user = self.isLogged()
-        if user:
-            self.render("add_book.html")
-        else:
-            self.render_noUser("add_book.html",error="You must be logged in to view this page")
-
-    def post(self):
-        next = self.request.get("next")
-        user = self.isLogged()
-        if user:
-            title=self.request.get("title").title()
-            author=self.request.get("author").title()
-            
-            if not title or not author:
-                if next:
-                    self.redirect("/"+next+"/step2?err")
-                    return
-                self.render("add_book.html",err="Please Fill up all fields")
-                return
-            
-            new_book = Library(title=title,author=author)
-            new_book.generateSk()
-            new_book.put()
-            
-            if next:
-                self.redirect("/"+next+"/step3?book="+str(new_book.key().id()))
-                return
-            self.redirect("/books?id="+new_book.key().id())
-
 class RequestBookHandler(PageHandler):
     def get(self):
         if not self.isLogged():
@@ -208,14 +179,14 @@ class TestDb(PageHandler):
         if pid == '0':
             generalTest()
         elif pid == '1':
-            logging.info("Creating initial dummy db")
-            generalTest()
-        elif pid == '2':
-            logging.info("Generating more sell Order")
-            generateMoreSellOrder()
-        elif pid == '3':
-            loadOtherBooks()
+            lib = Library.all()
+            for book in lib:
+              book.generateUrlTitle()
         self.redirect("/")
+
+class TestHandler(PageHandler):
+    def get(self,name):
+        self.write(name)
 
 app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/register/?',RegisterHandler),
@@ -225,7 +196,6 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/suggest/?',CommentHandler),
                                (r'/search/?',SearchHandler),
                                (r'/testdb/(\d+)/?',TestDb),
-
                                #USER
                                (r'/user/update/?',UserSettings),
                                (r'/user/orders/?',UserBookOrders),
@@ -233,7 +203,7 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/user/consiged/?',UserConsigned),
                                (r'/user/requests/?',UserRequests),
                                (r'/book/info/?',BookInfoHandler),
-                               #(r'/book/add/?',AddBookHandler),
+                               (r'/book/info/[\w|-]*/[\w|-]*/(\d+)/?',BookInfoHandler),
                                (r'/book/request/?',RequestBookHandler),
                                (r'/book/consign/?',ConsignBookHandler),
                                (r'/book/consign/buy/?',ConsignBuyHandler),
@@ -244,6 +214,7 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/help/?',HelpHandler),
                                (r'/help/(\w+)/?',Help2Handler),
                                #ADMIN
+                               (r'/admin/book/info/update/?',AdminUpdateInfoHandler),
                                (r'/admin/add/consigned/?',AddConsigneeHandler),
                                (r'/admin/add/post/?',AddPostHandler),
                                (r'/admin/add/book/?',AddBookHandler),

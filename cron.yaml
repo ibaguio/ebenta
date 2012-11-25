@@ -1,5 +1,0 @@
-cron:
-- description: update sell order expiry
-  timezone: Asia/Manila
-  url: /_admin/update_expiry
-  schedule: every day 00:01
