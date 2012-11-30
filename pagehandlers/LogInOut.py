@@ -56,6 +56,27 @@ providers = {
     # add more here
 }
 
+class PasswordForgetHandler(PageHandler):
+    def get(self):
+        if self.getUser():
+            return
+        self.render("forgot_pass.html")
+
+    def post(self):
+        username = self.request.get("username")
+        email = self.request.get("email")
+
+        if username:
+            user = Users.get_by_key_name(username)
+        elif email:
+            user = Users.all().filter("email",email).get()
+        if user:
+            reset_link = crypto.generateResetLink()
+            new_reset = ResetPassword(user=user,hash_link=reset_link)
+            new_reset.put()
+            EmailHandler.forgotPassword(user,hash_link)
+            self.redirect("/login/forgot/sentrequest")
+
 class TestLoginHandler(PageHandler):
     def get(self):
         user = users.get_current_user()

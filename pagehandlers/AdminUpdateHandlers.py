@@ -17,7 +17,7 @@ class AdminUpdateInfoHandler(PageHandler):
             author = self.request.get("new_author")
             isbn = self.request.get("new_isbn")
             desc = self.request.get("new_desc")
-            keys = re.split('\s*,\s*]',self.request.get("skeys"))
+            keys = re.split('\s*,\s*',self.request.get("skeys"))
 
             try: nprice = float(self.request.get("new_price"))
             except: nprice = -1.0

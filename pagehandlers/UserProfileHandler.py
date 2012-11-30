@@ -45,7 +45,7 @@ class UserSettings(PageHandler):
     def post(self):
         user = self.getUser()
         kind = self.request.get("submit")
-        logging.error("kind:"+str(kind))
+
         if not user:
             self.render("error.html")
             return
@@ -61,10 +61,10 @@ class UserSettings(PageHandler):
                 'last':self.request.get("last"),
                 'num':self.request.get("num"),
                 'email':self.request.get("email"),
-                'college':self.request.get("colelge"),
+                'college':self.request.get("college"),
                 'degree':self.request.get("degree"),
                 'dormitory':self.request.get("dormitory")}
-        logging.error("info:"+str(info))
+
         error = []
         if info['first']:
             user.firstName = info['first']
@@ -122,6 +122,7 @@ class UserConsigned(PageHandler):
 
         self.write(json.dumps(ret))
 
+#returns the user's listed requests
 class UserRequests(PageHandler):
     def post(self):
         if not self.isLogged().admin:

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import string, hashlib, random,hmac
+import string, hashlib, random, hmac
 
 #TOP_SECRET="bFPKSPGpUFVBYrlmUwaBvPDixL"
 #PASSWORD HASHING
@@ -68,3 +68,8 @@ def validCookie(cookie, username):
         return False
     user, h = extract_cookie(cookie)
     return hash_str(username) == h and user==username
+
+#generates reset link for a user
+#link = sha256(username+currentpassword)
+def generateResetLink(user):
+    return hashlib.sha256(user.username+user.password+user.email).hexdigest()

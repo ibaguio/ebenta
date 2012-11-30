@@ -1,6 +1,9 @@
 #static data here
 
 dormitory = ['None','Centennial','International Center','Ilang-ilang','Ipil','Kalayaan','Kamagong','Kamia','Molave','Sampaguita','Sanggumay','Yakal']
+categories = [None , 'economics', 'engineering', 'english', 'filipino', 'finance', 'history', 'mathematics', 'science','other']
+colleges = [None,'ncpag','cssp','arki','ait','cmc','fa','tmc','music','surp','upis','stat','asp','iis','econ','issi','educ','che','chk','slis','cs','cswcd','kal','cba','solair','law','engg','asian']
+
 
 #returns the ordinal of a number
 def ordinalth(n):

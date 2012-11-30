@@ -28,8 +28,8 @@ class About2Handler(PageHandler):
             self.render("/about/faq.html")
         elif param == "contact":
             self.render("/about/contact.html")
-        elif param == "developers":
-            self.render("/about/developers.html")
+        elif param == "faq":
+            self.render("/about/faq.html")
         elif param == "copyrights":
             self.render("/about/copyrights.html")
         elif param == "terms":
@@ -74,13 +74,14 @@ class RequestBookHandler(PageHandler):
             book = Library.get_by_id(long(bid))
             if not book: raise
         except:
-            self.render("book_request.html")
+            self.render("book_request.html",request_active="active")
             return
-        self.render("book_request.html",book=book,data_date=self.getDataDate())
+        self.render("book_request.html",book=book,data_date=self.getDataDate(),
+          request_active="active")
 
     def getDataDate(self):
-        date_now = datetime.date.today() + datetime.timedelta(days=7)
-        return str(date_now.strftime("%d/%m/%Y"))
+        data_date = datetime.date.today() + datetime.timedelta(days=7)
+        return str(data_date.strftime("%d/%m/%Y"))
 
     def post(self):
         bid = self.request.get("bid")
@@ -188,11 +189,16 @@ class TestHandler(PageHandler):
     def get(self,name):
         self.write(name)
 
+class BrowseHandler2(PageHandler):
+    def get(self):
+        self.redirect("/browse/all?page=1")
+
 app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/register/?',RegisterHandler),
                                (r'/home/?',UserHome),
                                (r'/logout/?',LogoutHandler),
                                (r'/login/?',LoginHandler),
+                               (r'/login/forget/?',PasswordForgetHandler),
                                (r'/suggest/?',CommentHandler),
                                (r'/search/?',SearchHandler),
                                (r'/testdb/(\d+)/?',TestDb),
@@ -208,13 +214,15 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/book/consign/?',ConsignBookHandler),
                                (r'/book/consign/buy/?',ConsignBuyHandler),
                                (r'/book/error/?',BookError),
-                               (r'/browse/?',BrowseAdsHandler),
+                               (r'/browse/?',BrowseHandler2),
+                               (r'/browse/(\w+)/?',BrowseHandler),
                                (r'/about/?',AboutHandler),
                                (r'/about/(\w+)/?',About2Handler),
                                (r'/help/?',HelpHandler),
                                (r'/help/(\w+)/?',Help2Handler),
                                #ADMIN
                                (r'/admin/book/info/update/?',AdminUpdateInfoHandler),
+                               (r'/admin/book/remove/?',AdminBookRemoveHandler),
                                (r'/admin/add/consigned/?',AddConsigneeHandler),
                                (r'/admin/add/post/?',AddPostHandler),
                                (r'/admin/add/book/?',AddBookHandler),
@@ -223,4 +231,4 @@ app = webapp2.WSGIApplication([(r'/', HomePage),
                                (r'/admin/view/rtc/?',ViewRTCHandler),
                                (r'/admin/user/search/?',UserSearchHandler),
                                (r'/image/(\d+)(\.jpe?g|\.png|\.gif|\.bmp)?/?',ImageServeHandler),
-                              ],debug=True)
+                              ],debug=False)

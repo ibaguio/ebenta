@@ -54,6 +54,11 @@ class AddBookHandler(PageHandler):
         ftype = getImageFormat(img_raw)
 
         try:
+            edition = int(self.request.get("edition"))
+        except :
+            edition = 0
+
+        try:
             if not p: raise
             else: price = float(p)
         except:
@@ -62,7 +67,7 @@ class AddBookHandler(PageHandler):
         if not title or not author:
             return
 
-        newBook = Library(title=title,author=author,isbn=isbn,description=desc,brandNewPrice=price)
+        newBook = Library(title=title,author=author,isbn=isbn,description=desc,brandNewPrice=price,edition=edition)
         newBook.generateSk()
         if sk:
             for s in sk:

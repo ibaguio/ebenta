@@ -117,3 +117,19 @@ class UserSearchHandler(PageHandler):
             return
         res = {"username":user.username}
         self.write(json.dumps(res))
+
+class AdminBookRemoveHandler(PageHandler):
+    def post(self):
+        if not self.isAdmin():
+            return
+
+        try:
+            bid = int(self.request.get("bid"))
+            book = Library.get_by_id(bid)
+            if book:
+                logging.warning("Removing book "+str(bid)+" Title: "+book.title)
+                book.delete()
+                self.response.status_int = 200
+        except Exception,e:
+            logging.info("Failed to remove book: "+str(e))
+            self.response.status_int = 400

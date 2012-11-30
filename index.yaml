@@ -22,3 +22,7 @@ indexes:
   properties:
   - name: price
   - name: completed
+- kind: Library
+  properties:
+  - name: category
+  - name: title

@@ -1,10 +1,19 @@
-{% extends "user_home_base.html" %}
+{% extends "base.html" %}
+{% import "macros.html" as macro %}
 
-{% block dash %}
-    <div class="hidden" id="settings-updated" style="width:190px;margin:5px auto;">
+{% block login %}
+    {{ macro.top_welcome(user) }}
+{% endblock%}
+{% block script_src %}{%if user.admin%}<script src="/static/js/custom/aids.js"></script>{%else%}<script src="/static/js/custom/home.js"></script>{%endif%}{%endblock%}
+{% block jscript%}$(window).ready(checkUrl());{% endblock%}
+{% block content%}
+<div class="row">
+    {{showHomeNav()}}
+    <div class="span7 well">
+        <div class="hidden" id="settings-updated" style="width:190px;margin:5px auto;">
                 <button class="close" data-dismiss="alert">x</button>
                 <label id="req-ok"></label>
-        </div>
+            </div>
         <div id="home" class="row">
             <center><img src="/static/images/transparent.png" style="width:85%;"></center>
             <div id="home-blog" style=";margin-top:30px;" class="span7">
@@ -36,7 +45,7 @@
             </ul>
                 <div class="span5" style="padding:0 14px;">
                     <form action="/user/update" method="post">
-                    <h3>{{macro.showUserIcon(user)}} {{user.username}}'s Profile</h3>
+                    <h3>{{showUserIcon(user)}} {{user.username}}'s Profile</h3>
                     <table class="table table-condensed" style="margin-top:20px;">
                     <tr><td>Username</td>
                         <td style="width:180px;">{{user.username}}</td><td></tr>
@@ -67,39 +76,9 @@
                         </td></tr>        
                     <tr><td>College</td>
                         <td><div id="form-college" class="hidden">
-                <select name="college" onchange="change('college')" id="input-college" class="input-medium">
-                    <option value="" {% if user.college==None%}selected{%endif%}></option>
-<option value="ait" {% if user.college=="ait"%}selected{%endif%}>AIT - Asian Institute of Tourism</option>
-<option value="asp" {% if user.college=="asp"%}selected{%endif%}>ASP - Archaeological Studies Program</option>
-<option value="arki" {% if user.college=="arki"%}selected{%endif%}>Arki - College of Architecture</option>
-<!--<option value="asian" {% if user.college=="asian"%}selected{%endif%}>Asian - Asian Center</option>-->
-<option value="cal" {% if user.college=="cal"%}selected{%endif%}>CAL - College of Arts and Letters</option>
-<option value="cba" {% if user.college=="cba"%}selected{%endif%}>CBA - College of Business Administration</option>
-<option value="che" {% if user.college=="che"%}selected{%endif%}>CHE - College of Home Economics</option>
-<option value="chk" {% if user.college=="chk"%}selected{%endif%}>CHK - College of Human Kinetics</option>
-<option value="cmc" {% if user.college=="cmc"%}selected{%endif%}>CMC - College of Mass Communication</option>
-<option value="cs" {% if user.college=="cs"%}selected{%endif%}>CS - College of Science</option>
-<option value="cssp" {% if user.college=="cssp"%}selected{%endif%}>CSSP - College of Social Sciences and Philosophy</option>
-<option value="cswcd" {% if user.college=="cswcd"%}selected{%endif%}>CSWCD - College of Social Work and Community Development</option>
-<option value="econ" {% if user.college=="econ"%}selected{%endif%}>Econ - School of Economics</option>
-<option value="educ" {% if user.college=="educ"%}selected{%endif%}>Educ - College of Education</option>
-<option value="engg" {% if user.college=="engg"%}selected{%endif%}>Engg - College of Engineering</option>
-<option value="fa" {% if user.college=="fa"%}selected{%endif%}>FA - College of Fine Arts</option>
-<option value="iis" {% if user.college=="iis"%}selected{%endif%}>IIS - Institute of Islamic Studies</option>
-<option value="issi" {% if user.college=="issi"%}selected{%endif%}>ISSI - Institute for Small Scale Industries</option>
-<option value="law" {% if user.college=="law"%}selected{%endif%}>Law - College of Law</option>
-<option value="music" {% if user.college=="music"%}selected{%endif%}>Music - College of Music</option>
-<option value="ncpag" {% if user.college=="ncpag"%}selected{%endif%}>NCPAG - National College of Public Administration and Governance</option>
-<option value="slis" {% if user.college=="slis"%}selected{%endif%}>SLIS - School of Library and Information Studies</option>
-<option value="solair" {% if user.college=="solair"%}selected{%endif%}>SOLAIR - School of Labor and Industrial Relations</option>
-<option value="surp" {% if user.college=="surp"%}selected{%endif%}>SURP - School of Urban and Regional Planning</option>
-<option value="stat" {% if user.college=="stat"%}selected{%endif%}>Stat - School of Statistics</option>
-<!--<option value="tmc" {% if user.college=="tmc"%}selected{%endif%}>TMC - Technology Management Center</option>-->
-<!--<option value="upis" {% if user.college=="upis"%}selected{%endif%}>UPIS - UP Integrated School</option>-->
-<option value="other" {% if user.college=="other"%}selected{%endif%}>Other</option>
-                </select>
-        </div>
-                            <span id="user-college">{{user.college|upper_case}}</span></td>
+                                <input type="text" class="input-medium" placeholder="College" name="college" id="input-college" value="{{user.college}}" onchange="change('college')">
+                            </div>
+                            <span id="user-college">{{user.college}}</span></td>
                         <td><a href="javascript:void(0)" onclick="changeCollege()" id="href-college"><label><i class="icon-wrench"></i>
                             <span id="edit-college"> edit</span></label></a>
                         </td></tr>
@@ -194,4 +173,170 @@
                 <input type="hidden" id="buy-loaded" value="false">
             </div>
             <input type="hidden" id="user_username" value="{{user.username}}"/>
-{% endblock %}
+            {%if user.admin%}{{adminDivs()}}{%endif%}
+    </div>
+</div>
+{% endblock%}
+
+{% macro showHomeNav()%}
+    <div class="span3 well" style="padding:8px 0;">
+        <ul class="nav nav-list">
+            <li class="nav-header">Dashboard</li>
+            <li class="active" id="li_home"><a href="#" onclick="showUserHome() "><i class="icon-home"></i> Home</a></li>
+            <li class="" id="li_search"><a href="#query" onclick="showSearch() "><i class="icon-search"></i> Search</a></li>
+            <li class="" id="li_userprofile"><a href="#profile" onclick="showProfile()"><i class="icon-user"></i> Profile</a></li>{%if user.admin%}{{showAdminTab()}}{%endif%}
+            <li class="" id="li_setting"><a href="#settings" onclick="showSettings()"><i class="icon-cog"></i> Settings</a></li>
+            <li class="nav-header">Book Orders</li>
+            <li class id="li_consign"><a href="#myconsign" onclick="showConsigned()"><i class="icon-tags"></i> Consigned</a></li>
+            <li class id="li_request"><a href="#myrequest" onclick="showRequested()"><i class="icon-book"></i> Requested</a></li>
+            <!--<li class="divider"></li>
+            <li class id="li_help"><a href="#help" onclick="showUserHelp()"><i class="icon-flag"></i> Help</a></li>
+            <ul class="hidden" style="margin-left:10px;" id="help-options">
+                <li id="li_help-consign"><a href="#help_consign" onclick="showHelp('consign')">Selling</a></li>
+                <li id="li_help-buy"><a href="#help_buying" onclick="showHelp('buying')">Buying</a></li>
+                <li><a href="javascript:void(0)"></a></li>
+            </ul>-->
+        </ul>
+    </div>
+{% endmacro %}
+{% macro showAdminTab()%}
+<li class="" id="li_aids">
+<a href="#admin" onclick="showAdmin()"><i class="icon-eye-open"></i> Admin</a></li>
+<ul id="uladmin" class="hidden">
+    <li><a href="#post" onclick="showNewBlog()">Blog Post</a></li>
+    <li><a href="#newitem" onclick="showNewItem()">New Item</a></li>
+    <li><a href="#addbook" onclick="showAddBook()">Add Book to Library</a></li>
+    <li><a href="#update" onclick="showUpdateRequest()">Update Request</a></li>
+    <li><a href="#view" onclick="showViewUser()">View All Users</a></li>
+    <li><a href="#all_requests" onclick="showUserRequest()">View All Requests</a></li>
+    <li><a href="#all_requests" onclick="showAllRTC()">View Req to Consign</a></li>
+</ul>
+
+{% endmacro %}
+{%macro adminDivs()%}
+<div id="admin-blog-post" style="display:none">
+    <form action="/admin/blogpost" method="post" class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="title">Title</label>
+            <div class="controls"><input type="text" name="title"></div>
+        </div>
+         <div class="control-group">
+            <label class="control-label" for="content">Content</label>
+            <div class="controls">
+                <textarea name="content" rows="7"></textarea>
+            </div>
+        </div>
+        <input type="submit" class="btn btn-success" value="Post" style="margin-left:330px">
+    </form>
+</div>
+<div id="admin-new-item" style="display:none">
+    <form action="/admin/newitem" method="post" class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="bid">Book ID</label>
+            <div class="controls">
+                <input type="text" name="bid" placeholder="Book ID">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="user">Consignee</label>
+            <div class="controls">
+                <input type="text" name="consignee" placeholder="Consignee's Username">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="rating">Rating</label>
+            <div class="controls">
+                <input type="text" name="rating" placeholder="Rating 1-5">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="ask_price">Ask Price</label>
+            <div class="controls">
+                <input type="text" name="ask_price" placeholder="Consignee's ask price">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="sell_price">Selling Price</label>
+            <div class="controls">
+                <input type="text" name="sell_price" placeholder="Price to be posted">
+            </div>
+        </div>
+        <input type="submit" class="btn btn-success" value="Add New Item" style="margin-left:275px">
+    </form>
+</div>
+<div id="admin-update-request" style="display:none">
+    <form action="/admin/update" method="post" class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="req_id">Request ID</label>
+            <div class="controls">
+                <input type="text" name="req_id" placeholder="Request ID">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="status">Status</label>
+            <div class="controls">
+                <select name="status">
+                    <option value="pending">Pending Action</option>
+                    <option value="processing">Processing Request</option>
+                    <option value="tbd">To be delivered</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+        </div>
+        <input type="submit" class="btn btn-success" value="Update" style="margin-left:275px">
+    </form>
+</div>
+<div id="admin-add-book-lib" style="display:none">
+    <form action="/admin/addbook" method="post" class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="title">Title</label>
+            <div class="controls">
+                <input type="text" name="title" placeholder="Title">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="author">Author</label>
+            <div class="controls">
+                <input type="text" name="author" placeholder="Author">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="isbn">ISBN</label>
+            <div class="controls">
+                <input type="text" name="isbn" placeholder="ISBN(optional)">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="desc">Description</label>
+            <div class="controls">
+                <input type="text" name="desc" placeholder="Description(optional)">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="brandprice">Brand New Price</label>
+            <div class="controls">
+                <input type="text" name="brandprice" placeholder="Brand New Price">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="sk">Search Keys</label>
+            <div class="controls">
+                <input type="text" name="sk" placeholder="Search keys (space separated)">
+            </div>
+        </div>
+        <input type="hidden" name="addbook" value="ok">
+        <input type="submit" class="btn btn-success" value="Update" style="margin-left:320px">
+    </form>
+</div>
+<div id="admin-view-user" style="display:none">
+    
+</div>
+<div id="admin-view-requests" style="display:none">
+    
+</div>
+<div id="admin-view-rtc" style="display:none">
+    
+</div>
+{%endmacro%}
+{% macro showUserIcon(user) %}{% if user.admin: %}<img src="/static/images/admin1.png" class="admin-icon" title="Admin">{% elif user.consignee%}<img src="/static/images/handshake.ico" class="admin-icon" title="Consignee">{% endif %}{% endmacro %}

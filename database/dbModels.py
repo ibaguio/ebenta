@@ -15,10 +15,11 @@ class User(db.Model):
     contactNum = db.StringProperty()
     email = db.StringProperty()
     studentNum = db.StringProperty()
-    joined = db.DateProperty(auto_now_add = True)
-    dormitory = db.StringProperty(required=True,\
+    joined = db.DateTimeProperty(auto_now_add = True)
+    dormitory = db.StringProperty(required=True,
         choices=set(strings.dormitory),default="None")
-    college= db.StringProperty(default="")
+    college= db.StringProperty(default=None,
+        choices=set(strings.colleges))
     degree= db.StringProperty(default="")
     admin = db.BooleanProperty(default=False)
 
@@ -67,11 +68,13 @@ class Library(db.Model):
     #author_ = db.ReferenceProperty(Author,collection_name="books")
     author = db.StringProperty()
     isbn = db.StringProperty(default="")
-    searchKeys = db.StringListProperty()
     description = db.StringProperty(default="",indexed=False)
     brandNewPrice = db.FloatProperty(default=-1.0,indexed=False);
     edition = db.IntegerProperty(default=0)
+    searchKeys = db.StringListProperty()
+    category = db.StringProperty(default=None,choices=set(strings.categories))
 
+    #returns book edition in string
     def getEdition(self):
         if self.edition > 0:
             logging.info(strings.ordinalth(self.edition)+" Ed")
@@ -120,14 +123,20 @@ class Library(db.Model):
         return "/image/"+str(img.key().id())+'.'+str(img.ftype)
 
     @classmethod
-    def getListings(cls,limit=15,offset=0,order="title",count_only=False,count=False):
+    def getListings(cls,limit=15,offset=0,order="title",
+        count_only=False,count=False,category=""):
         q = cls.all()
         q.order(order)
+
+        if category != "all":
+            q.filter("category",category)
+
         if count_only:
             return q.count()
         ret = q.fetch(limit=limit,offset=offset)
         if count:
             return ret, q.count()
+        logging.info("returning")
         return ret
 
     #returns a dict containing the stats of the book
@@ -293,15 +302,6 @@ class BlogPost(db.Model):
     added_by = db.ReferenceProperty(User,collection_name="blog_posts")
     posted = db.DateTimeProperty(auto_now_add=True)
 
-class Comment(db.Model):
-    user = db.ReferenceProperty(User, required=True)
-    comment = db.TextProperty(required=True)
-    posted = db.DateTimeProperty(auto_now_add = True)
-
-class Colleges(db.Model):
-    abbr = db.StringProperty(required=True)#abbriviation
-    college = db.StringProperty(required=True)
-
-class DegreeCourse(db.Model):
-    degree = db.StringProperty(required=True)
-    college = db.ReferenceProperty(Colleges,required=True)
+class ResetPassword(db.Model):
+    user = db.ReferenceProperty(User,required=True)
+    hash_link = db.StringProperty(required=True)

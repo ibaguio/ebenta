@@ -1,10 +1,9 @@
-#!/usr/bin/env python
-from utils.crypto import *
-from database.dbModels import *
 from utils.regex import *
 from utils.search import *
+from utils.crypto import *
 from database.dbModels import *
 from database.test import *
+from database.dbModels import *
 
 from google.appengine.ext import db
 from google.appengine.api import users
@@ -14,6 +13,7 @@ import os
 import webapp2
 import jinja2
 import re
+import datetime
 
 #default days before post expires
 def_exp_days = 30
@@ -31,6 +31,12 @@ def toUrl(string):
     else:
         return "other"
 
+def upper_case(string):
+    if string:
+        return string.upper()
+    return ""
+
+jinja_env.filters["upper_case"] = upper_case
 jinja_env.filters["toUrl"] = toUrl
 
 # constant globals for jinja
@@ -87,7 +93,8 @@ class PageHandler(webapp2.RequestHandler):
     
     #checks if the user is an admin
     def isAdmin(self):
-        return self.getUser().admin
+        u = self.getUser()
+        if u: return u.admin
 
     #redirects back to the referer
     def redirectBack(self):

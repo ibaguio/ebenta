@@ -1,6 +1,4 @@
-#!/usr/bin/env python
 from pagehandlers.PageHandler import *
-from datetime import datetime
 
 class BookInfoHandler(PageHandler):
     """Handler that generates the book's page"""

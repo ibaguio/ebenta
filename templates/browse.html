@@ -14,25 +14,48 @@
 #}
 {% block content%}
   {{showBrowseNav()}}
-  <div class="span9" id="browsed-title" >
-    <div class="pull-right" style="margin-right:40px;margin-top:10px;">
-      <i class="request-loading" id="loading" style="display:none"></i>
-      <img title="Error in fetching listings" src="/static/images/error.gif" style="display:none;width:20px;margin-right:5px" id="load-error">
-    </div>
-    <h3><a href="javascript:void(0)"><img src="/static/images/list_icon.png" style="margin-top:-5px" title="Show Navigation" id="imgHide" onclick="showNav()" class="hidden"/></a> <span id="result-header"></span></h3>
+  <div class="span9" id="browsed-title">
+    {% if total_pages > 0:%}
+      {{showBooks()}}
+    {% elif total_pages == 0%}
+      {{noBooks()}}
+    {% elif total_pages < 0%}
+      {{invalidPage()}}
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% macro showBooks() %}
+  <h3><a href="javascript:void(0)"><img src="/static/images/list_icon.png" style="margin-top:-5px" title="Show Navigation" id="imgHide" onclick="showNav()" class="hidden"/></a><span id="result-header"></span></h3>
+    <span id="page-info" style="margin-right:40px" class="pull-right">
+      <a href="/browse/{{filter}}?page={{page-1}}" class="browse-pagination"
+      {% if page == 1%}style="visibility:hidden"{%endif%}>« Prev</a>
+      Page {{page}} of {{total_pages}} 
+      <a href="/browse/{{filter}}?page={{page+1}}" class="browse-pagination" 
+      {% if total_pages==page %}style="visibility:hidden"{%endif%}>Next »</a>
+    </span>
   </div>
   <div class="span8 well" id="browsed-div">
     {{showContent()}}
   </div>
   <div id="results-nav" class="span9 offset3">
-    <div>
-      <center><h3><small id="display-info">Showing 0-0 of 0</small></h3></center>
-    </div>
     <div class="pagination pagination-centered" style="margin-top:0" >
-      <ul id="pagination"></ul>
+      <ul id="pagination">
+        {{generatePagination()}}
+      </ul>
     </div>
+{% endmacro%}
+
+{% macro noBooks()%}
+  <div class="span8 well" >
+    <h3>No Books yet under this category</h3>
   </div>
-{% endblock %}
+{% endmacro %}
+{% macro invalidPage()%}
+  <div class="span8 well" >
+    <h3>Page Not Found</h3>
+  </div>
+{% endmacro %}
 
 {% block jscript %}
   window.onload = function(){
@@ -49,21 +72,36 @@
   <div class="span3 well" style="padding:8px 0;">
       <ul class="nav nav-list">
         <li class="nav-header">Book<span class="pull-right"><a href="javascript:void(0)" onclick="hideNav()">hide</a></span></li>
-        <li class="active"><a href="javascript:void(0)" onclick="">All</a></li>
-        {#<li class="nav-header">Subjects</li>
-        <li class><a href="javascript:void(0)" onclick="">Mathematics</a></li>
-        <li class><a href="javascript:void(0)" onclick="">Science</a></li>
-        <li class><a href="javascript:void(0)" onclick="">English</a></li>
-        <li class><a href="javascript:void(0)" onclick="">Philisophy</a></li>
-        <li class="divider"></li>
-        <li class><a href="javascript:void(0)" onclick="">Advance Search</a></li>#}
+        <li {%if filter=="all"%}class="active"{%endif%}><a href="/browse/all">All</a></li>
+        <li class="nav-header">Categories</li>
+        <li {%if filter=="economics" %}class="active"{%endif%}><a href="/browse/economics">Economics</a></li>
+        <li {%if filter=="engineering"%}class="active"{%endif%}><a href="/browse/engineering">Engineering</a></li>
+        <li {%if filter=="english"%}class="active"{%endif%}><a href="/browse/english">English</a></li>
+        <li {%if filter=="filipino"%}class="active"{%endif%}><a href="/browse/filipino">Filipino</a></li>
+        <li {%if filter=="finance"%}class="active"{%endif%}><a href="/browse/finance">Finance</a></li>
+        <li {%if filter=="history"%}class="active"{%endif%}><a href="/browse/history">History</a></li>
+        <li {%if filter=="meth"%}class="active"{%endif%}><a href="/browse/mathematics">Mathematics</a></li>
+        <li {%if filter=="science"%}class="active"{%endif%}><a href="/browse/science">Science</a></li>
+        <li {%if filter=="other"%}class="active"{%endif%}><a href="/browse/other">Other</a></li>
+        <!--<li class="divider"></li>
+        <li class><a href="javascript:void(0)" onclick="">Advance Search</a></li>-->
       </ul>
   </div>
   </div>
 {% endmacro %}
 
+{% macro generatePagination()%}
+    {% if page == 1%}<li class="disabled"><a href="javascript:void(0)">«</a></li>
+    {% else %}<li><a href="/browse/{{filter}}?page={{page - 1}}">«</a></li>{% endif %}
+    {% for i in range(1,total_pages+1) %}
+    <li {% if i==page %}class="active"{%endif%}><a href="/browse/{{filter}}?page={{i}}">{{i}}</a></li>
+    {%endfor%}
+    {% if total_pages==page %}<li class="disabled"><a href="javascript:void(0)">»</a></li>
+    {% else %}<li><a href="/browse/{{filter}}?page={{page + 1}}">»</a></li>{% endif %}
+{% endmacro %}
+
 {% macro showContent() %}
-  {% for d in range(data.books|count) %}
+  {% for d in range(data.books|length) %}
   {% set book = data.books[d] %}
   {% set cons = data.consigned[d] %}
   {% set book_id = book.key().id() %}

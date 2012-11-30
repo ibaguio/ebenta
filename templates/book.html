@@ -63,7 +63,7 @@
                             <td>{{stats["avePrice"]}}</td></tr>
                         <tr><td>New Price</td>
                             <td><span id="xbook-new-price">{{stats["newPrice"]}}</span>
-                                <input type="text" id="xinput-new-price" name="new_price" class="input-mini" placeholder="Price" style="display:none">
+                                <input type="text" id="xinput-new-price" name="new_price" class="input-mini" placeholder="Price" {% if stats['newPrice']!='No Data'%}value="{{stats['newPrice']}}"{%endif%} style="display:none">
                             </td></tr>
                         <tr><td></td><td></td></tr>
                     </table>
@@ -134,7 +134,7 @@
                     <i class="icon-picture" ></i>Add Image</a></li>
                 <li ><a href="javascript:void(0)" id="" onclick="">
                     <i class="icon-time" ></i>View History</a></li>
-                <li ><a href="javascript:void(0)" id="" onclick="">
+                <li ><a href="javascript:void(0)" id="" onclick="rbook()">
                     <i class="icon-remove-sign" ></i>Remove</a></li>
             </ul>
         </div>

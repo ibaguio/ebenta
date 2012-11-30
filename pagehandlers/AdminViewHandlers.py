@@ -49,7 +49,8 @@ class ViewRequestsHandler(PageHandler):
                 ref_.append(tmp)
             sorted_[tmp].append(req)
 
-        self.render("admin/view_requests.html",requests=sorted_,group=cat,reference=ref_,total=total)
+        self.render("admin/view_requests.html",requests=sorted_,
+            group=cat,reference=ref_,total=total)
 
 class ViewRTCHandler(PageHandler):
     """Handles displaying of all Request to 

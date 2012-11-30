@@ -7,7 +7,15 @@
 
 {% block content %}
 	<div class="span7 offset2">
-    <div class="" style="padding-left:25px;">
+    {{showRegistration()}}
+	</div>
+{% endblock %}
+
+{% macro showRegistration() %}
+{% if val is not defined%}
+    {%set val = {} %}
+{% endif %}
+ <div class="" style="padding-left:25px;">
     {% if err: %}
     <div class="alert alert-error">
         <a class="close" data-dismiss="alert" href="javascript:void(0)">×</a>
@@ -135,5 +143,4 @@
     </form>
     </div>
     <script type="text/javascript">$(document).ready(function(){$("a.pops").popover();});</script>
-	</div>
-{% endblock %}
+{% endmacro %}

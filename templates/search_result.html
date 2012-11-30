@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% import "macros.html" as macro %}
+
+{% block login %}
+    {% if user: %}
+        {{ macro.top_welcome(user) }}
+    {% else: %}
+        {{macro.top_login()}}
+    {% endif %}
+{% endblock %}
+
+{% block content%}
+  {{showBrowseNav()}}
+  <div class="span9" id="browsed-title" >
+    <div class="pull-right" style="margin-right:40px;margin-top:10px;">
+      <i class="request-loading" id="loading" style="display:none"></i>
+      <img title="Error in fetching listings" src="/static/images/error.gif" style="display:none;width:20px;margin-right:5px" id="load-error">
+    </div>
+    <span><a href="javascript:void(0)"><img src="/static/images/list_icon.png" style="margin-top:-5px" title="Show Navigation" id="imgHide" onclick="showNav()" class="hidden"/></a> {{ showHeader() }}</span>
+  </div>
+  <div class="span8 well" id="browsed-div">
+    {{displayResults()}}
+  </div>
+{% endblock %}
+
+{%block jscript%}
+  window.onload= function(){
+    $(".link").popover();
+  }
+{%endblock%}
+
+{% macro showHeader()%}
+  <h3>Found {{resLen}} matches for <i style="color:#468847">{{query}}</i> <small>in {{time|safe}}</small></h3>
+{% endmacro %}
+
+{% macro displayResults() %}
+  {% if resLen > 0:%}
+  {% for book in results:%}
+    {% set book_id = book.key().id() %}
+    {% set url_title = book.title|toUrl %}
+    {% set url_author = book.author|toUrl %}
+    <div class="browsed"><div class="row-fluid">
+    <span class="browsed-img">
+      <a href="/book/info/{{url_author}}/{{url_title}}/{{book_id}}/" class="book-image">
+      {% if not book.getImage() %}
+        {{ noImage() }}
+      {% else %}
+        {{ showImage(book.getImage()) }}
+      {% endif %}
+      </a></span>
+    <div class="browsed-info">
+      <table>
+        <tr><td class="tdmarg"><img src="/static/images/title.png" title="Book Title" class="icon16px"></td>
+          <td><a href="/book/info/{{url_author}}/{{url_title}}/{{book_id}}/" class="link" rel="popover" onclick="openBookPage({{book.key().id()}})" data-content='<b>Author:</b><font color="#049cdb"> {{modAuthor(book.author)}} </font><br/><div style="margin-top:5px;"> {{getDescription(book.description)}} </div>' data-original-title="{{book.title}}">{{modTitle(book.title)}}</a></td></tr>
+        <tr><td><img src="/static/images/author.png" title="Author" class="icon16px"></td><td>
+              {{modAuthor(book.author)}} </td></tr>
+      </table><span class="browsed-stats">
+        </span></div></div></div>
+  {% endfor %}
+  {% else %}
+    No results found
+  {% endif %}
+{% endmacro%}
+
+{% macro noImage() %}
+  <div class="result-img" title="no image available"><div style="height:25px"></div><label class="label label-success" style="text-align:center;">No Image<br/>Available</label></div>
+{% endmacro%}
+
+{% macro showImage(src) %}
+  <div class="result-img"><img src="{{src}}"></div>
+{% endmacro%}
+
+{% macro modAuthor(author)%}
+  {% if author%} {{author}} {%endif%}
+{% endmacro %}
+
+{% macro modTitle(title)%}
+  {% if title.length >= 28%} {{title[:25]}}... {%else%} {{title}} {%endif%}
+{% endmacro %}
+
+{% macro getDescription(desc) %}
+  {% if desc.description %}{{description}}{%else%}No description available{%endif%}
+{% endmacro%}
+
+{% macro modTitle(title)%}
+  {% if title[28]: %}{{title[:25]}}...{% else %}{{title}}{%endif%}
+{% endmacro %}
+
+{% macro showBrowseNav() %}
+  <div id="browseNav">
+  <div class="span3 well" style="padding:8px 0;">
+      <ul class="nav nav-list">
+        <li class="nav-header">Book<span class="pull-right"><a href="javascript:void(0)" onclick="hideNav()">hide</a></span></li>
+        <li class="active"><a href="javascript:void(0)" onclick="">All</a></li>
+        {#<li class="nav-header">Subjects</li>
+        <li class><a href="javascript:void(0)" onclick="">Mathematics</a></li>
+        <li class><a href="javascript:void(0)" onclick="">Science</a></li>
+        <li class><a href="javascript:void(0)" onclick="">English</a></li>
+        <li class><a href="javascript:void(0)" onclick="">Philisophy</a></li>
+        <li class="divider"></li>
+        <li class><a href="javascript:void(0)" onclick="">Advance Search</a></li>#}
+      </ul>
+  </div>
+  </div>
+{% endmacro %}

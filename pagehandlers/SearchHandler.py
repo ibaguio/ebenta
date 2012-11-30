@@ -3,6 +3,11 @@ from pagehandlers.PageHandler import *
 class SearchHandler(PageHandler):
     def get(self):
         query = self.getQuery().strip() #remove trailing whitespaces
+        if "user" in query and self.isAdmin():
+            q = re.split("\W+",query)
+            q.pop(q.index("user"))
+            logging.info(q)
+            self.redirect("/admin/view/users?search="+"+".join(q))
         if not query:
             self.render("search.html")
         if type(query) == unicode:
@@ -53,7 +58,7 @@ class SearchHandler(PageHandler):
     def getQuery(self):
         qtype = self.request.get("query-type")
         if qtype != "advanced":
-            return self.request.get("q")
+            return self.request.get("q").lower()
         else:
             return {"sub-category":self.request.get("sub-category"),
                     "title":self.request.get("title"),

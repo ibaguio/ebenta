@@ -71,6 +71,9 @@ class RegisterHandler(PageHandler):
         if not val.get("course"):
             err.append("Please enter course")
             errs.append("course")
+        if User.all().filter("email",val.get('email')).get():
+            errs.append("email")
+            err.append("Email already in use")
         return err,errs,val
 
     dorms = ['None','Centennial','International Center','Ilang-ilang','Ipil',\

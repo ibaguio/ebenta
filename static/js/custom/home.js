@@ -1,10 +1,10 @@
-function hideAll(){//hide all divs in profile
+function hideAll(callback){
     $("div#home").hide();
     $("div#search").hide();
     $("div#userprofile").hide();
     $("div#setting").hide();
     $("div#consign").hide();
-    $("div#request").hide();
+    $("div#request").hide(callback);
     $("li#li_home").attr("class","");
     $("li#li_search").attr("class","");
     $("li#li_aids").attr("class","");
@@ -18,8 +18,6 @@ function hideAll(){//hide all divs in profile
 function showUserHome(){
     if (window.location.pathname.indexOf("/home")===-1)
         window.location.replace("/home")
-    hideAll();
-    show("home");
 }
 function showSearch(){
     if (window.location.pathname.indexOf("/home")===-1)

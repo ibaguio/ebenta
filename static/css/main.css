@@ -1,5 +1,11 @@
 body{
-  background-color: #d0d0d0;  
+  background-color: #E1E1E1;  
+}
+.browse-pagination{
+  margin: 0 7px;
+}
+#browsed-title{
+  margin-bottom: 10px;
 }
 .wrap {
     min-height: 100%;
